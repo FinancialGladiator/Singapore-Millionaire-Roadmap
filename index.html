@@ -83,6 +83,7 @@
   /* cards */
   .cards{display:grid;grid-template-columns:1fr;gap:12px;margin-top:24px}
   @media(min-width:720px){.cards{grid-template-columns:repeat(3,1fr)}}
+  @media(min-width:720px){.cards.cards-2col{grid-template-columns:repeat(2,1fr)}}
   .scard{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--line);border-radius:8px;padding:20px}
   .scard.s1{border-top-color:var(--single)} .scard.s2{border-top-color:var(--couple)} .scard.s3{border-top-color:var(--family)}
   .scard .name{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:17px;line-height:1.1;margin-bottom:4px}
@@ -350,18 +351,21 @@
   <div class="tab active" id="tab-cover">
     <div class="eyebrow">Singapore · fast-food wage → millionaire + a home</div>
     <h1 class="cover-h1">In Singapore, a single fast-food restaurant employee can not just retire a <em>millionaire</em> — but also own a property.</h1>
-    <p class="cover-sub">It sounds implausible. The maths says otherwise. Three things — all within reach of a minimum-wage worker — make it possible:</p>
-    <div class="cards">
+    <p class="cover-sub">It sounds implausible. The maths says otherwise. Four things — all within reach of a minimum-wage worker — make it possible:</p>
+    <div class="cards cards-2col">
       <div class="scard s1"><div class="name">1 · Discipline</div><div class="setup" style="margin-bottom:0">Live below your means for the long haul: bank the raises, skip the car, buy the cheapest flat and stay. Boring, on purpose.</div></div>
       <div class="scard s2"><div class="name">2 · The grants</div><div class="setup" style="margin-bottom:0">Leverage Singapore's scaffolding: a subsidised HDB flat, a grant that erases a third of the price, CPF, and near-zero income tax.</div></div>
       <div class="scard s3"><div class="name">3 · Invest in the STI</div><div class="setup" style="margin-bottom:0">Put every spare dollar into the index consistently, reinvest the dividends, and never flinch — for 45 years.</div></div>
+      <div class="scard" style="border-top-color:var(--srs)"><div class="name">4 · Maximise SRS</div><div class="setup" style="margin-bottom:0">Shelter income in the SRS every year — contribute enough and income tax can fall to as little as S$0 — while it keeps compounding in the STI until retirement.</div></div>
     </div>
+    <div class="sec-label" style="margin-top:26px">Achieving Millionaire Status</div>
+    <p class="sec-sub">Execute all four steps consistently, and this is what it could look like — starting from a S$2,400/month fast-food worker's wage.</p>
     <div class="proof">
-      <div class="p"><div class="p-val-row"><span class="p-name">HDB</span><span class="pv">S$148k</span><span class="hint"><button class="help">?</button><span class="bubble">Today's dollars, not a future/nominal figure. A 2-room Flexi bought at 35, financed via an HDB loan serviced from CPF-OA, and owned outright by 65. The S$148k is the flat's gross market value before subsidy — S$90k net paid by the buyer + S$58k EHG (Enhanced CPF Housing Grant). Assumed to hold its real value over time rather than being projected to a larger future price.</span></span></div><div class="p-desc">2-room Flexi, owned outright</div></div>
-      <div class="p"><div class="p-val-row"><span class="p-name">CPF</span><span class="pv">S$438k</span><span class="hint"><button class="help">?</button><span class="bubble">Today's dollars — discounted from the nominal balance at 65 back to today's purchasing power at 2.5%/yr inflation. Includes the employee's own 20% contribution, the employer's ~17% match, and CPF interest compounding on both.</span></span></div><div class="p-desc">Retirement + healthcare savings</div></div>
-      <div class="p"><div class="p-val-row"><span class="p-name">STI</span><span class="pv">S$657k</span><span class="hint"><button class="help">?</button><span class="bubble">Today's dollars — discounted from the nominal balance at 65. 45 years investing the monthly leftover into a Straits Times Index ETF at an assumed 6%/yr total return, with dividends reinvested throughout.</span></span></div><div class="p-desc">Index fund brokerage pot</div></div>
-      <div class="p"><div class="p-val-row"><span class="p-name">Net worth</span><span class="pv">S$1.10m</span><span class="hint"><button class="help">?</button><span class="bubble">Today's dollars. The STI pot plus the CPF total combined. Excludes the flat itself, which is treated as housing secured rather than an appreciating asset to add on top.</span></span></div><div class="p-desc">STI + CPF combined</div></div>
-      <div class="p"><div class="p-val-row"><span class="p-name">Retirement income</span><span class="pv">S$4,360/mo</span><span class="hint"><button class="help">?</button><span class="bubble">Today's dollars, for life. ≈S$2,160/mo from a 4%/yr STI drawdown + ≈S$2,200/mo CPF LIFE. No SRS in this baseline — at S$2,400/mo there's ~S$0 income tax, so SRS offers no benefit here; every spare dollar goes into STI instead. (The Calculator tab lets you add SRS at higher incomes.)</span></span></div><div class="p-desc">STI drawdown + CPF LIFE, for life</div></div>
+      <div class="p"><div class="p-val-row"><span class="p-name">HDB</span><span class="pv">S$140k</span><span class="hint"><button class="help">?</button><span class="bubble">Today's dollars, not a future/nominal figure. A 2-room Flexi bought at 35, financed via an HDB loan serviced from CPF-OA, and owned outright by 65. The S$140k is the flat's gross market value before subsidy — S$83k net paid by the buyer + S$57k EHG (Enhanced CPF Housing Grant). Assumed to hold its real value over time rather than being projected to a larger future price.</span></span></div><div class="p-desc">2-room Flexi, owned outright</div></div>
+      <div class="p"><div class="p-val-row"><span class="p-name">CPF</span><span class="pv">S$572k</span><span class="hint"><button class="help">?</button><span class="bubble">Today's dollars — discounted from the nominal balance at 65 back to today's purchasing power at 2.5%/yr inflation. Includes the employee's own 20% contribution, the employer's ~17% match, and CPF interest compounding on both.</span></span></div><div class="p-desc">Retirement + healthcare savings</div></div>
+      <div class="p"><div class="p-val-row"><span class="p-name">STI + SRS</span><span class="pv">S$676k</span><span class="hint"><button class="help">?</button><span class="bubble">Today's dollars — discounted from the nominal balance at 65. 45 years investing 11% of take-home into the STI at an assumed 6%/yr total return, plus 9% into SRS (also STI-invested), dividends reinvested throughout.</span></span></div><div class="p-desc">Index fund + tax-sheltered pot</div></div>
+      <div class="p"><div class="p-val-row"><span class="p-name">Net worth</span><span class="pv">S$1.25m</span><span class="hint"><button class="help">?</button><span class="bubble">Today's dollars. The STI + SRS pot plus the CPF total combined. Excludes the flat itself, which is treated as housing secured rather than an appreciating asset to add on top.</span></span></div><div class="p-desc">STI + CPF combined</div></div>
+      <div class="p"><div class="p-val-row"><span class="p-name">Retirement income</span><span class="pv">S$5,390/mo</span><span class="hint"><button class="help">?</button><span class="bubble">Today's dollars, for life. ≈S$2,250/mo from a 4%/yr drawdown on the STI + SRS pot + ≈S$3,140/mo CPF LIFE. SRS is set at 9% of take-home in this baseline, enough to bring income tax close to S$0; the rest of the invest budget (11%) goes to open STI.</span></span></div><div class="p-desc">STI/SRS drawdown + CPF LIFE, for life</div></div>
     </div>
 
     <figure class="quote-block">
@@ -375,16 +379,17 @@
     <div class="compound-box">
       <div class="cb-label">45 years, in contributions vs. pure compounding</div>
       <div class="cb-rows">
-        <div class="cb-row"><span class="cb-k">CPF — employee's own 20% <span class="hint"><button class="help">?</button><span class="bubble">20% of gross wages, deducted automatically from every paycheck into CPF, over 45 years.</span></span></span><span class="cb-v">S$436k</span></div>
-        <div class="cb-row"><span class="cb-k">CPF — employer's ~17% match <span class="hint"><button class="help">?</button><span class="bubble">Real money, but not his own — and not compounding. It still counts fully toward his eventual CPF LIFE payout, already folded into the S$438k CPF figure above.</span></span></span><span class="cb-v">S$357k</span></div>
-        <div class="cb-row"><span class="cb-k">STI — from take-home pay <span class="hint"><button class="help">?</button><span class="bubble">The monthly surplus actually invested into the STI over 45 years, funded entirely from take-home pay.</span></span></span><span class="cb-v">S$723k</span></div>
-        <div class="cb-row total"><span class="cb-k">Total contributed, by anyone <span class="hint"><button class="help">?</button><span class="bubble">The sum of all three lines above — every dollar that came from either his paycheck or his employer, before any investment growth.</span></span></span><span class="cb-v">S$1.52m</span></div>
-        <div class="cb-row total grow"><span class="cb-k">Pure compounding <span class="hint"><button class="help">?</button><span class="bubble">The final balance minus every dollar contributed by anyone — pure CPF interest and STI investment gains, nothing else.</span></span></span><span class="cb-v">S$1.81m</span></div>
-        <div class="cb-row total grand"><span class="cb-k">Grand total at 65, nominal <span class="hint"><button class="help">?</button><span class="bubble">Contributed (S$1.52m) + pure compounding (S$1.81m). The same total behind the S$1.10m net worth shown in today's dollars above — just not yet discounted for inflation here.</span></span></span><span class="cb-v">S$3.33m</span></div>
+        <div class="cb-row"><span class="cb-k">CPF — employee's own 20% <span class="hint"><button class="help">?</button><span class="bubble">20% of gross wages, deducted automatically from every paycheck into CPF, over 45 years.</span></span></span><span class="cb-v">S$519k</span></div>
+        <div class="cb-row"><span class="cb-k">CPF — employer's ~17% match <span class="hint"><button class="help">?</button><span class="bubble">Real money, but not his own — and not compounding. It still counts fully toward his eventual CPF LIFE payout, already folded into the S$572k CPF figure above.</span></span></span><span class="cb-v">S$502k</span></div>
+        <div class="cb-row"><span class="cb-k">STI — from take-home pay <span class="hint"><button class="help">?</button><span class="bubble">The 11%-of-take-home surplus actually invested into the open STI account over 45 years.</span></span></span><span class="cb-v">S$333k</span></div>
+        <div class="cb-row"><span class="cb-k">SRS — from take-home pay <span class="hint"><button class="help">?</button><span class="bubble">9% of take-home, deducted before tax and invested in the STI within the SRS wrapper — enough to bring income tax close to S$0.</span></span></span><span class="cb-v">S$220k</span></div>
+        <div class="cb-row total"><span class="cb-k">Total contributed, by anyone <span class="hint"><button class="help">?</button><span class="bubble">The sum of all four lines above — every dollar that came from either his paycheck or his employer, before any investment growth.</span></span></span><span class="cb-v">S$1.57m</span></div>
+        <div class="cb-row total grow"><span class="cb-k">Pure compounding <span class="hint"><button class="help">?</button><span class="bubble">The final balance minus every dollar contributed by anyone — pure CPF interest and STI/SRS investment gains, nothing else.</span></span></span><span class="cb-v">S$2.22m</span></div>
+        <div class="cb-row total grand"><span class="cb-k">Grand total at 65, nominal <span class="hint"><button class="help">?</button><span class="bubble">Contributed (S$1.57m) + pure compounding (S$2.22m). The same total behind the S$1.25m net worth shown in today's dollars above — just not yet discounted for inflation here.</span></span></span><span class="cb-v">S$3.79m</span></div>
       </div>
       <div class="cb-headline">
-        <span class="cb-you">S$1.52m was contributed, by him and his employer.</span>
-        <span class="cb-compound">Pure compounding added S$1.81m more.</span>
+        <span class="cb-you">S$1.57m was contributed, by him and his employer.</span>
+        <span class="cb-compound">Pure compounding added S$2.22m more.</span>
       </div>
     </div>
 
@@ -410,16 +415,16 @@
   <div class="tab" id="tab-outcomes">
     <div class="eyebrow">45-year projection · all citizens · STI 6%</div>
     <h1>One wage, two wages,<br>or two wages and <em>kids</em>.</h1>
-    <p class="standfirst">Four Singaporean households on S$2,400/mo crew wages, all frugal, all investing the leftover into the STI at 6% (dividends reinvested) for 45 years. The public-housing + CPF scaffolding does the rest.</p>
+    <p class="standfirst">Four Singaporean households on S$2,400/mo crew wages, all frugal, putting 11% of take-home into the STI and 9% into SRS at 6% (dividends reinvested) for 45 years. The public-housing + CPF scaffolding does the rest.</p>
     <div class="cards">
       <div class="scard s1">
         <div class="name">Single</div>
         <div class="setup">1 × S$2,400/mo · 2-room Flexi, bought at 35</div>
         <div class="hl">Retirement income · today's $</div>
-        <div class="big">S$4,360<small>/mo</small></div>
+        <div class="big">S$5,390<small>/mo</small></div>
         <div class="rows">
-          <div class="r"><span class="k">STI pot (today's $)</span><span class="v">S$657k</span></div>
-          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$1.10m</span></div>
+          <div class="r"><span class="k">STI + SRS pot (today's $)</span><span class="v">S$676k</span></div>
+          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$1.25m</span></div>
           <div class="r"><span class="k">CPF LIFE payouts</span><span class="v">1</span></div>
         </div>
       </div>
@@ -427,10 +432,10 @@
         <div class="name">Couple, no kids</div>
         <div class="setup">2 × S$2,400/mo · 3-room BTO, bought at 30</div>
         <div class="hl">Retirement income · today's $</div>
-        <div class="big">S$11,850<small>/mo</small></div>
+        <div class="big">S$10,570<small>/mo</small></div>
         <div class="rows">
-          <div class="r"><span class="k">STI pot (today's $)</span><span class="v">S$2.23m</span></div>
-          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$3.13m</span></div>
+          <div class="r"><span class="k">STI + SRS pot (today's $)</span><span class="v">S$1.29m</span></div>
+          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$2.43m</span></div>
           <div class="r"><span class="k">CPF LIFE payouts</span><span class="v">2</span></div>
         </div>
       </div>
@@ -438,10 +443,10 @@
         <div class="name">Family, one child</div>
         <div class="setup">2 × S$2,400/mo · 4-room BTO at 30 · child 31–53</div>
         <div class="hl">Retirement income · today's $</div>
-        <div class="big">S$9,830<small>/mo</small></div>
+        <div class="big">S$9,023<small>/mo</small></div>
         <div class="rows">
-          <div class="r"><span class="k">STI pot (today's $)</span><span class="v">S$1.79m</span></div>
-          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$2.55m</span></div>
+          <div class="r"><span class="k">STI + SRS pot (today's $)</span><span class="v">S$1.07m</span></div>
+          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$2.06m</span></div>
           <div class="r"><span class="k">CPF LIFE payouts</span><span class="v">2</span></div>
         </div>
       </div>
@@ -449,29 +454,29 @@
         <div class="name">Family, two children</div>
         <div class="setup">2 × S$2,400/mo · 4-room BTO at 30 · kids 31–53 &amp; 33.5–55.5</div>
         <div class="hl">Retirement income · today's $</div>
-        <div class="big" style="color:var(--srs)">S$8,740<small>/mo</small></div>
+        <div class="big" style="color:var(--srs)">S$8,598<small>/mo</small></div>
         <div class="rows">
-          <div class="r"><span class="k">STI pot (today's $)</span><span class="v">S$1.47m</span></div>
-          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$2.22m</span></div>
+          <div class="r"><span class="k">STI + SRS pot (today's $)</span><span class="v">S$939k</span></div>
+          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$1.93m</span></div>
           <div class="r"><span class="k">CPF LIFE payouts</span><span class="v">2</span></div>
         </div>
       </div>
     </div>
     <section>
-      <div class="sec-label">STI growth · all four · age 20 → 65</div>
+      <div class="sec-label">Investment pot growth (STI + SRS) · all four · age 20 → 65</div>
       <p class="sec-sub">Future (nominal) dollars. Two incomes buy the flat five years earlier, unlock a bigger grant, and leave far more to compound — so the couple pulls away. Each family tracks the couple until its first child arrives, then the gap opens; a second child opens it further, but by a smaller amount.</p>
       <div class="chart-card">
-        <svg id="chart" viewBox="0 0 900 470" role="img" aria-label="STI growth for four households"></svg>
+        <svg id="chart" viewBox="0 0 900 470" role="img" aria-label="Investment pot growth for four households"></svg>
         <div class="chart-legend">
-          <span><i class="dot" style="background:var(--couple)"></i>Couple — S$6.77m</span>
-          <span><i class="dot" style="background:var(--family)"></i>Family, 1 child — S$5.44m</span>
-          <span><i class="dot" style="background:var(--srs)"></i>Family, 2 children — S$4.46m</span>
-          <span><i class="dot" style="background:var(--single)"></i>Single — S$2.00m</span>
+          <span><i class="dot" style="background:var(--couple)"></i>Couple — S$3.92m</span>
+          <span><i class="dot" style="background:var(--family)"></i>Family, 1 child — S$3.24m</span>
+          <span><i class="dot" style="background:var(--srs)"></i>Family, 2 children — S$2.85m</span>
+          <span><i class="dot" style="background:var(--single)"></i>Single — S$2.05m</span>
         </div>
       </div>
       <div class="insight">
-        <h4>The price of a child — about S$2,000/month of retirement, for life. A second, about S$1,090 more.</h4>
-        <p>Family and couple are identical until the first child arrives at 31. Then household saving falls from ~S$2,700 to ~S$1,800/mo and stays down for 22 years, until the child turns independent at 53 and saving jumps to ~S$4,600/mo. That compounded dip is the whole gap: couple ~S$11,850/mo, family (1 child) ~S$9,830/mo — roughly S$2,000/mo of lifelong income and ~S$580k of net worth, from ~S$750/mo of child spending magnified over the decades it couldn't compound. A second child, arriving 2.5 years later at a slightly lower ~S$600/mo (shared clothes, toys, hand-me-downs), opens the gap further to ~S$8,740/mo — a smaller additional hit than the first child, since it costs less <em>and</em> has less time left to compound before 65.</p>
+        <h4>The price of a child — about S$1,550/month of retirement, for life. A second, about S$425 more.</h4>
+        <p>Family and couple are identical until the first child arrives at 31 — from then, some of what would have gone toward SRS and STI is redirected to cover the extra S$750/mo of child costs, for 22 years until the child turns independent at 53. That compounded gap is the whole story: couple ~S$10,570/mo, family (1 child) ~S$9,023/mo — roughly S$1,550/mo of lifelong income and ~S$370k of net worth, from spending that couldn't compound for two decades. A second child, arriving 2.5 years later at a slightly lower ~S$600/mo, opens the gap further to ~S$8,600/mo — a smaller additional hit than the first child, since it costs less <em>and</em> has less time left to compound before 65.</p>
       </div>
     </section>
   </div>
@@ -619,7 +624,7 @@
       </div></div>
       <div class="step"><div class="num">7</div><div>
         <h3>Future dollars → today's dollars</h3>
-        <p>Every headline figure is discounted to present value at 2.5%/yr, so "S$657k today" means the age-65 pot has the buying power of S$657k now — not the S$2.0m it reads on paper in 2071.</p>
+        <p>Every headline figure is discounted to present value at 2.5%/yr, so "S$676k today" means the age-65 pot has the buying power of S$676k now — not the S$2.05m it reads on paper in 2071.</p>
         <div class="formula">today_value = nominal ÷ 1.025^45 = nominal ÷ 3.04</div>
       </div></div>
     </section>
@@ -671,7 +676,7 @@
       <div class="step"><div class="num">1</div><div>
         <h3>Lifestyle inflation eats every raise</h3>
         <p>The projection depends on the surplus flowing into the STI for 45 years. But spending rises to meet income — hedonic adaptation makes each upgrade the new baseline, so the reward wears off and you reach for the next one. "Frugal for life" is the first assumption real life dissolves.</p>
-        <div class="formula">Absorb half of each raise into lifestyle → the single's ~S$657k pot roughly halves.</div>
+        <div class="formula">Absorb half of each raise into lifestyle → the single's ~S$676k pot roughly halves.</div>
       </div></div>
       <div class="step"><div class="num">2</div><div>
         <h3>The car — a quarter-million-dollar decision, on repeat</h3>
@@ -724,7 +729,7 @@
       <div class="step"><div class="num">2</div><div>
         <h3>Freeze your lifestyle — bank every raise</h3>
         <p>When pay rises, route the increase straight to investing instead of upgrading your life. Let income climb while spending stays flat, and pour the widening gap into the index. Not deprivation — just refusing to let each raise become the new baseline.</p>
-        <div class="formula">Beats trap #1 (lifestyle inflation). Holding the line vs spending half your raises ≈ S$657k vs ~S$330k.</div>
+        <div class="formula">Beats trap #1 (lifestyle inflation). Holding the line vs spending half your raises ≈ S$676k vs ~S$340k.</div>
       </div></div>
       <div class="step"><div class="num">3</div><div>
         <h3>Buy the cheapest flat that works — never upgrade</h3>
@@ -764,8 +769,8 @@
 
     <div class="calc-card">
       <div class="field">
-        <label>Your age now <span class="hint"><button class="help">?</button><span class="bubble">The age you are today. The projection runs from here to retirement at 65.</span></span> — <output id="o-age">25</output></label>
-        <input type="range" id="i-age" min="18" max="60" value="25">
+        <label>Your age now <span class="hint"><button class="help">?</button><span class="bubble">The age you are today. The projection runs from here to retirement at 65.</span></span> — <output id="o-age">20</output></label>
+        <input type="range" id="i-age" min="18" max="60" value="20">
       </div>
       <div class="field">
         <label>Job profile <span class="hint"><button class="help">?</button><span class="bubble">Indicative Singapore <b>entry-level gross salaries</b> — picking one sets the slider below. Notes: a <b>taxi driver</b> is self-employed, so there's no employer CPF and real CPF builds slower than modelled; a <b>surgeon's</b> "entry" salary only arrives after ~10 years of medical training; <b>sales</b> and <b>banking</b> pay can swing far above base with commissions and bonuses.</span></span></label>
@@ -1236,7 +1241,7 @@
       <div class="gloss-item"><div class="gt">Income tax relief</div><div class="gd">Amounts subtracted from your income before tax is worked out (CPF contributions, earned-income relief and so on), lowering the bill.</div></div>
       <div class="gloss-item"><div class="gt">Nominal vs. "today's dollars" <span>real</span></div><div class="gd">Nominal is the face-value number in some future year; "today's dollars" strips out inflation so you can see what it's actually worth in current buying power.</div></div>
       <div class="gloss-item"><div class="gt">Inflation</div><div class="gd">The gradual rise in prices over time, which erodes what each dollar buys. About 2.5% a year is assumed here.</div></div>
-      <div class="gloss-item"><div class="gt">Present value / discounting</div><div class="gd">Working out what a future sum is worth today by removing inflation (or interest). It's how S$2m in 2071 becomes ~S$657k in today's money.</div></div>
+      <div class="gloss-item"><div class="gt">Present value / discounting</div><div class="gd">Working out what a future sum is worth today by removing inflation (or interest). It's how S$2.05m in 2071 becomes ~S$676k in today's money.</div></div>
       <div class="gloss-item"><div class="gt">COE <span>Certificate of Entitlement</span></div><div class="gd">A permit you must buy at auction just for the right to own a car for 10 years — a big reason cars in Singapore are so expensive.</div></div>
       <div class="gloss-item"><div class="gt">Price-to-income ratio</div><div class="gd">How many years of a typical income it takes to buy a typical home — a quick gauge of how (un)affordable housing is.</div></div>
     </section>
@@ -1485,16 +1490,16 @@
 
   // chart
   var ages=[20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65];
-  var SINGLE=[181,2451,4913,7571,10435,13518,16835,20402,24235,28350,32766,37502,42580,48021,53848,61104,80565,101566,124206,148593,174840,203070,233412,266003,300988,338523,378770,421892,468046,517426,570235,626691,687026,751484,820324,894090,975882,1063220,1156452,1255949,1362103,1475332,1596076,1724805,1862016,1995696];
-  var COUPLE=[1146,15524,31121,48000,66242,85938,107185,130083,154743,181279,211099,257907,308352,362674,421125,483976,551512,624018,701809,785225,874628,970401,1072951,1182712,1300142,1425728,1559988,1703442,1856621,2020134,2194630,2380797,2579366,2791112,3016857,3258005,3521098,3801536,4100399,4418833,4758052,5119347,5504083,5913713,6349775,6774110];
-  var FAMILY=[1146,15524,31121,48000,66242,85938,107185,130083,154743,181279,211099,256918,294952,335808,379670,426732,477199,531271,589173,651148,717456,788372,864190,945218,1031785,1124243,1222960,1328303,1440637,1560396,1688042,1824068,1968993,2125072,2310855,2509642,2727833,2960676,3209088,3474043,3756575,4057780,4378823,4720937,5085432,5440398];
-  var FAMILY2=[1146,15524,31121,48000,66242,85938,107185,130083,154743,181279,211099,256918,294952,335808,373657,409716,448255,489410,533340,580219,630231,683573,740453,801091,865722,934593,1007969,1086101,1169233,1257671,1351743,1451793,1558189,1673023,1814670,1966250,2144317,2342149,2553449,2779066,3019899,3276904,3551094,3843544,4155396,4459335];
-  var W=900,H=470,padL=96,padR=28,padT=24,padB=54,x0=padL,x1=W-padR,y0=H-padB,y1=padT,maxY=6900000;
+  var SINGLE=[0,5957,12467,19568,27303,35718,44859,54778,65530,77173,89767,103378,118075,133931,151024,169438,189263,210555,233409,257927,284219,312398,342585,374912,409519,446554,486176,528552,573861,622293,674049,729343,788403,851470,918800,990667,1068309,1151162,1239561,1333848,1434390,1542767,1658329,1781530,1912853,2052812];
+  var COUPLE=[0,11300,23651,37131,51819,67801,85170,104023,124464,146603,170559,196454,224374,254453,286835,321678,359147,399417,442675,489113,538943,592381,649661,711036,776773,847158,922495,1003107,1089336,1181547,1280127,1385488,1498066,1618326,1746761,1883896,2032182,2190475,2359412,2539653,2731905,2939297,3160497,3396380,3647877,3915976];
+  var FAMILY=[0,11300,23651,37131,51819,67801,85170,104023,124464,146603,170559,196454,218115,241403,266428,293306,322164,353134,386357,421977,460153,501047,544836,591709,641869,695532,752929,814302,879912,950034,1024962,1105007,1190501,1281795,1390039,1505770,1631369,1765612,1909058,2062278,2225887,2402919,2591936,2793705,3009041,3238810];
+  var FAMILY2=[0,11300,23651,37131,51819,67801,85170,104023,124464,146603,170559,196454,218115,241403,266428,289449,314092,340462,368670,398827,431059,465500,502292,541586,583543,628334,676138,727149,781570,839619,901526,967535,1037907,1112916,1202407,1298045,1402124,1522613,1651479,1789244,1936471,2096137,2266748,2449006,2643660,2851506];
+  var W=900,H=470,padL=96,padR=28,padT=24,padB=54,x0=padL,x1=W-padR,y0=H-padB,y1=padT,maxY=4300000;
   function X(i){return x0+(x1-x0)*(i/(ages.length-1));}
   function Y(v){return y0+(y1-y0)*(v/maxY);}
   function path(a){return a.map(function(v,i){return (i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1);}).join(' ');}
   var s='';
-  [0,2000000,4000000,6000000].forEach(function(v){var y=Y(v);
+  [0,1000000,2000000,3000000,4000000].forEach(function(v){var y=Y(v);
     s+='<line x1="'+x0+'" y1="'+y+'" x2="'+x1+'" y2="'+y+'" stroke="var(--grid)"/>';
     s+='<text class="clabel" x="'+(x0-12)+'" y="'+(y+6)+'" text-anchor="end" fill="#9aa199">'+(v?('S$'+(v/1000000)+'m'):'0')+'</text>';});
   ages.forEach(function(a,i){if(a%10===0)s+='<text class="clabel" x="'+X(i)+'" y="'+(y0+30)+'" text-anchor="middle" fill="#9aa199">'+a+'</text>';});
@@ -1507,10 +1512,10 @@
   s+='<path d="'+path(COUPLE)+'" fill="none" stroke="var(--couple)" stroke-width="4.4"/>';
   function dot(a,c){var i=a.length-1;s+='<circle cx="'+X(i)+'" cy="'+Y(a[i])+'" r="5" fill="'+c+'"/>';}
   dot(COUPLE,"var(--couple)");dot(FAMILY,"var(--family)");dot(FAMILY2,"var(--srs)");dot(SINGLE,"var(--single)");
-  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(6774110)+2)+'" text-anchor="end" font-weight="700" fill="var(--couple)">S$6.8m</text>';
-  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(5440398)+22)+'" text-anchor="end" font-weight="700" fill="var(--family)">S$5.4m</text>';
-  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(4459335)+20)+'" text-anchor="end" font-weight="700" fill="var(--srs)">S$4.5m</text>';
-  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(1995696)-10)+'" text-anchor="end" fill="var(--single)">S$2.0m</text>';
+  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(3915976)+2)+'" text-anchor="end" font-weight="700" fill="var(--couple)">S$3.92m</text>';
+  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(3238810)+22)+'" text-anchor="end" font-weight="700" fill="var(--family)">S$3.24m</text>';
+  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(2851506)+20)+'" text-anchor="end" font-weight="700" fill="var(--srs)">S$2.85m</text>';
+  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(2052812)-10)+'" text-anchor="end" fill="var(--single)">S$2.05m</text>';
   document.getElementById('chart').innerHTML=s;
 
   /* ===== SHARED CALCULATOR STATE: local save + shareable scenario links ===== */
@@ -2178,7 +2183,7 @@
     });
     $('i-sal').addEventListener('input',function(){ $('i-job').value='custom'; });
     $('btn-preset').addEventListener('click',function(){
-      $('i-age').value=25; $('i-sal').value=2400; $('i-mode').value='average'; $('i-sti').value=6;
+      $('i-age').value=20; $('i-sal').value=2400; $('i-mode').value='average'; $('i-sti').value=6;
       $('i-job').value='mcd';
       $('i-house').value='single'; $('i-hdb').value='own'; $('i-flat').value=0; $('i-buy').value=35;
       $('i-marry').value=28; $('i-wed').value=30000; $('i-condo').value='no'; $('i-csize').value=1;
