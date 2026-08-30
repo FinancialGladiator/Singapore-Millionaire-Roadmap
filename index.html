@@ -210,7 +210,7 @@
   .ded-row .amt{font-family:'Space Mono',monospace;font-weight:700;flex:0 0 auto}
   .bar{display:flex;height:36px;border-radius:6px;overflow:hidden;margin:16px 0 12px;border:1px solid var(--line)}
   .bar .seg{display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;color:#fff;min-width:0;overflow:hidden}
-  .seg-need{background:var(--single)} .seg-want{background:var(--family)} .seg-srs{background:var(--srs)} .seg-inv{background:var(--couple)}
+  .seg-need{background:var(--single)} .seg-want{background:var(--family)} .seg-srs{background:var(--srs)} .seg-inv{background:var(--couple)} .seg-gap{background:repeating-linear-gradient(45deg,#e3ded5,#e3ded5 6px,#d5cfc2 6px,#d5cfc2 12px)}
   .blegend{display:flex;flex-direction:column;gap:9px;margin-top:4px}
   .blegend .row{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:13.5px}
   .blegend .row .l{display:flex;align-items:center;gap:8px;color:#3a433a}
@@ -914,7 +914,7 @@
 
     <section>
       <div class="sec-label">Split your take-home your way</div>
-      <p class="sec-sub">Drag any slider — the other three rebalance automatically so all four always add up to 100%, and every slider shows its dollar value.</p>
+      <p class="sec-sub">Drag any slider — the other three <b>won't</b> move automatically. Each one's own range shrinks to whatever room is left, so the total can never exceed 100% — but if you free up room by lowering one, you'll need to raise another yourself to put it to use.</p>
       <div class="alloc">
         <div class="alloc-row">
           <div class="alloc-head"><span class="l"><i class="dot" style="background:var(--single)"></i>Necessities <span class="hint"><button class="help">?</button><span class="bubble">Rent, food, transport, utilities, insurance — the unavoidable (plus your child's costs, if any). The classic guide is ~50% of take-home.</span></span></span><span class="amt"><output id="ao-need">50%</output> · <span id="ad-need"></span></span></div>
@@ -935,6 +935,7 @@
         </div>
       </div>
       <div class="bar" id="b-bar"></div>
+      <div class="milestones flow" id="alloc-gap-note" style="display:none;margin-top:10px;background:#fdf3ec;border:1px solid #d99a4e55;border-radius:6px;padding:10px 12px;color:#7a4a1f"></div>
 
       <div class="sec-label" style="margin-top:28px">Your monthly budget now</div>
       <div class="ded">
@@ -1662,31 +1663,7 @@
       return {rf:rf,excise:excise,gst:gst,arf:arf,coe:coe,margin:margin,total:total,parf:parf,dep:dep,ins:ins,run:run,monthly:dep+run};
     }
 
-    function rebalance(changed){
-      var v={need:+$('a-need').value,want:+$('a-want').value,srs:+$('a-srs').value,inv:+$('a-inv').value};
-      var keys=['need','want','srs','inv'];
-      var others=keys.filter(function(k){return k!==changed;});
-      var remain=100-v[changed], so=others.reduce(function(s,k){return s+v[k];},0);
-      if(so<=0){
-        var each=Math.floor(remain/others.length);
-        others.forEach(function(k,i){ v[k]= i===others.length-1 ? remain-each*(others.length-1) : each; });
-      } else {
-        // Round each share independently, then correct any rounding drift by adjusting
-        // whichever slider currently holds the LARGEST value — never a fixed slot (that
-        // bug used to always dump leftovers onto STI regardless of what it was set to).
-        var shares={}, sum=0;
-        others.forEach(function(k){ var s=Math.round(remain*v[k]/so); shares[k]=s; sum+=s; });
-        var drift=remain-sum;
-        if(drift!==0){
-          var biggest=others.reduce(function(a,b){ return shares[b]>shares[a]?b:a; }, others[0]);
-          shares[biggest]+=drift;
-        }
-        others.forEach(function(k){ v[k]=Math.max(shares[k],0); });
-      }
-      keys.forEach(function(k){ $('a-'+k).value=v[k]; });
-    }
-
-    function readOpts(){
+        function readOpts(){
       var o={};
       o.age=+$('i-age').value; o.sal0=+$('i-sal').value; o.mode=$('i-mode').value;
       o.cr=+$('i-raise').value/100; o.stiR=+$('i-sti').value/100; o.retire=65;
@@ -1773,10 +1750,11 @@
         OA+=oaC*12; RET+=retC*12;
         // budget engine: init at start and at marriage
         var marriedThisYear=(!o.single && !marriedFromStart && a===o.marryAge);
-        // SRS is already extracted from th above, so Necessities/Wants/STI-Invest now split
-        // what's left, renormalized to their own relative shares (excluding SRS's %).
-        var restSum=o.aN+o.aW+o.aI;
-        var investShare=restSum>0.0001 ? o.aI/restSum : 0;
+        // SRS is already extracted from th above. Invest's share of th is its DIRECT
+        // %-of-take-home (using the same pre-SRS base SRS itself uses), not renormalized
+        // against Necessities/Wants — so an unallocated gap (sliders not summing to 100%)
+        // correctly stays unallocated instead of being silently absorbed here.
+        var investShare=th>0.0001 ? Math.min(1,Math.max(0,(o.aI*thNoSRS)/th)) : 0;
         // Once SRS is maxed at its legal cap, you can't shelter any more there — the
         // "Singapore way" discipline continues via open STI instead: at least 50% of
         // every further pay raise goes to STI, even if your STI slider itself reads 0%.
@@ -1953,9 +1931,10 @@
     }
 
     function calc(){
-      // --- pre-pass: constrain the SRS slider so it can never be dragged past the % that
-      // hits the S$1,275/person legal cap. th0NoSRS doesn't depend on aS, so this is safe
-      // to compute before reading/clamping aS itself, then re-run the real projection below.
+      // --- pre-pass: enforce that no slider can push the total allocation over 100%,
+      // and that SRS additionally can never be dragged past the point where it hits the
+      // S$1,275/person legal cap. Sliders no longer auto-rebalance each other — each one's
+      // own reachable range just shrinks to however much room the other three have left.
       var o0=readOpts();
       var r0=project(o0);
       var s0p=r0.spath[0], e0p=r0.earn0;
@@ -1964,10 +1943,20 @@
       var ch0p=Math.max(s0p*12-cpfW0p*sE0p*12-1000,0);
       var tax0noP=sgTax(ch0p)/12;
       var th0NoSRSp=s0p*e0p-emp0p-tax0noP*e0p;
-      var srsCapPct = th0NoSRSp>0 ? Math.min(100, Math.floor((1275*e0p/th0NoSRSp)*100)) : 100;
-      var srsEl=$('a-srs');
-      srsEl.max=srsCapPct;
-      if(+srsEl.value>srsCapPct) srsEl.value=srsCapPct;
+      // Math.ceil (not floor) so the slider's max can actually reach S$1,275 exactly —
+      // flooring left it stopping a few dollars short. The engine's own hard S$1,275
+      // cap further down means rounding up here can never cause an actual overshoot.
+      var legalSrsCapPct = th0NoSRSp>0 ? Math.min(100, Math.ceil((1275*e0p/th0NoSRSp)*100)) : 100;
+      var allocIds=['a-need','a-want','a-srs','a-inv'];
+      allocIds.forEach(function(id){
+        var others=allocIds.filter(function(x){return x!==id;});
+        var othersSum=others.reduce(function(s,x){return s+(+$(x).value);},0);
+        var roomCap=Math.max(0,100-othersSum);
+        var effectiveCap=(id==='a-srs')?Math.min(roomCap,legalSrsCapPct):roomCap;
+        $(id).max=effectiveCap;
+        if(+$(id).value>effectiveCap){ $(id).value=effectiveCap; }
+      });
+      var srsCapPct=legalSrsCapPct, srsEl=$('a-srs');
       // --- main pass: read the now-clamped inputs and run the real projection ---
       var o=readOpts();
       var r=project(o);
@@ -2031,11 +2020,12 @@
       else if(o.age<o.buyAge){ house0=rentBase0; houseCash0=house0; houseTxt=fmt(house0)+' (renting a room)'; }
       else { house0=r.mortM; houseCash0=o.se?house0:0; houseTxt=fmt(house0)+(o.se?' (mortgage, cash)':' (mortgage, from CPF)'); }
       $('b-house').textContent=houseCash0>0?('− '+houseTxt):houseTxt;
-      // STI Investment: Necessities/Wants/STI now split the SRS-exclusive take-home,
-      // renormalized to their own relative shares (SRS was already extracted above).
-      var restSum0=o.aN+o.aW+o.aI;
-      var iShare0=restSum0>0.0001?o.aI/restSum0:0, nShare0=restSum0>0.0001?o.aN/restSum0:0, wShare0=restSum0>0.0001?o.aW/restSum0:0;
-      var stiOnly0=iShare0*th0;
+      // STI Investment, Necessities and Wants: each is now its OWN direct %-of-take-home,
+      // not renormalized against each other — so an unallocated gap shows up honestly
+      // instead of being silently absorbed by whichever of the three is left.
+      var stiOnly0=Math.max(o.aI*th0NoSRS,0);
+      var needOnly0=Math.max(o.aN*th0NoSRS,0);
+      var wantOnly0=Math.max(o.aW*th0NoSRS,0);
       $('b-stiinv').textContent= stiOnly0>0 ? ('− '+fmt(stiOnly0)) : 'S$0';
       var net0=Math.max(th0-houseCash0-stiOnly0,0);
       $('b-net').textContent=fmt(net0);
@@ -2053,15 +2043,25 @@
         var remainTax=sgTax(Math.max(ch0-15300,0))/12;
         $('a-srsnote').innerHTML='Max-to-zero: capped at the legal max <b>S$1,275/mo</b> — even maxed out, ~'+fmt(remainTax)+'/mo of tax would remain.'+capNote;
       }
-      $('ad-need').textContent=fmt(nShare0*th0);
-      $('ad-want').textContent=fmt(wShare0*th0);
+      $('ad-need').textContent=fmt(needOnly0);
+      $('ad-want').textContent=fmt(wantOnly0);
       $('ad-srs').textContent=fmt(srsCash0);
       $('ad-inv').textContent=fmt(stiOnly0);
-      var pN=Math.round(o.aN*100),pW=Math.round(o.aW*100),pS=Math.round(o.aS*100),pI=100-pN-pW-pS;
+      var pN=Math.round(o.aN*100),pW=Math.round(o.aW*100),pS=Math.round(o.aS*100),pI=Math.round(o.aI*100);
+      var pGap=Math.max(0,100-pN-pW-pS-pI);
+      var gapNote=$('alloc-gap-note');
+      if(pGap>0){
+        var gapDollar=(pGap/100)*th0NoSRS;
+        gapNote.innerHTML='⚠ <b>'+pGap+'% (' +fmt(gapDollar)+ '/mo) isn\u2019t allocated to anything yet.</b> It defaults to spendable cash — raise SRS or STI to put it to work instead, or Necessities/Wants if you\u2019d rather just spend it.';
+        gapNote.style.display='block';
+      } else {
+        gapNote.innerHTML=''; gapNote.style.display='none';
+      }
       $('b-bar').innerHTML='<div class="seg seg-need" style="width:'+pN+'%">'+(pN>=12?pN+'%':'')+'</div>'+
         '<div class="seg seg-want" style="width:'+pW+'%">'+(pW>=12?pW+'%':'')+'</div>'+
         '<div class="seg seg-srs" style="width:'+pS+'%">'+(pS>=12?pS+'%':'')+'</div>'+
-        '<div class="seg seg-inv" style="width:'+pI+'%">'+(pI>=12?pI+'%':'')+'</div>';
+        '<div class="seg seg-inv" style="width:'+pI+'%">'+(pI>=12?pI+'%':'')+'</div>'+
+        (pGap>0?'<div class="seg seg-gap" style="width:'+pGap+'%">'+(pGap>=12?pGap+'%':'')+'</div>':'');
       // projections
       $('p-sti-t').textContent=fmtK(r.POT/disc); $('p-sti-n').textContent=fmtK(r.POT); $('p-sti-draw').textContent=fmt(r.potdraw/disc);
       $('p-srs').textContent= o.aS>0 ? (fmtK(r.SRS/disc)+' · tax saved '+fmtK(r.taxSaved/disc)) : '—';
@@ -2168,8 +2168,8 @@
      'i-prebuy','i-prebuyage'].forEach(function(id){
       var el=$(id); if(el){ el.addEventListener('input',recompute); el.addEventListener('change',recompute); }
     });
-    [['a-need','need'],['a-want','want'],['a-srs','srs'],['a-inv','inv']].forEach(function(p){
-      $(p[0]).addEventListener('input',function(){ rebalance(p[1]); recompute(); });
+    ['a-need','a-want','a-srs','a-inv'].forEach(function(id){
+      $(id).addEventListener('input',recompute);
     });
     $('i-job').addEventListener('change',function(){ var p=PROFILES[$('i-job').value]; if(p){ $('i-sal').value=p.s; } recompute(); });
     $('i-prebuy').addEventListener('change',function(){
