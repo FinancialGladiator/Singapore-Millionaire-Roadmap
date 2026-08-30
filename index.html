@@ -928,6 +928,7 @@
           <div class="alloc-head"><span class="l"><i class="dot" style="background:var(--srs)"></i>SRS <span class="hint"><button class="help">?</button><span class="bubble">The <b>Supplementary Retirement Scheme</b>: contributions (cap ≈ S$1,275/person/mo) are deducted from taxable income now, invested in the STI, and locked until retirement — then only 50% of withdrawals are taxed, usually at little or no tax. Only worth it if you actually pay income tax. The slider's full-right position always maxes out at exactly the legal cap. <b>Gets priority</b> over open STI for its tax benefit.</span></span></span><span class="amt"><output id="ao-srs">9%</output> · <span id="ad-srs"></span></span></div>
           <input type="range" id="a-srs" min="0" max="100" step="1" value="9" style="accent-color:var(--srs)">
           <div class="milestones flow" id="a-srsnote" style="margin-top:8px"></div>
+          <div class="milestones flow" id="srs-excess-note" style="display:none;margin-top:8px;background:#fdf0ef;border:1px solid #c14b3d55;border-radius:6px;padding:10px 12px;color:#8a2f24"></div>
         </div>
         <div class="alloc-row">
           <div class="alloc-head"><span class="l"><i class="dot" style="background:var(--couple)"></i>Invest into STI <span class="hint"><button class="help">?</button><span class="bubble">Open a low-cost brokerage, buy a Straits Times Index ETF (e.g. ES3 or G3B) with this fixed sum <b>every month</b>, switch on dividend reinvestment, and never sell in a dip. Every future raise is split in the same proportions as these four sliders — so this % (plus SRS) is what keeps compounding for the rest of your career, and setting it to 0% means genuinely investing S$0.</span></span></span><span class="amt"><output id="ao-inv">11%</output> · <span id="ad-inv"></span></span></div>
@@ -2042,6 +2043,17 @@
       } else {
         var remainTax=sgTax(Math.max(ch0-15300,0))/12;
         $('a-srsnote').innerHTML='Max-to-zero: capped at the legal max <b>S$1,275/mo</b> — even maxed out, ~'+fmt(remainTax)+'/mo of tax would remain.'+capNote;
+      }
+      // Warn if SRS is pushed past the point of any further tax benefit. Below the
+      // point where tax hits S$0, more SRS = more tax saved; above it, every extra
+      // dollar just gets locked away for nothing in return.
+      var taxZeroPctThreshold = (ch0<=20000) ? 0 : (neededMonthly<=1275 && th0NoSRS>0 ? (neededMonthly*e0/th0NoSRS)*100 : null);
+      var srsExcessNote=$('srs-excess-note');
+      if(taxZeroPctThreshold!==null && (o.aS*100)>taxZeroPctThreshold+0.5){
+        srsExcessNote.innerHTML='⚠ <b>This is more SRS than saves you any tax.</b> The tax benefit stops at about <b>'+Math.round(taxZeroPctThreshold)+'%</b> (~S$'+fmt(neededMonthly*e0)+'/mo) — everything you\u2019ve added beyond that still gets <b>locked in SRS until age 64</b> (Singapore\u2019s current statutory withdrawal age), for zero extra tax relief. That money would keep more flexibility invested directly in STI, or spread across other assets — gold, an emergency cash fund, real estate — as covered on the Portfolio tab.';
+        srsExcessNote.style.display='block';
+      } else {
+        srsExcessNote.innerHTML=''; srsExcessNote.style.display='none';
       }
       $('ad-need').textContent=fmt(needOnly0);
       $('ad-want').textContent=fmt(wantOnly0);
