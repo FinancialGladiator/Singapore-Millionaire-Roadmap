@@ -297,6 +297,41 @@
   .hero-result .hr-sub{font-family:'Space Mono',monospace;font-size:12px;color:#a4b0a9;margin-top:16px}
   .hero-result .hr-foot{font-family:'Space Mono',monospace;font-size:11px;color:#7d8a80;
     margin-top:14px;padding-top:14px;border-top:1px solid #ffffff1a;line-height:1.6}
+  .delay-cost{margin-top:18px;background:#E2604F14;border:1px solid #E2604F3a;
+    border-radius:10px;padding:16px 18px}
+  .delay-cost-label{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.06em;
+    text-transform:uppercase;color:#c98a80;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+  .delay-cost-live{color:var(--brick);font-size:8px;animation:delayPulse 1.8s ease-in-out infinite}
+  @keyframes delayPulse{0%,100%{opacity:.35}50%{opacity:1}}
+  .delay-carousel{position:relative;min-height:96px;padding:0 34px}
+  .delay-arrow{position:absolute;top:50%;transform:translateY(-50%);width:28px;height:28px;
+    border-radius:50%;background:#0B0D0BB3;border:1px solid #E2604F45;color:var(--brick);
+    font-size:16px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    padding:0;z-index:2;-webkit-tap-highlight-color:transparent}
+  .delay-arrow:active{background:#E2604F26}
+  .delay-arrow-l{left:0}
+  .delay-arrow-r{right:0}
+  .delay-slide{animation:delayFadeIn .35s ease}
+  @keyframes delayFadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+  .delay-cost-period{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;
+    font-size:13px;color:var(--ink);margin-bottom:8px}
+  .delay-cost-row{display:flex;gap:16px}
+  .delay-cost-item{flex:1}
+  .delay-cost-value{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+    font-size:clamp(20px,5.5vw,26px);color:var(--brick);line-height:1.1}
+  .delay-cost-sub{font-family:'Space Mono',monospace;font-size:11px;color:#a4b0a9;
+    margin-top:6px;line-height:1.4}
+  .delay-dots{display:flex;gap:7px;margin-top:14px;justify-content:center}
+  .delay-dot{width:7px;height:7px;border-radius:50%;background:#E2604F40;border:none;
+    cursor:pointer;padding:0;transition:background .2s ease,transform .2s ease}
+  .delay-dot.active{background:var(--brick);transform:scale(1.3)}
+  .delay-cost-foot{font-family:'Space Mono',monospace;font-size:11.5px;color:#a4b0a9;
+    line-height:1.5;margin-top:14px;padding-top:14px;border-top:1px solid #E2604F30}
+  .delay-cost-foot span{color:var(--brick);font-weight:700}
+  @media (prefers-reduced-motion: reduce){
+    .delay-cost-live{animation:none}
+    .delay-slide{animation:none}
+  }
   .hero-cta{display:block;width:100%;margin-top:26px;padding:16px;cursor:pointer;
     font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15.5px;
     color:var(--brand-ink);background:var(--brand);border:none;border-radius:9px}
@@ -466,6 +501,9 @@
   /* calculator */
   .calc-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px;margin-top:8px}
   .field{margin-bottom:18px}
+  .toggle-field{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+  .toggle-label{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;color:var(--ink)}
+  .toggle-label input[type="checkbox"]{width:18px;height:18px;accent-color:var(--brand);flex-shrink:0;cursor:pointer}
   .field:last-child{margin-bottom:0}
   .field label{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:6px;flex-wrap:wrap}
   .field input[type=range]{width:100%;accent-color:var(--brand);height:28px;margin:0}
@@ -553,6 +591,12 @@
   .share-modal-close{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:50%;
     background:var(--panel);border:1px solid var(--line);font-size:15px;cursor:pointer;z-index:2;
     display:flex;align-items:center;justify-content:center;padding:0;color:var(--ink)}
+  .privacy-modal-inner{max-width:380px;padding:28px 24px 24px;text-align:center}
+  .privacy-icon{font-size:34px;margin-bottom:10px}
+  .privacy-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:20px;
+    color:var(--ink);margin-bottom:12px}
+  .privacy-body{font-size:14px;line-height:1.6;color:var(--ink);text-align:left;margin-bottom:12px}
+  .privacy-body-sub{color:var(--muted);font-style:italic}
   #share-canvas{width:100%;height:auto;border-radius:10px;display:block;margin-bottom:14px;
     border:1px solid var(--line)}
   .share-modal-actions{display:flex;gap:10px}
@@ -630,6 +674,17 @@
     </div>
   </div>
 
+  <div id="privacy-modal" class="share-modal">
+    <div class="share-modal-inner privacy-modal-inner">
+      <button id="privacy-modal-close" class="share-modal-close" aria-label="Close">✕</button>
+      <div class="privacy-icon">🔒</div>
+      <h3 class="privacy-title">Just so you know</h3>
+      <p class="privacy-body">This app doesn't have a server, and nothing you enter is ever sent anywhere. Every number you type &mdash; your age, salary, savings &mdash; stays only on this device, in your browser's own storage. Close the tab, and it's still there next time; nobody else, including us, ever sees it.</p>
+      <p class="privacy-body privacy-body-sub">Play with your real numbers freely &mdash; that's the whole point.</p>
+      <button type="button" class="hero-cta" id="privacy-modal-ok" style="margin-top:6px">Got it, thanks</button>
+    </div>
+  </div>
+
     <!-- ===== SECTION : THE CLAIM ===== -->
   <div class="tab active" id="tab-cover">
 
@@ -641,7 +696,7 @@
         <div class="hero-ask">
           <p class="hero-ask-lead">Don't take our word for it. Put yourself in it — salary before CPF and tax:</p>
           <p class="hero-sentence">
-            I'm <span class="inline-field"><input type="number" id="h-age" min="18" max="65" step="1" value="20" aria-label="Your age now" inputmode="numeric"><span class="inline-unit">years old</span></span>,
+            I'm <span class="inline-field"><input type="text" id="h-age" value="20" aria-label="Your age now" inputmode="numeric" pattern="[0-9]*" maxlength="2"><span class="inline-unit">years old</span></span>,
             earning <span class="inline-field"><span class="inline-pre">S$</span><input type="text" id="h-sal" value="2,400" aria-label="Your gross monthly salary before CPF and tax" inputmode="numeric" pattern="[0-9,]*" maxlength="8"><span class="inline-unit">gross a month</span></span>.
           </p>
           <p class="hero-warn" id="h-age-warn" style="display:none">This app models working years and retirement — it isn't built for ages past 65.</p>
@@ -653,6 +708,29 @@
           <div class="hero-spark" id="hero-spark" aria-hidden="true"></div>
           <div class="hr-sub">in today's dollars · <span id="hero-inc">—</span> a month, for life</div>
           <div class="hr-foot" id="hero-foot"></div>
+        </div>
+
+        <div class="delay-cost" id="delay-cost">
+          <div class="delay-cost-label">Waiting to start costs you, in today's dollars <span class="delay-cost-live">●</span></div>
+          <div class="delay-carousel" id="delay-carousel">
+            <button type="button" class="delay-arrow delay-arrow-l" id="delay-arrow-l" aria-label="Previous scenario">‹</button>
+            <div class="delay-slide" id="delay-slide">
+              <div class="delay-cost-period" id="delay-period">—</div>
+              <div class="delay-cost-row">
+                <div class="delay-cost-item">
+                  <div class="delay-cost-value" id="delay-nw">—</div>
+                  <div class="delay-cost-sub">less net worth at 65</div>
+                </div>
+                <div class="delay-cost-item">
+                  <div class="delay-cost-value" id="delay-inc">—</div>
+                  <div class="delay-cost-sub">less retirement income /mo, for life</div>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="delay-arrow delay-arrow-r" id="delay-arrow-r" aria-label="Next scenario">›</button>
+          </div>
+          <div class="delay-dots" id="delay-dots"></div>
+          <div class="delay-cost-foot">Tap a dot or an arrow to jump to it, or just watch it roll &mdash; each one compares waiting that long against starting today, on your own numbers. "Never invest" means literally nothing in the STI or SRS, ever &mdash; only mandatory CPF. All figures here are in today's dollars, stripped of inflation, same as everywhere else in this app &mdash; the nominal number at 65 would look roughly 3&times; bigger, but wouldn't buy any more than what's shown.</div>
         </div>
 
         <button class="hero-cta" id="hero-cta">Show me how this works →</button>
@@ -695,7 +773,7 @@
         <div class="cb-row"><span class="cb-k">SRS — from take-home pay <span class="hint"><button class="help">?</button><span class="bubble">9% of take-home, deducted before tax and invested in the STI within the SRS wrapper — enough to bring income tax close to S$0.</span></span></span><span class="cb-v" id="cb-srs">S$220k</span></div>
         <div class="cb-row total"><span class="cb-k">Total contributed, by anyone <span class="hint"><button class="help">?</button><span class="bubble">The sum of all four lines above — every dollar that came from either his paycheck or his employer, before any investment growth.</span></span></span><span class="cb-v" id="cb-total">S$1.57m</span></div>
         <div class="cb-row total grow"><span class="cb-k">Pure compounding <span class="hint"><button class="help">?</button><span class="bubble">The final balance minus every dollar contributed by anyone — pure CPF interest and STI/SRS investment gains, nothing else.</span></span></span><span class="cb-v" id="cb-growth">S$2.22m</span></div>
-        <div class="cb-row total grand"><span class="cb-k">Grand total at 65, nominal <span class="hint"><button class="help">?</button><span class="bubble">Contributed (S$1.57m) + pure compounding (S$2.22m). The same total behind the S$1.25m net worth shown in today's dollars above — just not yet discounted for inflation here.</span></span></span><span class="cb-v" id="cb-grand">S$3.79m</span></div>
+        <div class="cb-row total grand"><span class="cb-k">Grand total at 65, nominal <span class="hint"><button class="help">?</button><span class="bubble">Contributed + pure compounding, added together. The same total behind the net worth figure shown in today's dollars above — just not yet discounted for inflation here.</span></span></span><span class="cb-v" id="cb-grand">S$3.79m</span></div>
       </div>
       <div class="cb-headline">
         <span class="cb-you" id="cb-you">S$1.57m was contributed, by him and his employer.</span>
@@ -733,7 +811,7 @@
 
     <div class="calc-card">
             <div class="primary-block">
-        <div class="primary-label">The three that matter most</div>
+        <div class="primary-label">What matters most</div>
 <div class="field">
         <label>Your Age <span class="hint"><button class="help">?</button><span class="bubble">The age you are today. The projection runs from here to retirement at 65.</span></span> — <output id="o-age">20</output></label>
         <input type="range" id="i-age" min="18" max="65" value="20">
@@ -926,6 +1004,13 @@
         <label>STI return <span class="hint"><button class="help">?</button><span class="bubble">The Straits Times Index — Singapore's 30 largest listed companies. ~6% is its rough long-run <b>total return with dividends reinvested</b>. It's a long-run average, never a guarantee.</span></span> — <output id="o-sti">6%</output></label>
         <input type="range" id="i-sti" min="3" max="8" step="0.5" value="6">
       </div>
+<input type="hidden" id="i-raisefloor-pct" value="">
+<div class="field toggle-field" id="f-halfraise">
+        <label class="toggle-label">
+          <input type="checkbox" id="i-halfraise" checked>
+          <span>Save at least half of every raise <span class="hint"><button class="help">?</button><span class="bubble">A common discipline against lifestyle inflation: bank half of every pay rise before it has a chance to become a bigger lifestyle, investing (or sheltering in SRS) at least 50% of each increase from year one — not just once SRS hits its legal cap, which is otherwise the only point this kicks in. On by default, since it's the assumption the rest of this app's own copy already describes. Turn it off to let your sliders' own fixed percentages govern every raise instead.</span></span></span>
+        </label>
+      </div>
         </div>
       </details>
 
@@ -936,7 +1021,7 @@
     </div>
 
     <div class="note note-sg" style="margin-top:16px">
-      <p><b>Beat lifestyle creep — the Singapore way.</b> Every raise or promotion, split the increase in half: one half improves your life, the other half goes straight into investing. Your lifestyle still rises with every promotion — just at half speed — while your savings rate quietly climbs for 40+ years. This projection applies that rule automatically. <span class="hint"><button class="help">?</button><span class="bubble">Example: a S$600/mo raise → <b>S$300 to lifestyle, S$300 into your monthly STI investment</b>. Do this at every promotion and your investing grows without ever feeling deprived.</span></span></p>
+      <p><b>Beat lifestyle creep — the Singapore way.</b> Every raise or promotion, split the increase in half: one half improves your life, the other half goes straight into investing. Your lifestyle still rises with every promotion — just at half speed — while your savings rate quietly climbs for 40+ years. This projection applies that rule automatically, via the toggle in Career &amp; assumptions above — turn it off there if you'd rather your sliders' own fixed percentages govern every raise instead. <span class="hint"><button class="help">?</button><span class="bubble">Example: a S$600/mo raise → <b>S$300 to lifestyle, S$300 into your monthly STI investment</b>. Do this at every promotion and your investing grows without ever feeling deprived.</span></span></p>
     </div>
 
     <details class="ctl-group" id="grp-alloc">
@@ -1033,6 +1118,7 @@
           <button class="whatif" id="wi-save"><span class="wi-t">Save 5% more each month</span><span class="wi-d" id="wi-save-d">—</span></button>
           <button class="whatif" id="wi-car"><span class="wi-t" id="wi-car-t">Buy a car at 30</span><span class="wi-d" id="wi-car-d">—</span></button>
           <button class="whatif" id="wi-flat"><span class="wi-t" id="wi-flat-t">Buy a bigger flat</span><span class="wi-d" id="wi-flat-d">—</span></button>
+          <button class="whatif" id="wi-halfraise"><span class="wi-t" id="wi-halfraise-t">Save 75% of every raise instead</span><span class="wi-d" id="wi-halfraise-d">—</span></button>
         </div>
         <div class="milestones flow" style="margin-top:8px;color:var(--muted)">Each figure is the change to your net worth at 65, in today’s dollars. Tap one to apply it.</div>
       </div>
@@ -1177,16 +1263,16 @@
 
     <div class="eyebrow">45-year projection · all citizens · STI 6%</div>
     <h2 class="part-title">One wage, two wages,<br>or two wages and <em>kids</em>.</h2>
-    <p class="standfirst">Four Singaporean households on S$2,400/mo crew wages, all frugal, putting 11% of take-home into the STI and 9% into SRS at 6% (dividends reinvested) for 45 years. The public-housing + CPF scaffolding does the rest.</p>
+    <p class="standfirst">Four Singaporean households on S$2,400/mo crew wages, all frugal, putting 11% of take-home into the STI and 9% into SRS at 6% (dividends reinvested), banking at least half of every raise, for 45 years. The public-housing + CPF scaffolding does the rest.</p>
     <div class="cards">
       <div class="scard s1">
         <div class="name">Single</div>
         <div class="setup">1 × S$2,400/mo · 2-room Flexi, bought at 35</div>
         <div class="hl">Retirement income · today's $</div>
-        <div class="big">S$5,390<small>/mo</small></div>
+        <div class="big">S$6,764<small>/mo</small></div>
         <div class="rows">
-          <div class="r"><span class="k">STI + SRS pot (today's $)</span><span class="v">S$676k</span></div>
-          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$1.25m</span></div>
+          <div class="r"><span class="k">STI + SRS pot (today's $)</span><span class="v">S$1.09m</span></div>
+          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$1.66m</span></div>
           <div class="r"><span class="k">CPF LIFE payouts</span><span class="v">1</span></div>
         </div>
       </div>
@@ -1194,10 +1280,10 @@
         <div class="name">Couple, no kids</div>
         <div class="setup">2 × S$2,400/mo · 3-room BTO, bought at 30</div>
         <div class="hl">Retirement income · today's $</div>
-        <div class="big">S$10,570<small>/mo</small></div>
+        <div class="big">S$13,318<small>/mo</small></div>
         <div class="rows">
-          <div class="r"><span class="k">STI + SRS pot (today's $)</span><span class="v">S$1.29m</span></div>
-          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$2.43m</span></div>
+          <div class="r"><span class="k">STI + SRS pot (today's $)</span><span class="v">S$2.11m</span></div>
+          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$3.26m</span></div>
           <div class="r"><span class="k">CPF LIFE payouts</span><span class="v">2</span></div>
         </div>
       </div>
@@ -1205,10 +1291,10 @@
         <div class="name">Family, one child</div>
         <div class="setup">2 × S$2,400/mo · 4-room BTO at 30 · child 31–53</div>
         <div class="hl">Retirement income · today's $</div>
-        <div class="big">S$9,023<small>/mo</small></div>
+        <div class="big">S$11,771<small>/mo</small></div>
         <div class="rows">
-          <div class="r"><span class="k">STI + SRS pot (today's $)</span><span class="v">S$1.07m</span></div>
-          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$2.06m</span></div>
+          <div class="r"><span class="k">STI + SRS pot (today's $)</span><span class="v">S$1.89m</span></div>
+          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$2.89m</span></div>
           <div class="r"><span class="k">CPF LIFE payouts</span><span class="v">2</span></div>
         </div>
       </div>
@@ -1216,10 +1302,10 @@
         <div class="name">Family, two children</div>
         <div class="setup">2 × S$2,400/mo · 4-room BTO at 30 · kids 31–53 &amp; 33.5–55.5</div>
         <div class="hl">Retirement income · today's $</div>
-        <div class="big" style="color:var(--srs)">S$8,598<small>/mo</small></div>
+        <div class="big" style="color:var(--srs)">S$11,233<small>/mo</small></div>
         <div class="rows">
-          <div class="r"><span class="k">STI + SRS pot (today's $)</span><span class="v">S$939k</span></div>
-          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$1.93m</span></div>
+          <div class="r"><span class="k">STI + SRS pot (today's $)</span><span class="v">S$1.73m</span></div>
+          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$2.73m</span></div>
           <div class="r"><span class="k">CPF LIFE payouts</span><span class="v">2</span></div>
         </div>
       </div>
@@ -1230,15 +1316,15 @@
       <div class="chart-card">
         <svg id="chart" viewBox="0 0 900 470" role="img" aria-label="Investment pot growth for four households"></svg>
         <div class="chart-legend">
-          <span><i class="dot" style="background:var(--brand)"></i>Couple — S$3.92m</span>
-          <span><i class="dot" style="background:var(--family)"></i>Family, 1 child — S$3.24m</span>
-          <span><i class="dot" style="background:var(--srs)"></i>Family, 2 children — S$2.85m</span>
-          <span><i class="dot" style="background:var(--single)"></i>Single — S$2.05m</span>
+          <span><i class="dot" style="background:var(--brand)"></i>Couple — S$9.89m</span>
+          <span><i class="dot" style="background:var(--family)"></i>Family, 1 child — S$8.77m</span>
+          <span><i class="dot" style="background:var(--srs)"></i>Family, 2 children — S$8.28m</span>
+          <span><i class="dot" style="background:var(--single)"></i>Single — S$5.04m</span>
         </div>
       </div>
       <div class="insight">
-        <h3>The price of a child — about S$1,550/month of retirement, for life. A second, about S$425 more.</h3>
-        <p>Family and couple are identical until the first child arrives at 31 — from then, some of what would have gone toward SRS and STI is redirected to cover the extra S$750/mo of child costs, for 22 years until the child turns independent at 53. That compounded gap is the whole story: couple ~S$10,570/mo, family (1 child) ~S$9,023/mo — roughly S$1,550/mo of lifelong income and ~S$370k of net worth, from spending that couldn't compound for two decades. A second child, arriving 2.5 years later at a slightly lower ~S$600/mo, opens the gap further to ~S$8,600/mo — a smaller additional hit than the first child, since it costs less <em>and</em> has less time left to compound before 65.</p>
+        <h3>The price of a child — about S$1,547/month of retirement, for life. A second, about S$537 more.</h3>
+        <p>Family and couple are identical until the first child arrives at 31 — from then, some of what would have gone toward SRS and STI is redirected to cover the extra S$750/mo of child costs, for 22 years until the child turns independent at 53. That compounded gap is the whole story: couple ~S$13,318/mo, family (1 child) ~S$11,771/mo — roughly S$1,547/mo of lifelong income and ~S$369k of net worth, from spending that couldn't compound for two decades. A second child, arriving 2.5 years later at a slightly lower ~S$600/mo, opens the gap further to ~S$11,233/mo — a smaller additional hit than the first child, since it costs less <em>and</em> has less time left to compound before 65.</p>
       </div>
     </section>
     <section>
@@ -1536,7 +1622,7 @@
       <div class="step"><div class="num">2</div><div>
         <h2 class="trap-h">The car — a quarter-million-dollar decision, on repeat</h2>
         <p>Singapore deliberately makes cars a luxury, and financing one is the single largest wealth-destroying choice most households make — not just the price, but the price <em>instead of</em> investing that money, decade after decade.</p>
-        <div class="formula">Cat A COE alone ≈ S$126k in 2026 (~ a year's median household income). 10-year ownership ≈ S$200k–300k; depreciation alone ≈ S$15k–25k/yr. One car across adult life ≈ the entire STI pot.</div>
+        <div class="formula">Cat A <span class="hint">COE<button class="help">?</button><span class="bubble">Certificate of Entitlement -- a bidding-based permit that must be won before a car can even be registered in Singapore, on top of the car's own price. Category A covers smaller/less powerful cars.</span></span> alone ≈ S$126k in 2026 (~ a year's median household income). 10-year ownership ≈ S$200k–300k; depreciation alone ≈ S$15k–25k/yr. One car across adult life ≈ the entire STI pot.</div>
       
         <div class="trap-cost"><span class="tc-label">Owning a car (replaced every ~10 yrs, to 65) costs you</span><span class="tc-value" id="trap-cost-1">—</span></div>
         <div class="fix-block"><div class="fix-tag">The fix</div><h3 class="fix-h">Delay the car — ideally forever</h3>
@@ -1982,7 +2068,7 @@
     if(reduceMotion) return;
     var sx=0, sy=0, tracking=false, active=null, verticalIntent=false;
     var THRESHOLD=70;
-    var skipSelector='input,select,button,a,.hint,.bubble,.nav-dropdown,.alloc-row,.field,.calc-card,.ded,#breadcrumb';
+    var skipSelector='input,select,button,a,.hint,.bubble,.nav-dropdown,.alloc-row,.field,.calc-card,.ded,#breadcrumb,.delay-cost';
     function resetInline(el){ if(!el) return; el.style.transform=''; el.style.opacity=''; el.style.borderRadius=''; el.style.transition=''; }
     document.addEventListener('touchstart',function(e){
       var t=e.target;
@@ -2062,16 +2148,16 @@
 
   // chart
   var ages=[20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65];
-  var SINGLE=[0,5957,12467,19568,27303,35718,44859,54778,65530,77173,89767,103378,118075,133931,151024,169438,189263,210555,233409,257927,284219,312398,342585,374912,409519,446554,486176,528552,573861,622293,674049,729343,788403,851470,918800,990667,1068309,1151162,1239561,1333848,1434390,1542767,1658329,1781530,1912853,2052812];
-  var COUPLE=[0,11300,23651,37131,51819,67801,85170,104023,124464,146603,170559,196454,224374,254453,286835,321678,359147,399417,442675,489113,538943,592381,649661,711036,776773,847158,922495,1003107,1089336,1181547,1280127,1385488,1498066,1618326,1746761,1883896,2032182,2190475,2359412,2539653,2731905,2939297,3160497,3396380,3647877,3915976];
-  var FAMILY=[0,11300,23651,37131,51819,67801,85170,104023,124464,146603,170559,196454,218115,241403,266428,293306,322164,353134,386357,421977,460153,501047,544836,591709,641869,695532,752929,814302,879912,950034,1024962,1105007,1190501,1281795,1390039,1505770,1631369,1765612,1909058,2062278,2225887,2402919,2591936,2793705,3009041,3238810];
-  var FAMILY2=[0,11300,23651,37131,51819,67801,85170,104023,124464,146603,170559,196454,218115,241403,266428,289449,314092,340462,368670,398827,431059,465500,502292,541586,583543,628334,676138,727149,781570,839619,901526,967535,1037907,1112916,1202407,1298045,1402124,1522613,1651479,1789244,1936471,2096137,2266748,2449006,2643660,2851506];
-  var W=900,H=470,padL=96,padR=28,padT=24,padB=54,x0=padL,x1=W-padR,y0=H-padB,y1=padT,maxY=4300000;
+  var SINGLE=[0,16933,35430,55593,77533,101366,127214,155209,185489,218201,253500,291550,332526,376607,423987,474872,499418,551845,608296,669023,734298,804391,879592,960219,1046611,1139125,1238163,1344127,1457446,1578572,1707985,1846242,1993885,2151491,2319668,2499062,2688504,2890526,3105897,3335394,3579847,3832785,4107497,4399740,4710581,5041149];
+  var COUPLE=[0,33253,69580,109185,152284,199104,249889,304895,364394,428675,498043,519504,589119,664516,746062,834152,929231,1031747,1142172,1261003,1388773,1526013,1673294,1831242,2000523,2181838,2375979,2583739,2805959,3043530,3297396,3568654,3858372,4167682,4497781,4849941,5221800,5627935,6060563,6521213,7011529,7518540,8058043,8632017,9242555,9891881];
+  var FAMILY=[0,33253,69580,109185,152284,199104,249889,304895,364394,428675,498043,474765,529003,588263,652870,723176,799579,882478,972293,1069466,1174472,1287780,1409897,1541380,1682819,1834843,1998158,2173473,2361538,2563145,2779136,3010501,3258193,3523221,3817431,4132096,4464775,4837955,5235964,5660236,6112319,6579140,7076385,7605917,8169710,8769855];
+  var FAMILY2=[0,33253,69580,109185,152284,199104,249889,304895,364394,428675,498043,474765,529003,588263,652870,717784,788337,864897,947850,1037605,1134598,1239261,1352058,1473501,1604134,1744534,1895356,2057252,2230910,2417061,2616478,2830079,3058741,3303393,3575793,3867125,4174849,4530634,4910204,5314930,5746295,6191154,6665120,7169977,7707613,8280032];
+  var W=900,H=470,padL=96,padR=28,padT=24,padB=54,x0=padL,x1=W-padR,y0=H-padB,y1=padT,maxY=10800000;
   function X(i){return x0+(x1-x0)*(i/(ages.length-1));}
   function Y(v){return y0+(y1-y0)*(v/maxY);}
   function path(a){return a.map(function(v,i){return (i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1);}).join(' ');}
   var s='';
-  [0,1000000,2000000,3000000,4000000].forEach(function(v){var y=Y(v);
+  [0,2000000,4000000,6000000,8000000,10000000].forEach(function(v){var y=Y(v);
     s+='<line x1="'+x0+'" y1="'+y+'" x2="'+x1+'" y2="'+y+'" stroke="var(--grid)"/>';
     s+='<text class="clabel" x="'+(x0-12)+'" y="'+(y+6)+'" text-anchor="end" fill="var(--muted)">'+(v?('S$'+(v/1000000)+'m'):'0')+'</text>';});
   ages.forEach(function(a,i){if(a%10===0)s+='<text class="clabel" x="'+X(i)+'" y="'+(y0+30)+'" text-anchor="middle" fill="var(--muted)">'+a+'</text>';});
@@ -2084,15 +2170,15 @@
   s+='<path d="'+path(COUPLE)+'" fill="none" stroke="var(--brand)" stroke-width="4.4"/>';
   function dot(a,c){var i=a.length-1;s+='<circle cx="'+X(i)+'" cy="'+Y(a[i])+'" r="5" fill="'+c+'"/>';}
   dot(COUPLE,"var(--brand)");dot(FAMILY,"var(--family)");dot(FAMILY2,"var(--srs)");dot(SINGLE,"var(--single)");
-  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(3915976)+2)+'" text-anchor="end" font-weight="700" fill="var(--couple)">S$3.92m</text>';
-  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(3238810)+22)+'" text-anchor="end" font-weight="700" fill="var(--family)">S$3.24m</text>';
-  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(2851506)+20)+'" text-anchor="end" font-weight="700" fill="var(--srs)">S$2.85m</text>';
-  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(2052812)-10)+'" text-anchor="end" fill="var(--single)">S$2.05m</text>';
+  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(9891881)+2)+'" text-anchor="end" font-weight="700" fill="var(--couple)">S$9.89m</text>';
+  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(8769855)+22)+'" text-anchor="end" font-weight="700" fill="var(--family)">S$8.77m</text>';
+  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(8280032)+20)+'" text-anchor="end" font-weight="700" fill="var(--srs)">S$8.28m</text>';
+  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(5041149)-10)+'" text-anchor="end" fill="var(--single)">S$5.04m</text>';
   document.getElementById('chart').innerHTML=s;
 
   /* ===== SHARED CALCULATOR STATE: local save + shareable scenario links ===== */
   var CALC_INPUT_IDS=[
-    ['i-age','a'],['i-sal','s'],['i-spouse','sp'],['i-nw0','nw'],['i-owncsize','oc'],['i-exmort','em'],['i-exyears','ey'],['i-mop','mo'],['i-mortsrc','ms'],['i-mode','m'],['i-raise','r'],['i-sti','si'],['i-job','j'],
+    ['i-age','a'],['i-sal','s'],['i-spouse','sp'],['i-nw0','nw'],['i-owncsize','oc'],['i-exmort','em'],['i-exyears','ey'],['i-mop','mo'],['i-mortsrc','ms'],['i-mode','m'],['i-raise','r'],['i-sti','si'],['i-job','j'],['i-halfraise','hr'],['i-raisefloor-pct','rf'],
     ['i-house','h'],['i-hdb','hd'],['i-flat','f'],['i-buy','b'],
     ['i-prebuy','pb'],['i-prebuyage','pba'],['i-marry','mr'],['i-wed','w'],
     ['i-condo','cd'],['i-csize','cs'],['i-cage','ca'],['i-bto','bt'],
@@ -2103,7 +2189,7 @@
     var state={};
     CALC_INPUT_IDS.forEach(function(pair){
       var el=document.getElementById(pair[0]);
-      if(el) state[pair[1]]=el.value;
+      if(el) state[pair[1]]=(el.type==='checkbox')?(el.checked?'1':'0'):el.value;
     });
     return state;
   }
@@ -2111,7 +2197,9 @@
     if(!state) return;
     CALC_INPUT_IDS.forEach(function(pair){
       var el=document.getElementById(pair[0]);
-      if(el && state[pair[1]]!==undefined) el.value=state[pair[1]];
+      if(!el || state[pair[1]]===undefined) return;
+      if(el.type==='checkbox') el.checked=(state[pair[1]]==='1');
+      else el.value=state[pair[1]];
     });
   }
   function saveCalcStateLocal(){
@@ -2505,6 +2593,24 @@
     if(modal) modal.addEventListener('click', function(e){ if(e.target===modal) closeQuiz(); });
   })();
 
+  /* ===== PRIVACY NOTICE: shown once, on first visit, cover tab only ===== */
+  (function(){
+    var STORAGE_KEY='sgmr_privacy_seen';
+    var pModal=document.getElementById('privacy-modal');
+    if(!pModal) return;
+    function closePrivacyModal(){
+      pModal.classList.remove('open');
+      try{ localStorage.setItem(STORAGE_KEY,'1'); }catch(e){}
+    }
+    var seen=false;
+    try{ seen=localStorage.getItem(STORAGE_KEY)==='1'; }catch(e){}
+    if(!seen) pModal.classList.add('open');
+    var pClose=document.getElementById('privacy-modal-close'), pOk=document.getElementById('privacy-modal-ok');
+    if(pClose) pClose.addEventListener('click', closePrivacyModal);
+    if(pOk) pOk.addEventListener('click', closePrivacyModal);
+    pModal.addEventListener('click', function(e){ if(e.target===pModal) closePrivacyModal(); });
+  })();
+
   function stateFromURL(){
     try{
       var params=new URLSearchParams(location.search);
@@ -2702,6 +2808,9 @@
       o.house=$('i-house').value; o.single=o.house==='single';
       o.hasKid=(o.house==='kid'||o.house==='kid2'); o.numKids=o.house==='kid'?1:(o.house==='kid2'?2:0);
       o.prof=PROFILES[$('i-job').value]||null; o.se=!!(o.prof&&o.prof.se);
+      o.saveHalfRaise=$('i-halfraise') ? $('i-halfraise').checked : false;
+      var _rfEl=$('i-raisefloor-pct'), _rfRaw=_rfEl?_rfEl.value:'';
+      if(_rfRaw!==''){ o.raiseFloorPct=+_rfRaw; }
       var hdbMode=$('i-hdb').value;
       o.own=(hdbMode==='own'||hdbMode==='have-hdb'||hdbMode==='have-condo');
       // 'have-*' = already owns outright: no purchase, no grant, no mortgage, and no rent.
@@ -2831,7 +2940,25 @@
         // "Singapore way" discipline continues via open STI instead: at least 50% of
         // every further pay raise goes to STI, even if your STI slider itself reads 0%.
         var srsCapped = srsPerPerson >= 1274.99;
-        var raiseShare = srsCapped ? Math.max(investShare,0.5) : investShare;
+        // Opt-in: bank at least a floor % of every raise from year one, not just once SRS
+        // caps out. This is the standard "pay yourself first" discipline against
+        // lifestyle inflation. The checkbox sets a 50% floor; o.raiseFloorPct can
+        // override it directly (e.g. for a "what if 75%" comparison) without needing
+        // the checkbox itself touched. Floor 0 with SRS uncapped reproduces the
+        // original (pre-this-feature) behaviour exactly.
+        var floorPct = (o.raiseFloorPct!==undefined) ? o.raiseFloorPct : (o.saveHalfRaise ? 0.5 : 0);
+        // Defensive: the floor is a discipline for people already investing something --
+        // it should never be able to force money into STI for someone who has explicitly
+        // chosen a 0% base allocation (a "never invests" scenario, for instance). Without
+        // this, aI=0 alone doesn't actually mean zero STI if saveHalfRaise happens to be
+        // on, since every raise would still push 50%+ in regardless -- a real bug this
+        // caught, where "never invests" scenarios were still accumulating six figures of
+        // STI purely through this floor, contradicting what "never invests" should mean.
+        var hasAnyInvesting = (o.aI>0 || o.aS>0);
+        var effectiveFloor = hasAnyInvesting ? (srsCapped ? Math.max(floorPct,0.5) : floorPct) : 0;
+        // Separate opt-in for the opposite extreme: every raise consumed by lifestyle,
+        // none of it ever increasing what's invested, even once SRS caps out.
+        var raiseShare = o.paycheckToPaycheck ? 0 : Math.max(investShare, effectiveFloor);
         if(y===0 || marriedThisYear){ invest=investShare*th; lifestyle=(1-investShare)*th; }
         else{ var raise=th-prevTH; if(raise>0){invest+=raise*raiseShare;lifestyle+=raise*(1-raiseShare);} else {lifestyle+=raise;} }
         // wedding
@@ -3177,7 +3304,7 @@
           if(r.hdbMsr.binding){
             hLine+='<br>⚠ <b>capped by HDB\'s 30% Mortgage Servicing Ratio</b> (<span class="hint">MSR<button class="help">?</button><span class="bubble">Caps HDB and EC loan repayments at 30% of gross monthly household income — the tighter of the two loan limits for public housing; TDSR usually isn\'t the binding one.</span></span>) — the loan is limited so the instalment stays at 30% of gross income; an extra <b>'+fmtK(r.hdbMsr.extraDown)+'</b> had to be funded as downpayment instead.';
           } else {
-            hLine+='<br>instalment is <b>'+pct+'% of gross income</b> (within HDB\'s 30% MSR limit).';
+            hLine+='<br>instalment is <b>'+pct+'% of gross income</b> (within HDB\'s 30% <span class="hint">MSR<button class="help">?</button><span class="bubble">Mortgage Servicing Ratio -- caps HDB and EC loan repayments at 30% of gross monthly household income, the tighter of the two loan limits for public housing.</span></span> limit).';
           }
         }
         $('o-grantline').innerHTML=hLine;
@@ -3187,14 +3314,14 @@
         var mcst=Math.round(cd.mcst*0.7), sink=cd.mcst-mcst;
         var line='monthly outgoings today: MCST <b>'+fmt(mcst)+'</b> + sinking fund <b>'+fmt(sink)+'</b> + property tax <b>'+fmt(cd.tax)+'</b> + insurance <b>S$40</b> = <b>'+fmt(cd.mcst+cd.tax+40)+'/mo</b> · price ~<b>'+fmtK(cd.p)+'</b>, bank loan 3.2%';
         if(!o.btoSell){
-          line+='<br>⚠ keeping the BTO → <b>ABSD 20% ≈ '+fmtK(cd.p*0.2)+'</b> on purchase · BTO net rent ≈ <b>'+fmt(FLATS[o.flatIdx].rent*0.95-FLATS[o.flatIdx].rent*0.12-180)+'/mo</b> today (after 12% property tax, S&amp;CC S$80, upkeep S$100, 5% vacancy)';
+          line+='<br>⚠ keeping the BTO → <b><span class="hint">ABSD<button class="help">?</button><span class="bubble">Additional Buyer\'s Stamp Duty -- an extra tax on top of the normal stamp duty when buying a second residential property. For a Singapore Citizen buying a second home, it\'s currently 20% of the purchase price, on top of the standard ~3-4%.</span></span> 20% ≈ '+fmtK(cd.p*0.2)+'</b> on purchase · BTO net rent ≈ <b>'+fmt(FLATS[o.flatIdx].rent*0.95-FLATS[o.flatIdx].rent*0.12-180)+'/mo</b> today (after 12% property tax, S&amp;CC S$80, upkeep S$100, 5% vacancy)';
         }
         if(r.condoMsr){
           var cpct=Math.round(r.condoMsr.ratio*100);
           if(r.condoMsr.binding){
             line+='<br>⚠ <b>capped by the 55% <span class="hint">Total Debt Servicing Ratio<button class="help">?</button><span class="bubble">TDSR caps ALL your monthly debt repayments — this mortgage, plus any car loan, credit cards or other borrowing — at 55% of gross income. It applies to every property loan in Singapore, HDB or private.</span></span> (TDSR)</b> — the bank loan is limited so instalments stay at 55% of gross income; an extra <b>'+fmtK(r.condoMsr.extraDown)+'</b> had to be funded as downpayment instead.';
           } else {
-            line+='<br>loan instalment(s) are <b>'+cpct+'% of gross income</b> (within the 55% TDSR limit).';
+            line+='<br>loan instalment(s) are <b>'+cpct+'% of gross income</b> (within the 55% <span class="hint">TDSR<button class="help">?</button><span class="bubble">Total Debt Servicing Ratio -- caps ALL monthly debt repayments (this mortgage, plus any car loan, credit cards or other borrowing) at 55% of gross income. Applies to every property loan in Singapore, HDB or private.</span></span> limit).';
           }
         }
         $('o-condoline').innerHTML=line;
@@ -3630,6 +3757,14 @@
       $('wi-flat').disabled=!canBigger;
       paintWhatIf('wi-flat', canBigger?whatIfDelta(function(o){ o.flatIdx=flatIdx+1; }):null,
         canBigger?('Buy a '+FLATS[flatIdx+1].n+' instead'):'Already the largest flat');
+      // Same delta pattern as every other chip: current settings vs one change --
+      // NOT two fixed hypothetical extremes. Since the checkbox now defaults ON, this
+      // correctly shows what escalating from wherever you currently are (0%, 50%, or
+      // anything else) up to a 75% floor would additionally buy you -- rather than
+      // always showing the gap between two artificial endpoints regardless of your
+      // actual setting, which is what this used to do and could double-count the
+      // benefit the checkbox already applies by default.
+      paintWhatIf('wi-halfraise', whatIfDelta(function(o){ o.raiseFloorPct=0.75; }));
     }
     $('wi-earlier').addEventListener('click',function(){
       if(this.disabled) return;
@@ -3648,6 +3783,21 @@
     $('wi-flat').addEventListener('click',function(){
       if(this.disabled) return;
       $('i-flat').value=Math.min(3,(+$('i-flat').value)+1); recompute();
+    });
+    $('wi-halfraise').addEventListener('click',function(){
+      var cb=$('i-halfraise'), rf=$('i-raisefloor-pct');
+      if(cb) cb.checked=true;
+      if(rf) rf.value='0.75';
+      recompute();
+    });
+    // This checkbox is wired individually, not through the generic input-listener loop,
+    // so clearing a stale chip-applied override always happens BEFORE recompute runs --
+    // not racing against a separately-registered listener where order isn't guaranteed.
+    // Otherwise manually unchecking the box right after clicking "75% instead" could
+    // recompute once more with the stale 75% override still in effect.
+    $('i-halfraise').addEventListener('change',function(){
+      var rf=$('i-raisefloor-pct'); if(rf) rf.value='';
+      recompute();
     });
     $('i-job').addEventListener('change',function(){ var p=PROFILES[$('i-job').value]; if(p){ $('i-sal').value=p.s; } recompute(); });
     $('i-prebuy').addEventListener('change',function(){
@@ -4183,6 +4333,19 @@ function openShareModal(drawFn){
       var pos=Math.max(0,salEl.value.length-caretFromEnd);
       try{ salEl.setSelectionRange(pos,pos); }catch(e){}
     }
+    // Age was a type="number" input, which has a well-known cross-browser quirk
+    // (especially on mobile) where backspacing to empty can silently get rejected or
+    // snap back -- exactly the bug reported. Switched to type="text" with its own
+    // light formatter, matching how the salary field already avoids the same issue:
+    // strip non-digits, but never force a fallback value while the field is still
+    // being edited -- that's render()'s job, only at the point of computing, not typed.
+    function formatAgeField(){
+      var raw=ageEl.value.replace(/[^\d]/g,'').slice(0,2);
+      var caretFromEnd=ageEl.value.length-ageEl.selectionStart;
+      ageEl.value=raw;
+      var pos=Math.max(0,ageEl.value.length-caretFromEnd);
+      try{ ageEl.setSelectionRange(pos,pos); }catch(e){}
+    }
 
     // Same baseline the Calculator defaults to, with only age + wage swapped in, so the
     // cover, the Calculator and the household cards can never tell different stories.
@@ -4192,6 +4355,9 @@ function openShareModal(drawFn){
         single:true,hasKid:false,numKids:0,prof:null,se:false,
         own:true,flatIdx:0,buyAge:buyAge,prebuy:'family',rentStartAge:buyAge,
         aN:0.5,aW:0.3,aS:0.09,aI:0.11,
+        // Matches the calculator's own default (Tab 2, Career & assumptions):
+        // at least half of every raise banked from year one, not just once SRS caps.
+        saveHalfRaise:true,
         marryAge:999,wedding:0,condo:false,condoIdx:1,condoAge:40,btoSell:true,
         car:false,carAge:30,omv:25000,pa:0,paAge:25};
     }
@@ -4231,6 +4397,63 @@ function openShareModal(drawFn){
 
       countTo(document.getElementById('hero-nw'), r.nw/d);
       document.getElementById('hero-inc').textContent=money(r.income/d);
+
+      // Cost of delay, as a rotating carousel -- one scenario visible at a time, cycling
+      // automatically like a news ticker, rather than a wall of numbers at once. Every
+      // period is validated against the actual years left before 65: a 44-year-old
+      // never sees a "30 years" or "40 years" option, since 44+30 and 44+40 both run
+      // past retirement -- only "Never invest" survives that far regardless of age,
+      // since it isn't a fixed-length delay in the first place.
+      try{
+        var CANDIDATES=[
+          {label:'Wait 1 year',years:1},
+          {label:'Wait 5 years',years:5},
+          {label:'Wait 10 years',years:10},
+          {label:'Wait 20 years',years:20},
+          {label:'Wait 30 years',years:30},
+          {label:'Wait 40 years',years:40}
+        ];
+        var scenarios=[];
+        // IMPORTANT: age-shifting the whole simulation (project(age+N, sal)) doesn't just
+        // delay investing -- it also shrinks the CPF/home-buying timeline down to however
+        // many years are left, since those run on the person's actual age. The fix is to
+        // isolate the age-shifted run's STI and SRS, and recombine them with the BASELINE's
+        // own CPF (the only thing genuinely unaffected by a delayed-investing decision),
+        // rather than using the age-shifted run's own (wrongly shrunk) CPF. Same discount
+        // factor (d) throughout, since "today's dollars" is relative to the person's real
+        // current age, not a hypothetical shifted one.
+        // "Delaying" here means BOTH voluntary channels together, STI and SRS -- not STI
+        // alone with SRS quietly continuing on schedule. Someone delaying the decision to
+        // invest is living paycheck to paycheck for that stretch, not paying into SRS while
+        // still not investing in the STI -- there's no realistic person who does one but
+        // not the other. This keeps every row in this sequence, including "Never invest",
+        // answering the exact same question, just for different lengths of delay.
+        CANDIDATES.forEach(function(c){
+          if(age+c.years>65+1e-9) return; // filtered out -- no time left for this delay
+          var yearAge=Math.min(65,age+c.years);
+          var rYear=window.SGMR_ENGINE.project(opts(yearAge,sal));
+          var correctedNW = rYear.STI/d + rYear.SRS/d + r.CPF/d;
+          var correctedPotdraw = (rYear.STI + rYear.SRS) * 0.04/12;
+          var correctedIncome = r.cpflife/d + correctedPotdraw/d + r.retRent/d;
+          var nwLoss=Math.max(0,r.nw/d - correctedNW);
+          var incLoss=Math.max(0,r.income/d - correctedIncome);
+          scenarios.push({label:c.label,nw:nwLoss,inc:incLoss});
+        });
+        // "Never invest": the limit of the same sequence above as the delay approaches
+        // the full career -- redirect BOTH the STI allocation (aI) and the SRS allocation
+        // (aS) into spending, for the whole career, leaving only mandatory CPF running.
+        var oNever=opts(age,sal); oNever.aI=0; oNever.aS=0; oNever.aW+=0.20; oNever.paycheckToPaycheck=true;
+        var rNever=window.SGMR_ENGINE.project(oNever);
+        var correctedNeverPotdraw = 0; // both STI and SRS are zero in this scenario
+        var correctedNeverIncome = r.cpflife/d + correctedNeverPotdraw/d + r.retRent/d;
+        var nwNever=Math.max(0,r.nw/d - r.CPF/d);
+        var incNever=Math.max(0,r.income/d - correctedNeverIncome);
+        scenarios.push({label:'Never invest',nw:nwNever,inc:incNever});
+
+        window.__delayScenarios=scenarios;
+        if(window.__delayIdx===undefined || window.__delayIdx>=scenarios.length) window.__delayIdx=0;
+        if(window.__renderDelaySlide) window.__renderDelaySlide();
+      }catch(e){}
       // sparkline: STI+SRS pot over the career, nominal — a quiet preview of the curve
       var spark=document.getElementById('hero-spark');
       if(spark && r.stiPath && r.srsPath){
@@ -4253,7 +4476,8 @@ function openShareModal(drawFn){
       }
       document.getElementById('hero-foot').innerHTML=
         yrs+' years of compounding · 2-room Flexi owned outright · '+
-        '11% into the STI, 9% into SRS · assumes you start now and keep going.';
+        '11% into the STI, 9% into SRS · at least half of every raise banked · '+
+        'assumes you start now and keep going.';
 
       // proof strip, live
       var set=function(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; };
@@ -4280,7 +4504,8 @@ function openShareModal(drawFn){
 
     salEl.addEventListener('input',function(){ formatSalaryField(); render(); });
     salEl.addEventListener('change',render);
-    ['input','change'].forEach(function(ev){ ageEl.addEventListener(ev,render); });
+    ageEl.addEventListener('input',function(){ formatAgeField(); render(); });
+    ageEl.addEventListener('change',render);
 
     // Carry what they typed into the Calculator, so the CTA continues their thought
     // rather than resetting it.
@@ -4294,6 +4519,60 @@ function openShareModal(drawFn){
       if(window.SGMR_ENGINE.recompute) window.SGMR_ENGINE.recompute();
       switchTab('calc');
     });
+
+    // Renders whichever delay scenario is currently selected, plus the dot row --
+    // called both by the rotation timer below and immediately whenever the
+    // underlying figures change, so a fresh age/salary never leaves a stale slide
+    // showing on screen for the ~3.5s until the timer would otherwise tick it over.
+    window.__renderDelaySlide=function(){
+      var list=window.__delayScenarios||[];
+      var idx=window.__delayIdx||0;
+      var s=list[idx];
+      var slideEl=document.getElementById('delay-slide');
+      var periodEl=document.getElementById('delay-period'), nwEl=document.getElementById('delay-nw'), incEl=document.getElementById('delay-inc');
+      if(!s||!periodEl||!nwEl||!incEl) return;
+      periodEl.textContent=s.label;
+      nwEl.textContent=money(s.nw);
+      incEl.textContent=money(s.inc);
+      if(slideEl && !reduce){ slideEl.style.animation='none'; void slideEl.offsetWidth; slideEl.style.animation=''; }
+      var dotsEl=document.getElementById('delay-dots');
+      if(dotsEl){
+        dotsEl.innerHTML=list.map(function(_,i){
+          return '<button type="button" class="delay-dot'+(i===idx?' active':'')+'" data-idx="'+i+'" aria-label="Show '+list[i].label+'"></button>';
+        }).join('');
+        Array.prototype.forEach.call(dotsEl.querySelectorAll('.delay-dot'),function(btn){
+          btn.addEventListener('click',function(){
+            window.__delayIdx=+btn.getAttribute('data-idx');
+            window.__renderDelaySlide();
+            resetDelayTimer();
+          });
+        });
+      }
+    };
+    var delayInterval=null;
+    function resetDelayTimer(){
+      if(delayInterval) clearInterval(delayInterval);
+      delayInterval=setInterval(function(){
+        var list=window.__delayScenarios||[];
+        if(list.length<2) return;
+        window.__delayIdx=((window.__delayIdx||0)+1)%list.length;
+        window.__renderDelaySlide();
+      },3500);
+    }
+    resetDelayTimer();
+    // Left/right taps step the carousel manually -- the page's own swipe-to-change-tab
+    // gesture makes swiping across this box unreliable for navigating it, so these give
+    // an explicit, unambiguous way to move through the scenarios one at a time instead.
+    function stepDelay(dir){
+      var list=window.__delayScenarios||[];
+      if(list.length<2) return;
+      window.__delayIdx=(((window.__delayIdx||0)+dir)%list.length+list.length)%list.length;
+      window.__renderDelaySlide();
+      resetDelayTimer();
+    }
+    var arrowL=document.getElementById('delay-arrow-l'), arrowR=document.getElementById('delay-arrow-r');
+    if(arrowL) arrowL.addEventListener('click',function(){ stepDelay(-1); });
+    if(arrowR) arrowR.addEventListener('click',function(){ stepDelay(1); });
 
     render();
   })();
@@ -4319,9 +4598,11 @@ function openShareModal(drawFn){
       function(o){ o.car=!o.car; },
       // 2 condo upgrade - same inversion fix
       function(o){ o.condo=!o.condo; },
-      // 3 never invests
+      // 3 never invests -- paycheckToPaycheck forces every raise's 50%+ floor off too,
+      // otherwise "never invests" quietly still invests via the save-half-of-raise
+      // default, sneaking money into STI/SRS despite the 0% base allocation.
       function(o){ var t=o.aS+o.aI; o.aS=0; o.aI=0; var l=o.aN+o.aW, nr=l>0?o.aN/l:.625;
-                   o.aN+= t*nr; o.aW+= t-(t*nr); },
+                   o.aN+= t*nr; o.aW+= t-(t*nr); o.paycheckToPaycheck=true; },
       // 4 starting late
       function(o){ o.age=Math.min(60,o.age+5); o.buyAge=Math.max(o.buyAge,o.age); }
       // Divorce (trap #7) has its own dedicated computation below -- refreshDivorceScenarios --
@@ -4367,14 +4648,16 @@ function openShareModal(drawFn){
             hasKid:hasKid,numKids:numKids,prof:null,se:false,own:true,alreadyOwn:false,ownsCondo:false,
             ownCondoIdx:1,exMort:0,exYears:0,mopLeft:0,startNW:0,flatIdx:hasKid?2:1,buyAge:age,
             prebuy:'family',rentStartAge:age,aN:0.45,aW:0.25,aS:0.09,aI:0.21,marryAge:age,wedding:1,
-            condo:false,condoIdx:1,condoAge:60,btoSell:true,car:false,carAge:60,omv:25000,pa:0,paAge:25});
+            condo:false,condoIdx:1,condoAge:60,btoSell:true,car:false,carAge:60,omv:25000,pa:0,paAge:25,
+            saveHalfRaise:base.saveHalfRaise});
         }
         function singlePhase(startNW,hasKid,numKids){
           return E.project({age:divorceAge,sal0:sal,spouseSal:0,mode:'average',cr:0,stiR:0.06,retire:65,single:true,
             hasKid:hasKid,numKids:numKids,prof:null,se:false,own:true,alreadyOwn:true,ownsCondo:false,
             ownCondoIdx:1,exMort:0,exYears:0,mopLeft:0,startNW:startNW,flatIdx:1,buyAge:divorceAge,
             prebuy:'family',rentStartAge:divorceAge,aN:0.5,aW:0.3,aS:0.09,aI:0.11,marryAge:999,wedding:0,
-            condo:false,condoIdx:1,condoAge:65,btoSell:true,car:false,carAge:65,omv:25000,pa:0,paAge:25});
+            condo:false,condoIdx:1,condoAge:65,btoSell:true,car:false,carAge:65,omv:25000,pa:0,paAge:25,
+            saveHalfRaise:base.saveHalfRaise});
         }
 
         // Spousal maintenance: Singapore courts have NO fixed formula and are explicitly
