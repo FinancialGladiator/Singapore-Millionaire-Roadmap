@@ -804,7 +804,7 @@
       <div class="preset-scenarios-label">Or start from a persona</div>
       <div class="preset-scenarios-row">
         <button type="button" class="scenario-btn" id="btn-scenario-started">Just Started</button>
-        <button type="button" class="scenario-btn" id="btn-scenario-conservative">Conservative Saver</button>
+        <button type="button" class="scenario-btn" id="btn-scenario-conservative">Classic Saver</button>
         <button type="button" class="scenario-btn" id="btn-scenario-fire">FIRE-Chasing</button>
       </div>
     </div>
@@ -831,7 +831,7 @@
         </div>
         <div class="field">
           <label>Target Savings Rate <span class="hint"><button class="help">?</button><span class="bubble">The share of take-home you put into SRS and the STI combined. Moving this splits the change across your existing SRS/STI balance and takes the difference from Necessities and Wants. For hands-on control of all four, open <b>Allocation &amp; tax</b> below.</span></span> — <output id="o-save">20%</output></label>
-          <input type="range" id="i-save" min="0" max="60" step="1" value="20">
+          <input type="range" id="i-save" min="0" max="80" step="1" value="20">
           <div class="milestones flow" id="o-saveline" style="margin-top:8px"></div>
         </div>
       </div>
@@ -1008,8 +1008,9 @@
 <div class="field toggle-field" id="f-halfraise">
         <label class="toggle-label">
           <input type="checkbox" id="i-halfraise" checked>
-          <span>Save at least half of every raise <span class="hint"><button class="help">?</button><span class="bubble">A common discipline against lifestyle inflation: bank half of every pay rise before it has a chance to become a bigger lifestyle, investing (or sheltering in SRS) at least 50% of each increase from year one — not just once SRS hits its legal cap, which is otherwise the only point this kicks in. On by default, since it's the assumption the rest of this app's own copy already describes. Turn it off to let your sliders' own fixed percentages govern every raise instead.</span></span></span>
+          <span>Save at least half of every raise <span class="hint"><button class="help">?</button><span class="bubble">A common discipline against lifestyle inflation: bank at least half of every pay rise before it has a chance to become a bigger lifestyle. This is a floor, not a bonus -- if your own sliders already send more than 50% of every raise into investing, this makes no difference, since there's nothing left to top up. On by default, since it's the assumption the rest of this app's own copy already describes. Turn it off to let your sliders' own fixed percentages govern every raise instead, with no floor underneath them at all.</span></span></span>
         </label>
+        <div id="halfraise-noeffect" style="display:none;margin-top:8px;font-size:12.5px;color:var(--muted);line-height:1.5">⚠ This toggle currently makes <b>zero difference</b> to your numbers -- most likely because your own STI slider is already set above 50%, so it already exceeds the floor this toggle would enforce. A floor can only ever raise what your sliders would otherwise give you, never add on top of it.</div>
       </div>
         </div>
       </details>
@@ -1020,11 +1021,7 @@
       <div class="milestones flow" id="save-status" style="margin-top:4px;color:var(--muted)">💾 Your inputs save automatically on this device — come back anytime.</div>
     </div>
 
-    <div class="note note-sg" style="margin-top:16px">
-      <p><b>Beat lifestyle creep — the Singapore way.</b> Every raise or promotion, split the increase in half: one half improves your life, the other half goes straight into investing. Your lifestyle still rises with every promotion — just at half speed — while your savings rate quietly climbs for 40+ years. This projection applies that rule automatically, via the toggle in Career &amp; assumptions above — turn it off there if you'd rather your sliders' own fixed percentages govern every raise instead. <span class="hint"><button class="help">?</button><span class="bubble">Example: a S$600/mo raise → <b>S$300 to lifestyle, S$300 into your monthly STI investment</b>. Do this at every promotion and your investing grows without ever feeling deprived.</span></span></p>
-    </div>
-
-    <details class="ctl-group" id="grp-alloc">
+        <details class="ctl-group" id="grp-alloc">
       <summary><span class="cg-title">Allocation &amp; tax</span></summary>
       <div class="cg-body">
       <p class="sec-sub">Drag any slider — the other three <b>won't</b> move automatically. Each one's own range shrinks to whatever room is left, so the total can never exceed 100% — but if you free up room by lowering one, you'll need to raise another yourself to put it to use.</p>
@@ -1039,7 +1036,7 @@
           <input type="range" id="a-want" min="0" max="100" step="1" value="30" style="accent-color:var(--family)">
         </div>
         <div class="alloc-row">
-          <div class="alloc-head"><span class="l"><i class="dot" style="background:var(--srs)"></i>SRS <span class="hint"><button class="help">?</button><span class="bubble">The <b>Supplementary Retirement Scheme</b>: contributions (cap ≈ S$1,275/person/mo) are deducted from taxable income now, invested in the STI, and locked until retirement — then only 50% of withdrawals are taxed, usually at little or no tax. Only worth it if you actually pay income tax. The slider's full-right position always maxes out at exactly the legal cap. <b>Gets priority</b> over open STI for its tax benefit.</span></span></span><span class="amt"><output id="ao-srs">9%</output> · <span id="ad-srs"></span></span></div>
+          <div class="alloc-head"><span class="l"><i class="dot" style="background:var(--srs)"></i>SRS <span class="hint"><button class="help">?</button><span class="bubble">The <b>Supplementary Retirement Scheme</b>: contributions (cap ≈ S$1,275/person/mo) are deducted from taxable income now, invested in the STI, and locked until retirement — then only 50% of withdrawals are taxed, usually at little or no tax. Only worth it if you actually pay income tax. The slider's full-right position always maxes out at exactly the legal cap. <b>Gets priority</b> over open STI for its tax benefit.<br><br><b>Married with unequal incomes?</b> This % applies to each partner's own take-home separately, not household income — so the same % can max out the higher earner's S$1,275 cap while falling well short of it for the lower earner. To have both hit S$1,275 (S$2,550 combined), the % needs to be high enough for the lower earner's smaller income too.</span></span></span><span class="amt"><output id="ao-srs">9%</output> · <span id="ad-srs"></span></span></div>
           <input type="range" id="a-srs" min="0" max="100" step="1" value="9" style="accent-color:var(--srs)">
           <div class="milestones flow" id="a-srsnote" style="margin-top:8px"></div>
           <div class="milestones flow" id="srs-excess-note" style="display:none;margin-top:8px;background:#E2604F1A;border:1px solid #E2604F55;border-radius:6px;padding:10px 12px;color:var(--brick)"></div>
@@ -1070,7 +1067,7 @@
         <div class="ded-row tot"><span class="lab">Net spendable <span class="hint"><button class="help">?</button><span class="bubble">What's actually left in your pocket after CPF, SRS, tax, housing, car, parental allowance and STI investing — this is what your Necessities and Wants sliders below split up.</span></span></span><span class="amt" id="b-net"></span></div>
         <div class="ded-row" id="row-need0" style="display:none"><span class="lab">&nbsp;&nbsp;↳ Necessities <span class="hint"><button class="help">?</button><span class="bubble">Your Necessities slider's share of Net Spendable above — the same percentage you set in Allocation &amp; tax, applied to what's actually left after every committed cost.</span></span></span><span class="amt" id="b-need0"></span></div>
         <div class="ded-row" id="row-want0" style="display:none"><span class="lab">&nbsp;&nbsp;↳ Wants <span class="hint"><button class="help">?</button><span class="bubble">Your Wants slider's share of Net Spendable above, on the same basis as Necessities.</span></span></span><span class="amt" id="b-want0"></span></div>
-        <div class="ded-row" id="row-unalloc0" style="display:none"><span class="lab">&nbsp;&nbsp;↳ Unallocated <span class="hint"><button class="help">?</button><span class="bubble">Net Spendable your Necessities and Wants sliders haven't claimed yet. It defaults to ordinary spendable cash — raise either slider in Allocation &amp; tax to put it to deliberate use instead.</span></span></span><span class="amt" id="b-unalloc0"></span></div>
+        <div class="ded-row" id="row-unalloc0" style="display:none"><span class="lab">&nbsp;&nbsp;↳ Unallocated <span class="hint"><button class="help">?</button><span class="bubble">Left over because Necessities, Wants and STI don't sum to 100% between them (SRS is separate, drawing from a different income pool, so it doesn't count against this). It defaults to ordinary spendable cash — raise any of the three sliders in Allocation &amp; tax to put it to deliberate use instead.</span></span></span><span class="amt" id="b-unalloc0"></span></div>
       </div>
     </section>
 
@@ -1187,7 +1184,7 @@
         </div>
       </div>
       <div class="note">
-        <p><b>Model assumptions, at a glance:</b> STI total return <span id="as-sti"></span>/yr with dividends reinvested; inflation/discount rate 2.5%/yr; CPF OA 2.5%/yr, SA/RA/MA 4%/yr; SRS capped at S$1,275/person/mo and deducted before tax, same as CPF; income tax uses current IRAS resident brackets; salary follows your chosen career-growth curve. Future raises normally split in the same proportions as your four sliders — <b>except once SRS hits its S$1,275/mo legal cap</b>, at which point at least 50% of every further raise automatically flows into open STI instead, even if your STI slider reads 0% — you can't shelter more in SRS, so the "bank half of every raise" discipline continues in the open market account. That's why STI can still grow late in a career even from a S$0 starting point, once salary has risen enough to max out SRS.</p>
+        <p><b>Model assumptions, at a glance:</b> STI total return <span id="as-sti"></span>/yr with dividends reinvested; inflation/discount rate 2.5%/yr; CPF OA 2.5%/yr, SA/RA/MA 4%/yr; SRS capped at S$1,275/person/mo and deducted before tax, same as CPF; income tax uses current IRAS resident brackets; salary follows your chosen career-growth curve. Whatever the SRS slider asks for beyond that per-person cap flows straight into open STI instead, so a maxed-out SRS never silently loses money. Future raises normally split in the same proportions as your four sliders — <b>unless "save at least half of every raise" is switched on</b> (the default), in which case every further raise sends at least 50% into investing regardless of your sliders' own ratio, though this floor only ever raises what you'd get, never adds on top of it if your sliders already exceed 50%.</p>
       </div>
     </section>
         </div>
@@ -2315,18 +2312,24 @@
   /* ===== NAMED PRESETS: one-tap starting personas, using the same short-key state
      format as getCalcState/applyCalcState so they can just call applyCalcState directly. ===== */
   var SCENARIO_PRESETS={
-    started:{a:'20',s:'2400',sp:'0',nw:'0',oc:'1',em:'0',ey:'0',mo:'0',ms:'cpf',m:'average',r:'3.5',si:'6',j:'custom',
+    // All three now share IDENTICAL career-growth and STI-return assumptions (2.5%/yr
+    // raises, 6%/yr STI), so savings-rate discipline is the ONLY thing distinguishing
+    // them -- with exactly one further exception: FIRE Chaser alone also saves at least
+    // half of every raise (hr:'1'); the other two explicitly leave it off (hr:'0'), not
+    // merely undefined, so clicking between presets can never leave a stale checkbox
+    // state behind from whichever preset was applied before.
+    started:{a:'20',s:'2400',sp:'0',nw:'0',oc:'1',em:'0',ey:'0',mo:'0',ms:'cpf',m:'average',r:'2.5',si:'6',j:'custom',
       h:'single',hd:'own',f:'0',b:'35', pb:'family',pba:'35',mr:'999',w:'0',
       cd:'no',cs:'1',ca:'40',bt:'sell', cr:'no',cra:'30',om:'25000',pa:'0',paa:'25',
-      an:'50',aw:'30',as:'9',ai:'11'},
-    conservative:{a:'28',s:'4000',sp:'0',nw:'20000',oc:'1',em:'0',ey:'0',mo:'0',ms:'cpf',m:'average',r:'3',si:'4',j:'custom',
+      an:'59',aw:'35',as:'4',ai:'6',hr:'0'},
+    conservative:{a:'20',s:'2400',sp:'0',nw:'0',oc:'1',em:'0',ey:'0',mo:'0',ms:'cpf',m:'average',r:'2.5',si:'6',j:'custom',
       h:'single',hd:'own',f:'1',b:'32', pb:'family',pba:'32',mr:'999',w:'0',
-      cd:'no',cs:'1',ca:'45',bt:'sell', cr:'no',cra:'35',om:'25000',pa:'200',paa:'30',
-      an:'55',aw:'25',as:'9',ai:'11'},
-    fire:{a:'23',s:'5500',sp:'0',nw:'5000',oc:'1',em:'0',ey:'0',mo:'0',ms:'cpf',m:'warrior',r:'6',si:'7',j:'custom',
+      cd:'no',cs:'1',ca:'45',bt:'sell', cr:'no',cra:'35',om:'25000',pa:'0',paa:'25',
+      an:'56',aw:'33',as:'9',ai:'11',hr:'0'},
+    fire:{a:'20',s:'2400',sp:'0',nw:'0',oc:'1',em:'0',ey:'0',mo:'0',ms:'cpf',m:'average',r:'2.5',si:'6',j:'custom',
       h:'single',hd:'own',f:'0',b:'28', pb:'family',pba:'28',mr:'999',w:'0',
       cd:'no',cs:'1',ca:'50',bt:'sell', cr:'no',cra:'40',om:'25000',pa:'0',paa:'25',
-      an:'35',aw:'15',as:'9',ai:'41'}
+      an:'52',aw:'31',as:'13',ai:'17',hr:'1'}
   };
   function applyScenarioPreset(key){
     var preset=SCENARIO_PRESETS[key]; if(!preset) return;
@@ -2892,7 +2895,7 @@
       // above, which are end-of-simulation or cumulative figures.
       var curMortCPF=0, curMortCash=0, curRentOffset=0, curCarCost=0, curPaCost=0;
       var rentingOutBTO=false, soldBTO=false;
-      var invest=0,lifestyle=0,prevTH=0;
+      var invest=0,lifestyle=0,prevTH=0,prevOverflow=0;
       // partner's pay as a multiple of the user's, so one growth curve serves both
       var spouseRatio = (o.spouseSal!==undefined && o.sal0>0) ? (o.spouseSal/o.sal0) : 1;
       var nwPath=[],ageAxis=[],stiPath=[],srsPath=[],cpfPath=[],stiContrib=0,srsContrib=0,empCPFcum=0,employerCPFcum=0;
@@ -2921,6 +2924,12 @@
         var srs2=(earners>1)?Math.max(0,Math.min(o.aS*th2,1275)):0;
         var srsPerPerson=Math.max(srs1,srs2);
         var srsTargetHH=srs1+srs2;
+        // Whatever the SRS slider asked for but the legal per-person cap wouldn't allow --
+        // redirected straight into open STI below, rather than falling back into the
+        // general pool to be re-split by Necessities/Wants/STI's own percentages. The
+        // slider represents investing intent; a capped tax wrapper shouldn't dilute that
+        // intent into ordinary lifestyle spending just because the preferred vehicle is full.
+        var srsOverflowHH = Math.max(0,o.aS*th1-1275) + (earners>1 ? Math.max(0,o.aS*th2-1275) : 0);
         var tax1=sgTax(Math.max(chg1-srs1*12,0))/12;
         var tax2=(earners>1)?sgTax(Math.max(chg2-srs2*12,0))/12:0;
         var pRel=(o.pa>0)?(sgTax(Math.max(chg1-srs1*12,0))-sgTax(Math.max(chg1-srs1*12-5500,0)))/12:0;
@@ -2955,12 +2964,32 @@
         // caught, where "never invests" scenarios were still accumulating six figures of
         // STI purely through this floor, contradicting what "never invests" should mean.
         var hasAnyInvesting = (o.aI>0 || o.aS>0);
-        var effectiveFloor = hasAnyInvesting ? (srsCapped ? Math.max(floorPct,0.5) : floorPct) : 0;
+        // Previously, srsCapped forced at least a 50% floor UNCONDITIONALLY, even with the
+        // toggle off -- a leftover from when this fallback was the app's only mechanism,
+        // before the toggle existed. That made "off" not really mean off once SRS capped,
+        // which is exactly backwards from what the toggle promises. The toggle (or its
+        // floorPct override) is now the single source of truth for this floor, full stop --
+        // srsCapped no longer bumps it up on its own.
+        var effectiveFloor = hasAnyInvesting ? floorPct : 0;
         // Separate opt-in for the opposite extreme: every raise consumed by lifestyle,
         // none of it ever increasing what's invested, even once SRS caps out.
         var raiseShare = o.paycheckToPaycheck ? 0 : Math.max(investShare, effectiveFloor);
-        if(y===0 || marriedThisYear){ invest=investShare*th; lifestyle=(1-investShare)*th; }
-        else{ var raise=th-prevTH; if(raise>0){invest+=raise*raiseShare;lifestyle+=raise*(1-raiseShare);} else {lifestyle+=raise;} }
+        if(y===0 || marriedThisYear){
+          // Carve the SRS overflow out BEFORE the Necessities/Wants/STI split, so it's
+          // added to invest exactly once -- not counted again inside investShare*th too,
+          // which is already computed against the full (overflow-inclusive) th.
+          var thForSplit0=Math.max(0,th-srsOverflowHH);
+          invest=investShare*thForSplit0+srsOverflowHH; lifestyle=(1-investShare)*thForSplit0;
+          prevOverflow=srsOverflowHH;
+        }
+        else{
+          var raise=th-prevTH;
+          var overflowDelta=srsOverflowHH-prevOverflow;
+          var raiseForSplit=raise-overflowDelta;
+          if(raiseForSplit>0){invest+=raiseForSplit*raiseShare+overflowDelta;lifestyle+=raiseForSplit*(1-raiseShare);}
+          else{lifestyle+=raiseForSplit;invest+=overflowDelta;}
+          prevOverflow=srsOverflowHH;
+        }
         // wedding
         if(marriedThisYear && o.wedding>0){ var w=o.wedding*infl; STI=Math.max(STI-w,0); }
         // buy HDB
@@ -3273,16 +3302,28 @@
       // Now: a higher slider is NEVER reduced by a lower one -- only the reverse, and only
       // deliberately, so "Necessities at 100% empties everything else" is an intentional,
       // visible consequence of priority, not an unpredictable side effect.
-      var allocIds=['a-need','a-want','a-srs','a-inv'];
+      // SRS is deducted from a DIFFERENT, earlier income pool than Necessities/Wants/STI
+      // (see the section note above: "SRS is the one exception"), so it was never really
+      // competing for the same 100% as the other three -- it just looked that way because
+      // this hierarchy lumped all four sliders into one cumulative chain. That silently
+      // stole room from Necessities/Wants/STI: with SRS at even a modest %, the other three
+      // could never actually reach 100% of their own pool between them, leaving real money
+      // unaccounted for as "unallocated" even when all four sliders summed to 100 on
+      // screen. Necessities/Wants/STI now form their own independent chain, free to reach
+      // 100% of their own pool regardless of the SRS slider's value.
+      var allocIds=['a-need','a-want','a-inv'];
       var cumulative=0;
       allocIds.forEach(function(id){
         var el=$(id);
         var effectiveMax=Math.max(0,100-cumulative);
-        if(id==='a-srs') effectiveMax=Math.min(effectiveMax,legalSrsCapPct);
         el.max=effectiveMax;
         if(+el.value>effectiveMax) el.value=effectiveMax;
         cumulative+=+el.value;
       });
+      // SRS: independent of the chain above, capped only by its own legal ceiling.
+      var srsEl=$('a-srs');
+      srsEl.max=legalSrsCapPct;
+      if(+srsEl.value>legalSrsCapPct) srsEl.value=legalSrsCapPct;
       // syncUI() already wrote the % labels from the RAW dragged values, before this
       // clamp ran -- so a clamped slider (e.g. SRS hitting its legal cap) would show a
       // stale, too-high percentage even though its own value and dollar figure were
@@ -3296,6 +3337,26 @@
       var o=readOpts();
       var r=project(o);
       var disc=r.disc;
+      // Live-detect whether the raise-saving toggle is currently a no-op -- e.g. once SRS
+      // caps out almost immediately (typical at high income), the older SRS-cap fallback
+      // already forces the same 50% floor regardless of this checkbox, so toggling it does
+      // nothing. Rather than leave that undiscoverable in a tooltip, show it plainly: flip
+      // the flag on a cloned copy and compare net worth directly against the real result.
+      // Skipped entirely when a custom floor override is active (the "75%" what-if chip) --
+      // that's a separate flow where the checkbox's own state isn't what's in play.
+      try{
+        var noEffectEl=document.getElementById('halfraise-noeffect');
+        if(noEffectEl){
+          if(o.raiseFloorPct!==undefined){
+            noEffectEl.style.display='none';
+          } else {
+            var oAlt=clone(o); oAlt.saveHalfRaise=!o.saveHalfRaise;
+            var rAlt=project(oAlt);
+            var noEffect=Math.abs(r.nw-rAlt.nw)<1;
+            noEffectEl.style.display = noEffect ? '' : 'none';
+          }
+        }
+      }catch(e){}
       // grant / condo / car info lines
       if(o.own){
         var hLine='est. grant <b>'+fmtK(r.grant)+'</b> · net price today <b>'+fmtK(r.netToday)+'</b> · instalment ~<b>'+fmt(r.mortM/Math.pow(1.025,Math.max(o.buyAge-o.age,0)))+'</b>/mo'+(o.se?' <b>in cash</b>':' from CPF');
@@ -3697,7 +3758,7 @@
        STI-heavy split survives); Necessities/Wants absorb the remainder in theirs. */
     function syncSaveSlider(){
       var total=(+$('a-srs').value)+(+$('a-inv').value);
-      $('i-save').value=Math.min(60,total);
+      $('i-save').value=Math.min(80,total);
       $('o-save').textContent=Math.round(total)+'%';
     }
     $('i-save').addEventListener('input',function(){
@@ -3774,7 +3835,7 @@
       recompute();
     });
     $('wi-save').addEventListener('click',function(){
-      $('i-save').value=Math.min(60,(+$('a-srs').value)+(+$('a-inv').value)+5);
+      $('i-save').value=Math.min(80,(+$('a-srs').value)+(+$('a-inv').value)+5);
       $('i-save').dispatchEvent(new Event('input'));
     });
     $('wi-car').addEventListener('click',function(){
