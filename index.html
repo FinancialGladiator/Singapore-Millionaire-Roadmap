@@ -431,8 +431,9 @@
   .preset-scenarios-row{display:flex;gap:8px;flex-wrap:wrap}
   .scenario-btn{flex:1;min-width:104px;padding:12px 10px;border-radius:8px;border:1px solid var(--line);
     background:var(--panel);color:var(--ink);font-family:'Bricolage Grotesque',sans-serif;
-    font-weight:700;font-size:13px;cursor:pointer;transition:border-color .15s ease}
+    font-weight:700;font-size:13px;cursor:pointer;transition:border-color .15s ease,background .15s ease,color .15s ease}
   .scenario-btn:active{border-color:var(--brand)}
+  .scenario-btn.active{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
   .narrative-thread{position:relative;margin-top:16px;padding-left:20px;border-left:2px solid var(--line)}
   .narrative-beat{position:relative;padding-bottom:22px}
   .narrative-beat:last-child{padding-bottom:0}
@@ -804,8 +805,9 @@
       <div class="preset-scenarios-label">Or start from a persona</div>
       <div class="preset-scenarios-row">
         <button type="button" class="scenario-btn" id="btn-scenario-started">Just Started</button>
-        <button type="button" class="scenario-btn" id="btn-scenario-conservative">Classic Saver</button>
+        <button type="button" class="scenario-btn active" id="btn-scenario-conservative">Classic Saver</button>
         <button type="button" class="scenario-btn" id="btn-scenario-fire">FIRE-Chasing</button>
+        <button type="button" class="scenario-btn" id="btn-scenario-mycareer">My Career</button>
       </div>
     </div>
 
@@ -2192,6 +2194,20 @@
   }
   function applyCalcState(state){
     if(!state) return;
+    // Real range inputs silently clamp .value to their CURRENT min/max, even when set
+    // via JS -- so restoring, say, a lower buy-age or a higher allocation % than whatever
+    // was left over from the PREVIOUS state gets truncated before this function even
+    // finishes. syncUI()/calc()'s own logic only recomputes each slider's min/max AFTER
+    // reading its value, which is too late for the value being set here -- confirmed this
+    // caused exactly the "first click wrong, second click correct" bug reported for the
+    // scenario presets. Every range input this app dynamically constrains (allocation
+    // sliders, buy age, condo/car age, pre-buy age) gets its min/max thrown wide open
+    // first, so nothing set below can be silently clamped by a stale constraint from
+    // whatever was showing before -- syncUI()/calc() will correctly re-narrow every one
+    // of them immediately afterward, once they run against the newly-restored values.
+    ['a-need','a-want','a-inv','a-srs','i-buy','i-prebuyage','i-cage','i-carage'].forEach(function(id){
+      var el=document.getElementById(id); if(el){ el.min=0; el.max=200; }
+    });
     CALC_INPUT_IDS.forEach(function(pair){
       var el=document.getElementById(pair[0]);
       if(!el || state[pair[1]]===undefined) return;
@@ -2323,11 +2339,11 @@
       cd:'no',cs:'1',ca:'40',bt:'sell', cr:'no',cra:'30',om:'25000',pa:'0',paa:'25',
       an:'59',aw:'35',as:'4',ai:'6',hr:'0'},
     conservative:{a:'20',s:'2400',sp:'0',nw:'0',oc:'1',em:'0',ey:'0',mo:'0',ms:'cpf',m:'average',r:'2.5',si:'6',j:'custom',
-      h:'single',hd:'own',f:'1',b:'32', pb:'family',pba:'32',mr:'999',w:'0',
+      h:'single',hd:'own',f:'0',b:'35', pb:'family',pba:'35',mr:'999',w:'0',
       cd:'no',cs:'1',ca:'45',bt:'sell', cr:'no',cra:'35',om:'25000',pa:'0',paa:'25',
-      an:'56',aw:'33',as:'9',ai:'11',hr:'0'},
+      an:'56',aw:'33',as:'9',ai:'11',hr:'1'},
     fire:{a:'20',s:'2400',sp:'0',nw:'0',oc:'1',em:'0',ey:'0',mo:'0',ms:'cpf',m:'average',r:'2.5',si:'6',j:'custom',
-      h:'single',hd:'own',f:'0',b:'28', pb:'family',pba:'28',mr:'999',w:'0',
+      h:'single',hd:'own',f:'0',b:'35', pb:'family',pba:'35',mr:'999',w:'0',
       cd:'no',cs:'1',ca:'50',bt:'sell', cr:'no',cra:'40',om:'25000',pa:'0',paa:'25',
       an:'52',aw:'31',as:'13',ai:'17',hr:'1'}
   };
@@ -2351,10 +2367,44 @@
 
     var btnStarted=document.getElementById('btn-scenario-started'),
         btnConservative=document.getElementById('btn-scenario-conservative'),
-        btnFire=document.getElementById('btn-scenario-fire');
-    if(btnStarted) btnStarted.addEventListener('click', function(){ applyScenarioPreset('started'); });
-    if(btnConservative) btnConservative.addEventListener('click', function(){ applyScenarioPreset('conservative'); });
-    if(btnFire) btnFire.addEventListener('click', function(){ applyScenarioPreset('fire'); });
+        btnFire=document.getElementById('btn-scenario-fire'),
+        btnMyCareer=document.getElementById('btn-scenario-mycareer');
+    var scenarioBtns={started:btnStarted,conservative:btnConservative,fire:btnFire,mycareer:btnMyCareer};
+    function markPresetActive(key){
+      for(var k in scenarioBtns){
+        var b=scenarioBtns[k]; if(!b) continue;
+        b.classList.toggle('active', k===key);
+      }
+    }
+    // Set right before a preset applies its own values, so the input listeners those
+    // value-changes fire (below) can tell "this recompute was caused by clicking a
+    // preset" apart from "the reader just dragged a slider" -- only the latter should
+    // ever light up My Career.
+    var presetJustClicked=false;
+    function clickPreset(key){
+      presetJustClicked=true;
+      applyScenarioPreset(key);
+      markPresetActive(key);
+      presetJustClicked=false;
+    }
+    // Exposed globally: any genuinely manual edit -- not a preset click, not a restored
+    // session or shared link on page load -- means the reader has deviated from every
+    // preset's own exact numbers, so none of the three personas honestly describes this
+    // scenario anymore. My Career is what a real, once-personalised scenario becomes.
+    window.__markDeviatedFromPresets = function(){
+      if(!presetJustClicked) markPresetActive('mycareer');
+    };
+    if(btnStarted) btnStarted.addEventListener('click', function(){ clickPreset('started'); });
+    if(btnConservative) btnConservative.addEventListener('click', function(){ clickPreset('conservative'); });
+    if(btnFire) btnFire.addEventListener('click', function(){ clickPreset('fire'); });
+    if(btnMyCareer) btnMyCareer.addEventListener('click', function(){ markPresetActive('mycareer'); });
+    // Exposed globally so the restore-state check (which runs LATER in the script,
+    // and is what actually determines whether a shared link or saved session already
+    // claimed this page load) can safely apply Classic Saver afterward -- calling this
+    // here instead would run before RESTORED_FROM_SHARE has actually been computed
+    // (a var-hoisting trap: the check would always see its hoisted `undefined`, not
+    // the real result), silently overwriting a restored session moments later.
+    window.__applyDefaultPreset = function(){ clickPreset('conservative'); };
   })();
 
   /* ===== QUIZ: "Test your financial knowledge" -- self-contained, no engine dependency ===== */
@@ -2646,6 +2696,22 @@
     var localState=loadCalcStateLocal();
     if(localState){ applyCalcState(localState); RESTORED_FROM_SHARE=true; }
   })();
+  // Classic Saver is this app's own baseline discipline (9% SRS + 11% STI, raises
+  // banked at least half), matching Tab 1's own default outcome exactly -- so it's the
+  // sensible starting point on Tab 2 too. Runs here, AFTER the restore check above has
+  // actually executed, so RESTORED_FROM_SHARE reflects its real, computed value -- not
+  // the hoisted `undefined` a too-early check would have silently seen instead.
+  if(!RESTORED_FROM_SHARE && window.__applyDefaultPreset) window.__applyDefaultPreset();
+  // A restored session or shared link might not match any preset at all (or might match
+  // a DIFFERENT one) -- Classic Saver's button carries the "active" class directly in its
+  // static HTML so it's correct on first paint without waiting on script timing, but that
+  // default has to be cleared here if something else actually won this page load, or it
+  // would stay lit even when the real, restored numbers belong to a different scenario.
+  else {
+    ['btn-scenario-started','btn-scenario-conservative','btn-scenario-fire'].forEach(function(id){
+      var b=document.getElementById(id); if(b) b.classList.remove('active');
+    });
+  }
 
   /* ===== CALCULATOR ===== */
   (function(){
@@ -2812,6 +2878,12 @@
       o.hasKid=(o.house==='kid'||o.house==='kid2'); o.numKids=o.house==='kid'?1:(o.house==='kid2'?2:0);
       o.prof=PROFILES[$('i-job').value]||null; o.se=!!(o.prof&&o.prof.se);
       o.saveHalfRaise=$('i-halfraise') ? $('i-halfraise').checked : false;
+      // Universal, not a per-scenario choice: SRS past the point of any further tax
+      // benefit is a strict downgrade versus open STI (same investments, but locked away
+      // for no reason), so this always applies -- no rational saver would deliberately
+      // choose otherwise, unlike the raise-saving discipline above, which genuinely is
+      // a personal choice some people make and others don't.
+      o.optimizeSRS=true;
       var _rfEl=$('i-raisefloor-pct'), _rfRaw=_rfEl?_rfEl.value:'';
       if(_rfRaw!==''){ o.raiseFloorPct=+_rfRaw; }
       var hdbMode=$('i-hdb').value;
@@ -2920,16 +2992,27 @@
         // a standard, negligible approximation for a career-length illustration.
         var th1=sal1-cpfW1*eR-taxNo1, th2=(earners>1)?(sal2-cpfW2*eR-taxNo2):0;
         var thNoSRS=th1+th2;
-        var srs1=Math.max(0,Math.min(o.aS*th1,1275));
-        var srs2=(earners>1)?Math.max(0,Math.min(o.aS*th2,1275)):0;
+        // Opt-in: cap SRS at whichever is SMALLER -- the legal S$1,275/mo max, or the
+        // amount that brings this person's own chargeable income down to the top of the
+        // 0%-tax bracket (S$20,000/yr). Past that point, SRS provides zero additional
+        // tax benefit -- every extra dollar just locks money away with no upside over
+        // open STI, which stays fully liquid. Computed per person (SRS, CPF and tax all
+        // work per-person in Singapore), and only active when o.optimizeSRS is set --
+        // off by default, so every existing scenario computes exactly as it always has.
+        var srsCap1 = o.optimizeSRS ? Math.min(1275, Math.max(0,(chg1-20000)/12)) : 1275;
+        var srsCap2 = o.optimizeSRS ? Math.min(1275, Math.max(0,(chg2-20000)/12)) : 1275;
+        var srs1=Math.max(0,Math.min(o.aS*th1,srsCap1));
+        var srs2=(earners>1)?Math.max(0,Math.min(o.aS*th2,srsCap2)):0;
         var srsPerPerson=Math.max(srs1,srs2);
         var srsTargetHH=srs1+srs2;
-        // Whatever the SRS slider asked for but the legal per-person cap wouldn't allow --
-        // redirected straight into open STI below, rather than falling back into the
-        // general pool to be re-split by Necessities/Wants/STI's own percentages. The
-        // slider represents investing intent; a capped tax wrapper shouldn't dilute that
-        // intent into ordinary lifestyle spending just because the preferred vehicle is full.
-        var srsOverflowHH = Math.max(0,o.aS*th1-1275) + (earners>1 ? Math.max(0,o.aS*th2-1275) : 0);
+        // Whatever the SRS slider asked for but this cap wouldn't allow -- whether the
+        // legal per-person max, or (with optimizeSRS on) the point past which SRS stops
+        // saving any tax -- redirected straight into open STI below, rather than falling
+        // back into the general pool to be re-split by Necessities/Wants/STI's own
+        // percentages. The slider represents investing intent; a capped tax wrapper
+        // shouldn't dilute that intent into ordinary lifestyle spending just because the
+        // preferred vehicle is full (or has stopped being worth using further).
+        var srsOverflowHH = Math.max(0,o.aS*th1-srsCap1) + (earners>1 ? Math.max(0,o.aS*th2-srsCap2) : 0);
         var tax1=sgTax(Math.max(chg1-srs1*12,0))/12;
         var tax2=(earners>1)?sgTax(Math.max(chg2-srs2*12,0))/12:0;
         var pRel=(o.pa>0)?(sgTax(Math.max(chg1-srs1*12,0))-sgTax(Math.max(chg1-srs1*12-5500,0)))/12:0;
@@ -3731,7 +3814,10 @@
     ['i-age','i-sal','i-spouse','i-nw0','i-owncsize','i-exmort','i-exyears','i-mop','i-mortsrc','i-mode','i-raise','i-sti','i-house','i-hdb','i-flat','i-buy',
      'i-marry','i-wed','i-condo','i-csize','i-cage','i-bto','i-car','i-carage','i-omv','i-pa','i-paage',
      'i-prebuy','i-prebuyage'].forEach(function(id){
-      var el=$(id); if(el){ el.addEventListener('input',recompute); el.addEventListener('change',recompute); }
+      var el=$(id); if(el){
+        el.addEventListener('input',function(){ if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets(); recompute(); });
+        el.addEventListener('change',function(){ if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets(); recompute(); });
+      }
     });
     // Toggling "Buy a car? Yes" should mean "I have one now" by default, not silently
     // apply at whatever age the slider was last left at (30) -- which, for anyone
@@ -3749,7 +3835,7 @@
       }
     });
     ['a-need','a-want','a-srs','a-inv'].forEach(function(id){
-      $(id).addEventListener('input',function(){ syncSaveSlider(); recompute(); });
+      $(id).addEventListener('input',function(){ if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets(); syncSaveSlider(); recompute(); });
     });
 
     /* ---- composite "Save & invest" control -------------------------------------
@@ -3762,6 +3848,7 @@
       $('o-save').textContent=Math.round(total)+'%';
     }
     $('i-save').addEventListener('input',function(){
+      if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets();
       var target=+$('i-save').value;
       var srs=+$('a-srs').value, inv=+$('a-inv').value, cur=srs+inv;
       var sRatio = cur>0 ? srs/cur : 0.45;          // fall back to the 9:11 default shape
@@ -3857,10 +3944,11 @@
     // Otherwise manually unchecking the box right after clicking "75% instead" could
     // recompute once more with the stale 75% override still in effect.
     $('i-halfraise').addEventListener('change',function(){
+      if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets();
       var rf=$('i-raisefloor-pct'); if(rf) rf.value='';
       recompute();
     });
-    $('i-job').addEventListener('change',function(){ var p=PROFILES[$('i-job').value]; if(p){ $('i-sal').value=p.s; } recompute(); });
+    $('i-job').addEventListener('change',function(){ if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets(); var p=PROFILES[$('i-job').value]; if(p){ $('i-sal').value=p.s; } recompute(); });
     $('i-prebuy').addEventListener('change',function(){
       // Switching to "family" with no gap between age and prebuyAge would silently show
       // zero free years (identical to renting) — give it a sensible default gap instead.
