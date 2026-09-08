@@ -1040,7 +1040,8 @@
         </div>
         <div class="alloc-row">
           <div class="alloc-head"><span class="l"><i class="dot" style="background:var(--srs)"></i>SRS <span class="hint"><button class="help">?</button><span class="bubble">The <b>Supplementary Retirement Scheme</b>: contributions (cap ≈ S$1,275/person/mo) are deducted from taxable income now, invested in the STI, and locked until retirement — then only 50% of withdrawals are taxed, usually at little or no tax. Only worth it if you actually pay income tax. The slider's full-right position always maxes out at exactly the legal cap. <b>Gets priority</b> over open STI for its tax benefit.<br><br><b>Married with unequal incomes?</b> This % applies to each partner's own take-home separately, not household income — so the same % can max out the higher earner's S$1,275 cap while falling well short of it for the lower earner. To have both hit S$1,275 (S$2,550 combined), the % needs to be high enough for the lower earner's smaller income too.</span></span></span><span class="amt"><output id="ao-srs">9%</output> · <span id="ad-srs"></span></span></div>
-          <input type="range" id="a-srs" min="0" max="100" step="1" value="9" style="accent-color:var(--srs)">
+          <input type="range" id="a-srs" min="0" max="100" step="1" value="9" style="accent-color:var(--srs)" list="a-srs-ticks">
+          <datalist id="a-srs-ticks"><option value="9"></option></datalist>
           <div class="milestones flow" id="a-srsnote" style="margin-top:8px"></div>
           <div class="milestones flow" id="srs-excess-note" style="display:none;margin-top:8px;background:#E2604F1A;border:1px solid #E2604F55;border-radius:6px;padding:10px 12px;color:var(--brick)"></div>
         </div>
@@ -2338,15 +2339,15 @@
     started:{a:'20',s:'2400',sp:'0',nw:'0',oc:'1',em:'0',ey:'0',mo:'0',ms:'cpf',m:'average',r:'2.5',si:'6',j:'custom',
       h:'single',hd:'own',f:'0',b:'35', pb:'family',pba:'35',mr:'999',w:'0',
       cd:'no',cs:'1',ca:'40',bt:'sell', cr:'no',cra:'30',om:'25000',pa:'0',paa:'25',
-      an:'62',aw:'37',as:'9',ai:'1',hr:'0'},
+      an:'56',aw:'34',as:'9',ai:'1',hr:'0'},
     conservative:{a:'20',s:'2400',sp:'0',nw:'0',oc:'1',em:'0',ey:'0',mo:'0',ms:'cpf',m:'average',r:'2.5',si:'6',j:'custom',
       h:'single',hd:'own',f:'0',b:'35', pb:'family',pba:'35',mr:'999',w:'0',
       cd:'no',cs:'1',ca:'45',bt:'sell', cr:'no',cra:'35',om:'25000',pa:'0',paa:'25',
-      an:'56',aw:'33',as:'9',ai:'11',hr:'1'},
+      an:'50',aw:'30',as:'9',ai:'11',hr:'1'},
     fire:{a:'20',s:'2400',sp:'0',nw:'0',oc:'1',em:'0',ey:'0',mo:'0',ms:'cpf',m:'average',r:'2.5',si:'6',j:'custom',
       h:'single',hd:'own',f:'0',b:'35', pb:'family',pba:'35',mr:'999',w:'0',
       cd:'no',cs:'1',ca:'50',bt:'sell', cr:'no',cra:'40',om:'25000',pa:'0',paa:'25',
-      an:'49',aw:'30',as:'9',ai:'21',hr:'1'}
+      an:'43',aw:'27',as:'9',ai:'21',hr:'1'}
   };
   function applyScenarioPreset(key){
     var preset=SCENARIO_PRESETS[key]; if(!preset) return;
@@ -3375,43 +3376,43 @@
       // flooring left it stopping a few dollars short. The engine's own hard S$1,275
       // cap further down means rounding up here can never cause an actual overshoot.
       var legalSrsCapPct = th0NoSRSp>0 ? Math.min(100, Math.ceil((1275/th0NoSRSp)*100)) : 100;
-      // Sliders keep a FIXED 0-100 range at all times -- dynamically resizing an UNTOUCHED
-      // slider's max attribute shifts its thumb's visual position even though its value
-      // never changed, which read as "all four sliders move when I drag one." Instead,
-      // only the slider actually being interacted with gets its VALUE clamped, in the
-      // same value-not-range way SRS's legal cap already worked.
-      // Strict priority hierarchy: Necessities > Wants > SRS > STI. Each slider's room is
-      // set ONLY by whatever's ABOVE it in this list, using values already locked in --
-      // never by what's below. This replaces a symmetric "100 minus everyone else" model
-      // that depended on which slider happened to be checked first: dragging SRS could
-      // exceed the legal S$1,275 cap before the check caught up, and if one slider ever
-      // ended up needing more room than existed, whichever slider the loop reached first
-      // silently ate all the room, zeroing out the rest in an order nobody could predict.
-      // Now: a higher slider is NEVER reduced by a lower one -- only the reverse, and only
-      // deliberately, so "Necessities at 100% empties everything else" is an intentional,
-      // visible consequence of priority, not an unpredictable side effect.
-      // SRS is deducted from a DIFFERENT, earlier income pool than Necessities/Wants/STI
-      // (see the section note above: "SRS is the one exception"), so it was never really
-      // competing for the same 100% as the other three -- it just looked that way because
-      // this hierarchy lumped all four sliders into one cumulative chain. That silently
-      // stole room from Necessities/Wants/STI: with SRS at even a modest %, the other three
-      // could never actually reach 100% of their own pool between them, leaving real money
-      // unaccounted for as "unallocated" even when all four sliders summed to 100 on
-      // screen. Necessities/Wants/STI now form their own independent chain, free to reach
-      // 100% of their own pool regardless of the SRS slider's value.
-      var allocIds=['a-need','a-want','a-inv'];
-      var cumulative=0;
-      allocIds.forEach(function(id){
-        var el=$(id);
-        var effectiveMax=Math.max(0,100-cumulative);
-        el.max=effectiveMax;
-        if(+el.value>effectiveMax) el.value=effectiveMax;
-        cumulative+=+el.value;
-      });
-      // SRS: independent of the chain above, capped only by its own legal ceiling.
-      var srsEl=$('a-srs');
-      srsEl.max=legalSrsCapPct;
-      if(+srsEl.value>legalSrsCapPct) srsEl.value=legalSrsCapPct;
+      // Exposed globally so each slider's own drag-clamp listener (defined outside this
+      // function's scope, further down) can read the current legal ceiling directly,
+      // without recomputing tax/CPF math itself.
+      window.__legalSrsCapPct = legalSrsCapPct;
+      // Past this point, every further % point of SRS provides zero additional tax
+      // benefit -- the engine caps the actual dollar contribution here regardless and
+      // redirects the rest to STI -- but the slider itself still goes all the way to
+      // the legal ceiling above: SRS doesn't actually draw from the same pool as
+      // Necessities/Wants/STI (it's deducted from gross salary before any of them see
+      // a dollar), so there's no real capital reason to wall it off early. This value
+      // instead drives a visible tick mark on the slider's own track further down, so
+      // the point where the benefit stops is honestly shown without hiding the range
+      // beyond it.
+      var taxOptimalSRS0=Math.max(0,(ch0p-20000)/12);
+      var taxOptimalPct = th0NoSRSp>0 ? Math.min(100, Math.ceil((taxOptimalSRS0/th0NoSRSp)*100)) : 0;
+      var srsTickEl=document.querySelector('#a-srs-ticks option');
+      if(srsTickEl) srsTickEl.value=taxOptimalPct;
+      // Sliders keep a FIXED visual range at all times -- dynamically resizing an
+      // UNTOUCHED slider's max attribute shifts its thumb's position even when its value
+      // never changed, which read as "all four sliders move when I drag one," and also
+      // defeats the point of showing a small % as visually small. Necessities/Wants/STI
+      // stay 1-100; SRS stays 1-(legal ceiling), a hard tax-law limit unrelated to
+      // capital. All four now share one real "100" (verified above: the same base
+      // underlies every one of them, including SRS, so however they're split the
+      // dollars always add up exactly) -- but the actual room-based clamping happens in
+      // each slider's own drag listener further down, against whichever OTHER three
+      // values are currently in place, not here. This is only a safety net for state
+      // that arrives already over 100% without going through that listener at all (a
+      // shared link, a saved session, or "My Career" custom values) -- STI absorbs any
+      // such excess, matching the existing Necessities > Wants > SRS > STI priority.
+      $('a-need').max=100; $('a-want').max=100; $('a-inv').max=100;
+      $('a-srs').max=legalSrsCapPct;
+      if(+$('a-srs').value>legalSrsCapPct) $('a-srs').value=legalSrsCapPct;
+      var allocSum=(+$('a-need').value)+(+$('a-want').value)+(+$('a-srs').value)+(+$('a-inv').value);
+      if(allocSum>100){
+        $('a-inv').value=Math.max(0,+$('a-inv').value-(allocSum-100));
+      }
       // syncUI() already wrote the % labels from the RAW dragged values, before this
       // clamp ran -- so a clamped slider (e.g. SRS hitting its legal cap) would show a
       // stale, too-high percentage even though its own value and dollar figure were
@@ -3591,25 +3592,43 @@
       $('b-pa').textContent = paCash0>0 ? ('− '+fmt(paCash0)) : 'S$0';
       // houseCash0 is uniformly signed (negative = net income), so a single subtraction
       // correctly handles every case, including net rental income enlarging the pool.
-      var allocBase0=Math.max(th0-houseCash0-carCash0-paCash0,0);
+      // Necessities/Wants/SRS/STI now all split this SAME base -- take-home before SRS
+      // is deducted (th0NoSRS, the exact base SRS's own % already uses), minus
+      // committed costs -- rather than the old POST-SRS th0. This is what makes all
+      // four slider percentages honestly comparable on one shared "100": every one of
+      // them, including SRS, is priced against the identical pool, so however the four
+      // are split, the dollars always add up exactly (verified algebraically: with
+      // SRS's overflow redirect folded into the STI figure below, the four dollar
+      // amounts sum to this base exactly, whether or not SRS is capped).
+      var disposableBase0=Math.max(th0NoSRS-houseCash0-carCash0-paCash0,0);
       // Whatever the SRS slider asked for but the tax-optimal cap above wouldn't allow --
       // redirected straight into this STI figure, mirroring the engine's own overflow
       // logic exactly, so the "monthly budget now" table never silently shows money as
       // still going into SRS once it stops earning any tax benefit.
       var srsOverflow0 = Math.max(0,o.aS*th0a-srsCap0a) + (e0>1 ? Math.max(0,o.aS*th0b-srsCap0b) : 0);
-      var stiOnly0=Math.max(o.aI*allocBase0,0)+srsOverflow0;
-      var needOnly0=Math.max(o.aN*allocBase0,0);
-      var wantOnly0=Math.max(o.aW*allocBase0,0);
+      var stiOnly0=Math.max(o.aI*disposableBase0,0)+srsOverflow0;
+      var needOnly0=Math.max(o.aN*disposableBase0,0);
+      var wantOnly0=Math.max(o.aW*disposableBase0,0);
       $('b-stiinv').textContent= stiOnly0>0 ? ('− '+fmt(stiOnly0)) : 'S$0';
-      var net0raw=allocBase0-stiOnly0;
-      var net0=Math.max(net0raw,0);
-      $('b-net').textContent=fmt(net0);
       var needRow0=$('row-need0'), wantRow0=$('row-want0');
       if(needRow0) needRow0.style.display = needOnly0>0 ? '' : 'none';
       if(wantRow0) wantRow0.style.display = wantOnly0>0 ? '' : 'none';
       $('b-need0').textContent = needOnly0>0 ? ('− '+fmt(needOnly0)) : 'S$0';
       $('b-want0').textContent = wantOnly0>0 ? ('− '+fmt(wantOnly0)) : 'S$0';
-      var unalloc0=Math.max(net0-needOnly0-wantOnly0,0);
+      // "Net Spendable" -- what's left for Necessities+Wants once SRS and STI have both
+      // taken their share of the shared base. Used below for the car-affordability
+      // gate (net0raw can go negative to signal a genuine shortfall; net0 is the
+      // floored, display-safe version).
+      var net0raw=disposableBase0-srsCash0-stiOnly0;
+      var net0=Math.max(net0raw,0);
+      $('b-net').textContent=fmt(net0);
+      // What's left of the shared base once all four buckets (Necessities, Wants, SRS,
+      // STI -- including SRS's own actual dollar contribution) have taken their share.
+      // Algebraically zero whenever the four slider percentages sum to 100, whether or
+      // not SRS happens to be capped (the overflow redirect above already accounts for
+      // that case) -- this is the SAME quantity "unalloc0" always meant, just now
+      // computed against a base all four sliders genuinely share.
+      var unalloc0=Math.max(disposableBase0-needOnly0-wantOnly0-stiOnly0-srsCash0,0);
       var unallocRow0=$('row-unalloc0');
       if(unallocRow0) unallocRow0.style.display = unalloc0>1 ? '' : 'none';
       $('b-unalloc0').textContent = fmt(unalloc0);
@@ -3677,7 +3696,7 @@
       var pGap=Math.max(0,100-pN-pW-pS-pI);
       var gapNote=$('alloc-gap-note');
       if(pGap>0){
-        var gapDollar=(pGap/100)*allocBase0;
+        var gapDollar=(pGap/100)*disposableBase0;
         gapNote.innerHTML='⚠ <b>'+pGap+'% (' +fmt(gapDollar)+ '/mo) isn\u2019t allocated to anything yet.</b> It defaults to spendable cash — raise SRS or STI to put it to work instead, or Necessities/Wants if you\u2019d rather just spend it.';
         gapNote.style.display='block';
       } else {
@@ -3851,8 +3870,26 @@
         }
       }
     });
-    ['a-need','a-want','a-srs','a-inv'].forEach(function(id){
-      $(id).addEventListener('input',function(){ if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets(); syncSaveSlider(); recompute(); });
+    var ALLOC_IDS=['a-need','a-want','a-srs','a-inv'];
+    ALLOC_IDS.forEach(function(id){
+      $(id).addEventListener('input',function(){
+        if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets();
+        // Each slider keeps a FIXED visual range (1-100, or SRS's own legal ceiling) at
+        // all times, so a small % genuinely looks small on the track -- dynamically
+        // narrowing an untouched slider's max shifts its thumb's position even when its
+        // value never changed, which reads as every slider moving whenever you drag one.
+        // Instead, only the slider actually being dragged gets ITS VALUE clamped here,
+        // against whatever the OTHER three are already using: with all four at their
+        // default/preset values (summing to exactly 100), that leaves zero room, so
+        // nothing can be dragged right until something else is pulled left first --
+        // freeing exactly that much room for any of the other three to claim.
+        var otherSum=0;
+        ALLOC_IDS.forEach(function(otherId){ if(otherId!==id) otherSum+=+$(otherId).value; });
+        var roomLeft=Math.max(0,100-otherSum);
+        var hardCap=(id==='a-srs') ? Math.min(roomLeft,(window.__legalSrsCapPct!==undefined?window.__legalSrsCapPct:100)) : roomLeft;
+        if(+$(id).value>hardCap) $(id).value=hardCap;
+        syncSaveSlider(); recompute();
+      });
     });
 
     /* ---- composite "Save & invest" control -------------------------------------
