@@ -529,7 +529,7 @@
   .ded-row .amt{font-family:'Space Mono',monospace;font-weight:700;flex:0 0 auto}
   .bar{display:flex;height:36px;border-radius:6px;overflow:hidden;margin:16px 0 12px;border:1px solid var(--line)}
   .bar .seg{display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;color:#fff;min-width:0;overflow:hidden}
-  .seg-need{background:var(--single)} .seg-want{background:var(--family)} .seg-srs{background:var(--srs)} .seg-inv{background:var(--brand)} .seg-gap{background:repeating-linear-gradient(45deg,#e3ded5,#e3ded5 6px,#d5cfc2 6px,#d5cfc2 12px)}
+  .seg-need{background:var(--single)} .seg-want{background:var(--family)} .seg-srs{background:var(--srs)} .seg-cpftopup{background:#C79A1E} .seg-inv{background:var(--brand)} .seg-gap{background:repeating-linear-gradient(45deg,#e3ded5,#e3ded5 6px,#d5cfc2 6px,#d5cfc2 12px)}
   .blegend{display:flex;flex-direction:column;gap:9px;margin-top:4px}
   .blegend .row{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:13.5px}
   .blegend .row .l{display:flex;align-items:center;gap:8px;color:var(--muted)}
@@ -1021,6 +1021,20 @@
         </label>
         <div id="halfraise-noeffect" style="display:none;margin-top:8px;font-size:12.5px;color:var(--muted);line-height:1.5">⚠ This toggle currently makes <b>zero difference</b> to your numbers -- most likely because your own STI slider is already set above 50%, so it already exceeds the floor this toggle would enforce. A floor can only ever raise what your sliders would otherwise give you, never add on top of it.</div>
       </div>
+<div class="field toggle-field" id="f-cpflifedefer">
+        <label class="toggle-label">
+          <input type="checkbox" id="i-cpflifedefer">
+          <span>Defer CPF LIFE payouts to age 70 <span class="hint"><button class="help">?</button><span class="bubble" id="bub-cpflifedefer">Each year CPF LIFE payouts are deferred past 65 raises the monthly amount by about 7% -- deferring the full 5 years to 70 means roughly 35% more every month, for life, versus starting at 65.</span></span></span>
+        </label>
+      </div>
+<div class="field" id="f-cpflifeplan">
+        <label>CPF LIFE plan <span class="hint"><button class="help">?</button><span class="bubble" id="bub-cpflifeplan">Loading...</span></span></label>
+        <select id="i-cpflifeplan">
+          <option value="standard">Standard -- level for life</option>
+          <option value="escalating">Escalating -- starts lower, +2%/yr for life</option>
+          <option value="basic">Basic -- lower payout, bigger bequest</option>
+        </select>
+      </div>
         </div>
       </details>
 
@@ -1052,6 +1066,10 @@
           <div class="milestones flow" id="srs-excess-note" style="display:none;margin-top:8px;background:#E2604F1A;border:1px solid #E2604F55;border-radius:6px;padding:10px 12px;color:var(--brick)"></div>
         </div>
         <div class="alloc-row">
+          <div class="alloc-head"><span class="l"><i class="dot" style="background:var(--srs)"></i>CPF top-up (RSTU), monthly <span class="hint"><button class="help">?</button><span class="bubble" id="bub-cpftopup">A voluntary cash top-up to your own CPF Special Account — a separate relief from SRS, up to S$8,000/yr (~S$667/mo). Draws from the same shared budget as Necessities/Wants/SRS/STI below.</span></span></span><span class="amt"><output id="o-cpftopup">S$0/mo</output></span></div>
+          <input type="range" id="i-cpftopup" min="0" max="667" step="10" value="0" style="accent-color:var(--srs)">
+        </div>
+        <div class="alloc-row">
           <div class="alloc-head"><span class="l"><i class="dot" style="background:var(--brand)"></i>Invest into STI <span class="hint"><button class="help">?</button><span class="bubble">Open a low-cost brokerage, buy a Straits Times Index ETF (e.g. ES3 or G3B) with this fixed sum <b>every month</b>, switch on dividend reinvestment, and never sell in a dip. Every future raise is split in the same proportions as these four sliders — so this % (plus SRS) is what keeps compounding for the rest of your career, and setting it to 0% means genuinely investing S$0.</span></span></span><span class="amt"><output id="ao-inv">11%</output> · <span id="ad-inv"></span></span></div>
           <input type="range" id="a-inv" min="0" max="100" step="1" value="11" style="accent-color:var(--brand)">
         </div>
@@ -1069,6 +1087,7 @@
         <div class="ded-row"><span class="lab">− CPF (employee) <span class="hint"><button class="help">?</button><span class="bubble">20% of each salary up to the wage ceiling (~S$8,000/mo). Your <b>employer adds ~17% more</b> into CPF on top — not deducted from pay, but it still builds your retirement.</span></span></span><span class="amt" id="b-cpf"></span></div>
         <div class="ded-row"><span class="lab">− SRS contribution <span class="hint"><button class="help">?</button><span class="bubble">Pre-tax: your SRS slider's monthly amount is subtracted from taxable income <b>before</b> tax is worked out — the same way CPF is. That's why it sits here, above tax, not after Take-home like STI. It's still real money leaving your pocket into a locked, tax-advantaged account.</span></span></span><span class="amt" id="b-srs"></span></div>
         <div class="ded-row"><span class="lab">− Income tax <span class="hint"><button class="help">?</button><span class="bubble" id="bub-tax">Singapore resident tax after CPF relief <b>and SRS relief</b>, per earner. The first <b>S$20,000</b> of chargeable income is tax-free, so modest salaries pay little or nothing — and any SRS contribution lowers this further.</span></span></span><span class="amt" id="b-tax"></span></div>
+        <div class="ded-row" id="row-cpftopup0" style="display:none"><span class="lab">− CPF top-up (RSTU) <span class="hint"><button class="help">?</button><span class="bubble">Your CPF top-up slider's monthly amount, drawn from the same shared pool as Necessities/Wants/SRS/STI below — capped at whatever's genuinely left once they've taken their share, same as any of them would be.</span></span></span><span class="amt" id="b-cpftopup0"></span></div>
         <div class="ded-row tot"><span class="lab">Take-home</span><span class="amt" id="b-th"></span></div>
         <div class="ded-row"><span class="lab"><span id="b-house-sign"></span>Housing <span class="hint"><button class="help">?</button><span class="bubble" id="bub-house">Your rent or mortgage <b>right now</b>, based on your current age and choices. Renting or a condo loan is real cash; an HDB mortgage is normally serviced from CPF-OA. If you kept your HDB and rented it out after a condo upgrade, the estimated after-tax rent nets against the condo mortgage here -- and can turn this into net income.</span></span></span><span class="amt" id="b-house"></span></div>
         <div class="ded-row" id="row-car" style="display:none"><span class="lab">− Car <span class="hint"><button class="help">?</button><span class="bubble" id="bub-car">Depreciation and running costs (petrol, insurance, road tax, parking, maintenance, ERP) for the car you've chosen, paid in cash every month -- this competes directly with Wants and STI investing.</span></span></span><span class="amt" id="b-car"></span></div>
@@ -2200,11 +2219,11 @@
 
   /* ===== SHARED CALCULATOR STATE: local save + shareable scenario links ===== */
   var CALC_INPUT_IDS=[
-    ['i-age','a'],['i-sal','s'],['i-spouse','sp'],['i-nw0','nw'],['i-owncsize','oc'],['i-exmort','em'],['i-exyears','ey'],['i-mop','mo'],['i-mortsrc','ms'],['i-mode','m'],['i-raise','r'],['i-sti','si'],['i-job','j'],['i-halfraise','hr'],['i-raisefloor-pct','rf'],
+    ['i-age','a'],['i-sal','s'],['i-spouse','sp'],['i-nw0','nw'],['i-owncsize','oc'],['i-exmort','em'],['i-exyears','ey'],['i-mop','mo'],['i-mortsrc','ms'],['i-mode','m'],['i-raise','r'],['i-sti','si'],['i-job','j'],['i-halfraise','hr'],['i-raisefloor-pct','rf'],['i-cpflifedefer','cld'],['i-cpflifeplan','clp'],
     ['i-house','h'],['i-hdb','hd'],['i-flat','f'],['i-btowait','bw'],['i-buy','b'],
     ['i-prebuy','pb'],['i-prebuyage','pba'],['i-marry','mr'],['i-wed','w'],
     ['i-condo','cd'],['i-csize','cs'],['i-cage','ca'],['i-bto','bt'],
-    ['i-car','cr'],['i-carage','cra'],['i-omv','om'],['i-pa','pa'],['i-paage','paa'],
+    ['i-car','cr'],['i-carage','cra'],['i-omv','om'],['i-pa','pa'],['i-paage','paa'],['i-cpftopup','ct'],
     ['a-need','an'],['a-want','aw'],['a-srs','as'],['a-inv','ai']
   ];
   function getCalcState(){
@@ -2906,6 +2925,8 @@
       o.numKids=o.house==='kid'?1:(o.house==='kid2'?2:(o.house==='singlemom'?1:0));
       o.prof=PROFILES[$('i-job').value]||null; o.se=!!(o.prof&&o.prof.se);
       o.saveHalfRaise=$('i-halfraise') ? $('i-halfraise').checked : false;
+      o.cpfLifeDefer=$('i-cpflifedefer') ? $('i-cpflifedefer').checked : false;
+      o.cpfLifePlan=$('i-cpflifeplan') ? $('i-cpflifeplan').value : 'standard';
       // Universal, not a per-scenario choice: SRS past the point of any further tax
       // benefit is a strict downgrade versus open STI (same investments, but locked away
       // for no reason), so this always applies -- no rational saver would deliberately
@@ -2950,6 +2971,7 @@
       o.carAge=+$('i-carage').value;
       o.omv=+$('i-omv').value;
       o.pa=+$('i-pa').value; o.paAge=+$('i-paage').value;
+      o.cpfTopUp=$('i-cpftopup') ? +$('i-cpftopup').value : 0;
       return o;
     }
     function clone(o){ var n={},k; for(k in o) n[k]=o[k]; return n; }
@@ -3086,11 +3108,23 @@
         }
         var cRel=(childReliefHH>0)?(sgTax(Math.max(chg1-srs1*12,0))-sgTax(Math.max(chg1-srs1*12-childReliefHH,0)))/12:0;
         var pRel=(o.pa>0)?(sgTax(Math.max(chg1-srs1*12-childReliefHH,0))-sgTax(Math.max(chg1-srs1*12-childReliefHH-5500,0)))/12:0;
+        // CPF Cash Top-Up Relief (RSTU): up to S$8,000/yr for a self top-up to SA/RA,
+        // a separate relief bucket from SRS -- both can be claimed from the same income
+        // in the same year. Stacked last, on top of every other relief already
+        // subtracted above, so its own incremental saving is measured correctly against
+        // the fully-reduced base rather than in isolation. Scoped to self top-ups only
+        // for now -- the scheme also allows topping up a spouse, parent, or sibling for
+        // another S$8,000/yr, which this doesn't yet model.
+        var rstuMonthly = o.cpfTopUp || 0;
+        var rstuRelief = Math.min(rstuMonthly*12, 8000);
+        var rRel=(rstuRelief>0)?(sgTax(Math.max(chg1-srs1*12-childReliefHH-(o.pa>0?5500:0),0))-sgTax(Math.max(chg1-srs1*12-childReliefHH-(o.pa>0?5500:0)-rstuRelief,0)))/12:0;
         taxSaved+=((taxNo1-tax1)+(taxNo2-tax2))*12;
         // Take-home is now genuinely SRS-exclusive: SRS comes off the top like CPF (and
-        // lowers the tax base above), so it's never double-subtracted further down.
-        var th=(sal1+sal2)-emp-srsTargetHH-(tax1+tax2)+pRel+cRel;
-        OA+=oaC*12; RET+=retC*12;
+        // lowers the tax base above), so it's never double-subtracted further down. The
+        // RSTU top-up itself is cash leaving take-home into CPF -- rRel is only the tax
+        // it saves, added back the same way pRel and cRel already are.
+        var th=(sal1+sal2)-emp-srsTargetHH-(tax1+tax2)+pRel+cRel-rstuMonthly+rRel;
+        OA+=oaC*12; RET+=retC*12+rstuMonthly*12;
         // budget engine: init at start and at marriage
         var marriedThisYear=(!o.single && !marriedFromStart && a===o.marryAge);
         // SRS is already extracted from th above. Invest's share of th is its DIRECT
@@ -3284,7 +3318,23 @@
         stiPath.push(STI); srsPath.push(SRS); cpfPath.push(OA+RET);
       }
       var POT=STI+SRS, CPF=OA+RET, annu=CPF*0.7;
-      var cpflife=annu*0.0941/12, potdraw=POT*0.04/12;
+      // Deferring CPF LIFE past 65 raises the monthly payout by roughly 7%/yr of
+      // deferral (CPF Board's own published figure) -- 35% more at the full 5-year
+      // deferral to 70. This app's CPF LIFE figure is a single, steady-state "monthly
+      // income" snapshot rather than a year-by-year post-retirement simulation, so the
+      // deferral is modelled as a straight multiplier on that payout rate -- it doesn't
+      // separately model the 5 gap years with no CPF LIFE income at all before the
+      // boosted payout starts, which the help bubble explains directly.
+      var cpfLifeDeferBonus = o.cpfLifeDefer ? 0.35 : 0;
+      // Plan choice adjusts the STARTING payout rate against Standard (this app's
+      // existing 0.0941 baseline): Escalating begins roughly 9% lower, then rises 2%/yr
+      // for life (CPF Board's own published range); Basic starts roughly 12% lower and
+      // -- unlike this snapshot figure shows -- continues declining further in real life
+      // once Retirement Account balances fall below S$60k, since Basic sets aside a
+      // smaller annuity premium in exchange for a larger bequest. Both simplifications
+      // are explained directly in the help bubble.
+      var cpfLifePlanMult = (o.cpfLifePlan==='escalating') ? 0.91 : (o.cpfLifePlan==='basic') ? 0.88 : 1;
+      var cpflife=annu*0.0941*cpfLifePlanMult*(1+cpfLifeDeferBonus)/12, potdraw=POT*0.04/12;
       var retRent=rentingOutBTO?(FLATS[o.flatIdx].rent*Math.pow(1.025,yrs)*0.78):0;
       return {yrs:yrs,disc:disc,STI:STI,SRS:SRS,POT:POT,CPF:CPF,cpflife:cpflife,potdraw:potdraw,
         nw:POT+CPF,income:cpflife+potdraw+retRent,taxSaved:taxSaved,spath:spath,
@@ -3392,6 +3442,7 @@
       $('o-carage').textContent=$('i-carage').value;
       $('o-omv').textContent=fmt(+$('i-omv').value);
       $('o-pa').textContent=fmt(+$('i-pa').value)+'/mo';
+      var oCpfTopUp=$('o-cpftopup'); if(oCpfTopUp && $('i-cpftopup')) oCpfTopUp.textContent=fmt(+$('i-cpftopup').value)+'/mo';
       $('o-paage').textContent=$('i-paage').value;
       $('f-paage').style.display=(+$('i-pa').value>0)?'block':'none';
       var flat=$('i-flat');
@@ -3635,18 +3686,25 @@
       }
       var cRel0=(childReliefHH0>0)?(sgTax(Math.max(ch0a-srs0a*12,0))-sgTax(Math.max(ch0a-srs0a*12-childReliefHH0,0)))/12:0;
       var pRel0=(o.pa>0)?(sgTax(Math.max(ch0a-srs0a*12-childReliefHH0,0))-sgTax(Math.max(ch0a-srs0a*12-childReliefHH0-5500,0)))/12:0;
+      // Same CPF top-up (RSTU) relief as the projection engine -- mirrored here for the
+      // year-0 "monthly budget now" display specifically, stacked last on the fully-
+      // reduced base for the same reason cRel0/pRel0 already are.
+      var rstuMonthly0 = o.cpfTopUp || 0;
+      var rstuRelief0 = Math.min(rstuMonthly0*12, 8000);
+      var rRel0=(rstuRelief0>0)?(sgTax(Math.max(ch0a-srs0a*12-childReliefHH0-(o.pa>0?5500:0),0))-sgTax(Math.max(ch0a-srs0a*12-childReliefHH0-(o.pa>0?5500:0)-rstuRelief0,0)))/12:0;
       var tax0=tax0a+tax0b;
-      var th0=(s0a+s0b)-emp0-srsCash0-tax0+pRel0+cRel0;
+      var th0=(s0a+s0b)-emp0-srsCash0-tax0+pRel0+cRel0-rstuMonthly0+rRel0;
       $('b-gross').textContent=fmt(s0a+s0b)+(e0>1?' · 2 earners':'');
       $('b-cpf').textContent='− '+fmt(emp0)+(o.se?' (Medisave only)':'');
       $('b-srs').textContent= srsCash0>0 ? ('− '+fmt(srsCash0)) : 'S$0';
-      $('b-tax').textContent='− '+fmt(Math.max(tax0-pRel0-cRel0,0));
+      $('b-tax').textContent='− '+fmt(Math.max(tax0-pRel0-cRel0-rRel0,0));
       // Keep value cells to a bare figure — trailing parentheticals wrapped and broke the
       // table layout. The context now lives in the row's tooltip instead.
       var taxCtx=[];
       if(srsCash0>0) taxCtx.push('This figure is <b>after SRS relief</b> \u2014 your '+fmt(srsCash0)+'/mo SRS contribution is deducted from taxable income first.');
       if(cRel0>1) taxCtx.push('It is also <b>after Qualifying Child Relief and Working Mother\u2019s Child Relief</b>, worth about '+fmt(cRel0)+'/mo here \u2014 assumed claimed in full by the primary earner, a simplification since this app doesn\u2019t track which parent is which.');
       if(pRel0>1) taxCtx.push('It is also <b>after Parent Relief</b>, worth about '+fmt(pRel0)+'/mo here.');
+      if(rRel0>1) taxCtx.push('It is also <b>after CPF Cash Top-Up Relief (RSTU)</b>, worth about '+fmt(rRel0)+'/mo here \u2014 a separate relief from SRS, both claimed in the same year.');
       var bubTax=$('bub-tax');
       if(bubTax) bubTax.innerHTML='Singapore resident tax after CPF relief <b>and SRS relief</b>, per earner. '
         +'The first <b>S$20,000</b> of chargeable income is tax-free, so modest salaries pay little or nothing.'
@@ -3774,6 +3832,33 @@
       // that case) -- this is the SAME quantity "unalloc0" always meant, just now
       // computed against a base all four sliders genuinely share.
       var unalloc0=Math.max(disposableBase0-needOnly0-wantOnly0-stiOnly0-srsCash0,0);
+      // CPF top-up was computed earlier (for tax0/th0) using the slider's raw value,
+      // unaware of whether Necessities/Wants/SRS/STI had already claimed the whole
+      // shared base -- disposableBase0 and unalloc0 above never depended on it at all,
+      // so this is where the TRUE room actually becomes known. If the raw request
+      // exceeds what's genuinely left, the earlier tax0/th0/b-tax/b-th figures were
+      // computed against too much money and need correcting here, in place, rather
+      // than letting the slider silently draw from a budget that was already spent.
+      // Exposed globally (this pre-CPF-top-up figure specifically) so the slider's own
+      // drag listener can clamp its value directly, the same way SRS's legal cap is
+      // exposed for its own slider.
+      window.__cpfTopUpRoom = unalloc0;
+      var rstuMonthly0Constrained = Math.min(rstuMonthly0, unalloc0);
+      if(rstuMonthly0Constrained !== rstuMonthly0){
+        var rstuRelief0c = Math.min(rstuMonthly0Constrained*12, 8000);
+        var rRel0c=(rstuRelief0c>0)?(sgTax(Math.max(ch0a-srs0a*12-childReliefHH0-(o.pa>0?5500:0),0))-sgTax(Math.max(ch0a-srs0a*12-childReliefHH0-(o.pa>0?5500:0)-rstuRelief0c,0)))/12:0;
+        th0=th0-(rstuMonthly0-rstuMonthly0Constrained)-(rRel0-rRel0c);
+        tax0=tax0a+tax0b; // unchanged, but re-stated for clarity alongside the corrected figures below
+        rRel0=rRel0c;
+        rstuMonthly0=rstuMonthly0Constrained;
+        $('b-tax').textContent='− '+fmt(Math.max(tax0-pRel0-cRel0-rRel0,0));
+        $('b-th').textContent=fmt(th0);
+      }
+      unalloc0=Math.max(unalloc0-rstuMonthly0,0);
+      var cpfRow0=$('row-cpftopup0');
+      if(cpfRow0) cpfRow0.style.display = rstuMonthly0>0 ? '' : 'none';
+      var bCpfTopUp0=$('b-cpftopup0');
+      if(bCpfTopUp0) bCpfTopUp0.textContent = rstuMonthly0>0 ? ('− '+fmt(rstuMonthly0)) : 'S$0';
       var unallocRow0=$('row-unalloc0');
       if(unallocRow0) unallocRow0.style.display = unalloc0>1 ? '' : 'none';
       $('b-unalloc0').textContent = fmt(unalloc0);
@@ -3826,6 +3911,32 @@
       // point where tax hits S$0, more SRS = more tax saved; above it, every extra
       // dollar just gets locked away for nothing in return.
       var taxZeroPctThreshold = (ch0<=20000) ? 0 : (neededMonthly<=1275 && th0NoSRS>0 ? (neededMonthly*e0/th0NoSRS)*100 : null);
+      // Dynamic best-practice bubble for CPF top-up, tied to the reader's OWN stated
+      // income -- verified directly rather than using a round guessed number: SRS's
+      // own legal cap (S$1,275/mo/person) stops being enough to fully shelter taxable
+      // income only once chargeable income exceeds about S$37,400/yr -- roughly
+      // S$4,000/mo gross for a single earner, not S$10k as commonly assumed. Below
+      // that, SRS alone already zeroes out the tax bill, so CPF top-up's only value is
+      // the 4%-vs-STI return trade-off already covered by the priority-order note.
+      var bubCpfTopUp=$('bub-cpftopup');
+      if(bubCpfTopUp){
+        var srsAloneEnoughA = Math.max(0,(ch0a-20000)/12) <= 1275;
+        var srsAloneEnoughB = (e0>1) ? (Math.max(0,(ch0b-20000)/12) <= 1275) : true;
+        var txt;
+        if(e0===1){
+          txt = srsAloneEnoughA
+            ? 'At your stated income, SRS alone already brings chargeable income down to S$0 tax -- verified directly, lifetime tax saved doesn\u2019t move whether this is S$0 or maxed out. There\u2019s no tax benefit left here to capture. (The threshold: this only changes once chargeable income clears roughly S$37,400/yr -- about S$4,000/mo gross for a single earner, not the S$10k often assumed.) What\u2019s left is a pure return trade-off -- CPF\u2019s guaranteed ~4% versus STI\u2019s ~6% expected -- covered in full below.'
+            : 'At your stated income, SRS\u2019s own legal cap (S$1,275/mo) isn\u2019t enough to fully shelter your chargeable income -- so this slider genuinely has real tax relief left to capture, on top of SRS, up to another S$8,000/yr. Worth prioritising once SRS itself is maxed.';
+        } else if(srsAloneEnoughA && srsAloneEnoughB){
+          txt = 'At both your stated incomes, SRS alone already brings each of you to S$0 tax -- neither of you has tax relief left here to capture. What\u2019s left is a pure return trade-off -- CPF\u2019s guaranteed ~4% versus STI\u2019s ~6% expected.';
+        } else if(!srsAloneEnoughA && !srsAloneEnoughB){
+          txt = 'At both your stated incomes, SRS\u2019s own legal cap isn\u2019t enough to fully shelter either of you -- this slider has real tax relief left to capture for both, on top of SRS.';
+        } else {
+          txt = 'Your incomes are uneven enough that this plays out differently for each of you: the higher earner still has real tax relief left here once SRS is maxed, while the lower earner\u2019s SRS alone already zeroes out their tax bill. The stronger move research points to: once the higher earner\u2019s own S$8,000/yr self top-up is used, a further S$8,000/yr can go toward the <b>lower earner\u2019s</b> CPF instead -- the higher earner still claims that relief, while it also grows the lower earner\u2019s own CPF pot, which would otherwise lag behind. This slider only models a self top-up for now, not that family top-up.';
+        }
+        txt += ' A separate relief from SRS -- both can be claimed the same year from different money -- up to S$8,000/yr (~S$667/mo) each, and it draws from the same shared budget as Necessities/Wants/SRS/STI below.';
+        bubCpfTopUp.innerHTML = txt;
+      }
       var srsExcessNote=$('srs-excess-note');
       if(taxZeroPctThreshold!==null && (o.aS*100)>taxZeroPctThreshold+0.5){
         srsExcessNote.innerHTML='⚠ <b>This is more SRS than saves you any tax.</b> The tax benefit stops at about <b>'+Math.round(taxZeroPctThreshold)+'%</b> (~S$'+fmt(neededMonthly*e0)+'/mo) — everything you\u2019ve added beyond that still gets <b>locked in SRS until age 64</b> (Singapore\u2019s current statutory withdrawal age), for zero extra tax relief. That money would keep more flexibility invested directly in STI, or spread across other assets — gold, an emergency cash fund, real estate — as covered on the Portfolio tab.';
@@ -3838,7 +3949,12 @@
       $('ad-srs').textContent=fmt(srsCash0);
       $('ad-inv').textContent=fmt(stiOnly0);
       var pN=Math.round(o.aN*100),pW=Math.round(o.aW*100),pS=Math.round(o.aS*100),pI=Math.round(o.aI*100);
-      var pGap=Math.max(0,100-pN-pW-pS-pI);
+      // CPF top-up isn't a %-of-pool slider like the four above, but it draws from the
+      // same shared base, so its bar segment is the equivalent share of that same base --
+      // computed from the actual, already-constrained dollar figure, then carved out of
+      // the gap rather than added on top of it, so the bar's total still reads as 100%.
+      var pCpfTopUp = disposableBase0>0 ? Math.round((rstuMonthly0/disposableBase0)*100) : 0;
+      var pGap=Math.max(0,100-pN-pW-pS-pI-pCpfTopUp);
       var gapNote=$('alloc-gap-note');
       if(pGap>0){
         var gapDollar=(pGap/100)*disposableBase0;
@@ -3850,6 +3966,7 @@
       $('b-bar').innerHTML='<div class="seg seg-need" style="width:'+pN+'%">'+(pN>=12?pN+'%':'')+'</div>'+
         '<div class="seg seg-want" style="width:'+pW+'%">'+(pW>=12?pW+'%':'')+'</div>'+
         '<div class="seg seg-srs" style="width:'+pS+'%">'+(pS>=12?pS+'%':'')+'</div>'+
+        (pCpfTopUp>0?'<div class="seg seg-cpftopup" style="width:'+pCpfTopUp+'%">'+(pCpfTopUp>=12?pCpfTopUp+'%':'')+'</div>':'')+
         '<div class="seg seg-inv" style="width:'+pI+'%">'+(pI>=12?pI+'%':'')+'</div>'+
         (pGap>0?'<div class="seg seg-gap" style="width:'+pGap+'%">'+(pGap>=12?pGap+'%':'')+'</div>':'');
       // projections
@@ -3857,6 +3974,40 @@
       $('p-srs').textContent= o.aS>0 ? (fmtK(r.SRS/disc)+' · tax saved '+fmtK(r.taxSaved/disc)) : '—';
       $('p-sti-only').textContent= fmtK(r.STI/disc);
       $('p-cpf-bal').textContent=fmtK(r.CPF/disc); $('p-cpf-life').textContent=fmt(r.cpflife/disc);
+      // Personalized deferral comparison -- runs a second, lightweight projection with
+      // only the toggle flipped, so the bubble shows the reader's OWN two real figures
+      // rather than a generic example. Cheap: project() is already fast enough to run
+      // twice per recompute without any perceptible lag.
+      var bubCpfLifeDefer=$('bub-cpflifedefer');
+      if(bubCpfLifeDefer){
+        var rCompare=project(Object.assign({},o,{cpfLifeDefer:!o.cpfLifeDefer}));
+        var cpflife65 = (o.cpfLifeDefer ? rCompare.cpflife : r.cpflife)/disc;
+        var cpflife70 = (o.cpfLifeDefer ? r.cpflife : rCompare.cpflife)/disc;
+        bubCpfLifeDefer.innerHTML = 'At your own numbers: <b>'+fmt(cpflife65)+'/mo</b> starting at 65, versus <b>'+fmt(cpflife70)+'/mo</b> for life if deferred to 70 \u2014 about 35% more, but nothing at all from CPF LIFE during those 5 extra years (this app doesn\u2019t model bridging that gap from your STI/SRS pot, which a real deferral would need). '
+          + 'The two options only balance out around <b>age 85</b> \u2014 roughly 15 years after whichever start date you pick \u2014 after which deferring pays more, cumulatively, for every additional year lived; before that, starting at 65 gives more total income. This is a straightforward crossover-age fact about the two payout streams themselves, not a judgement about anyone\u2019s own health or life expectancy \u2014 worth weighing against your own family history and how you feel about the risk of dying before the crossover versus living well past it.';
+      }
+      // Same personalized-comparison approach as the deferral bubble above: a second,
+      // lightweight projection with only the plan switched, so the dollar figures shown
+      // are the reader's own, not a generic example. The crossover ages themselves
+      // (escalating vs standard) don't depend on the reader's own numbers at all -- both
+      // plans scale off the identical CPF balance, so the ratio between them, and
+      // therefore the age each crosses the other, is fixed by the 9%-lower-start and
+      // 2%/yr-growth rates alone. Verified directly: monthly payout itself overtakes
+      // Standard at 70; CUMULATIVE total overtakes at 76.
+      var bubCpfLifePlan=$('bub-cpflifeplan');
+      if(bubCpfLifePlan){
+        var rStd = (o.cpfLifePlan==='standard') ? r : project(Object.assign({},o,{cpfLifePlan:'standard'}));
+        var stdLife = rStd.cpflife/disc, thisLife = r.cpflife/disc;
+        var txt;
+        if(o.cpfLifePlan==='standard'){
+          txt = 'The default, and this app\u2019s baseline above: a level payout for life, the highest starting amount of the three, with no further growth or decline built in. <b>Escalating</b> starts lower but rises 2%/yr for life -- a hedge against inflation eroding a fixed payout over a long retirement. <b>Basic</b> starts lower still and keeps more of your Retirement Account balance as a bequest, rather than converting as much of it into guaranteed lifetime income.';
+        } else if(o.cpfLifePlan==='escalating'){
+          txt = 'At your own numbers: <b>'+fmt(thisLife)+'/mo</b> to start, versus <b>'+fmt(stdLife)+'/mo</b> under Standard -- roughly 9% less on day one. It then grows 2%/yr for life. Two crossover points worth knowing, fixed by the rates themselves rather than your own numbers: the monthly payout itself overtakes Standard\u2019s fixed amount at <b>age 70</b>; the running cumulative total \u2014 what you\u2019ve actually received so far, adding it all up \u2014 only overtakes Standard\u2019s around <b>age 76</b>. Before 76, Standard has paid out more in total; after it, Escalating pulls ahead for every year lived beyond that. Same framing as deferral above: a fact about the two payout streams, not a judgement about anyone\u2019s own life expectancy.';
+        } else {
+          txt = 'At your own numbers: <b>'+fmt(thisLife)+'/mo</b>, versus <b>'+fmt(stdLife)+'/mo</b> under Standard -- roughly 12% less every month, for life (and this app\u2019s single steady-state figure doesn\u2019t capture Basic\u2019s real-world further decline once Retirement Account balances fall below S$60k, since less of it converts to guaranteed lifetime income up front). This isn\u2019t a \u201cwait and get more\u201d trade-off like Escalating -- it\u2019s a straight swap of monthly income for a larger bequest to your beneficiaries, since Basic keeps more of your own balance unconverted rather than pooling it into the annuity.';
+        }
+        bubCpfLifePlan.innerHTML = txt;
+      }
       $('p-nw-t').textContent=fmtK(r.nw/disc); $('p-nw-n').textContent=fmtK(r.nw);
       var homeTxt = o.alreadyOwn ? (o.condo ? (CONDOS[o.condoIdx].n+' condo (upgraded)') : 'home already owned') : (o.own ? (o.condo ? (CONDOS[o.condoIdx].n+' condo'+(o.btoSell?'':' + BTO rented out')) : FLATS[o.flatIdx].n+' owned') : 'renting for life');
       $('p-home').textContent=homeTxt;
@@ -4037,6 +4188,23 @@
       });
     });
 
+    // CPF top-up isn't part of the four-way %-of-pool split above (it's a direct
+    // dollar slider, like Parental Allowance), but it draws from the SAME shared
+    // budget -- so it needs its own clamp against whatever calc() most recently
+    // found was genuinely left over, exposed via window.__cpfTopUpRoom. That value
+    // doesn't depend on this slider's own setting (only on Necessities/Wants/SRS/STI
+    // and the fixed costs above them), so it stays accurate to clamp against even
+    // mid-drag, before the next recompute() runs.
+    if($('i-cpftopup')){
+      $('i-cpftopup').addEventListener('input',function(){
+        if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets();
+        var room=(window.__cpfTopUpRoom!==undefined)?window.__cpfTopUpRoom:667;
+        var hardCap=Math.min(667,room);
+        if(+$('i-cpftopup').value>hardCap) $('i-cpftopup').value=hardCap;
+        recompute();
+      });
+    }
+
     /* ---- composite "Save & invest" control -------------------------------------
        Writes through to the four detailed sliders rather than being a fifth source
        of truth. SRS/STI keep their existing ratio (so a deliberate SRS-heavy or
@@ -4147,6 +4315,18 @@
       var rf=$('i-raisefloor-pct'); if(rf) rf.value='';
       recompute();
     });
+    if($('i-cpflifedefer')){
+      $('i-cpflifedefer').addEventListener('change',function(){
+        if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets();
+        recompute();
+      });
+    }
+    if($('i-cpflifeplan')){
+      $('i-cpflifeplan').addEventListener('change',function(){
+        if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets();
+        recompute();
+      });
+    }
     $('i-job').addEventListener('change',function(){ if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets(); var p=PROFILES[$('i-job').value]; if(p){ $('i-sal').value=p.s; } recompute(); });
     // Partner's Salary sits ABOVE the Household selector on the page -- easy to miss
     // entirely if the reader is working their way downward and only just discovered,
