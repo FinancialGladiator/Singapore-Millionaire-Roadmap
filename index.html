@@ -856,6 +856,7 @@
         <label>Housing <span class="hint"><button class="help">?</button><span class="bubble"><b>Buy an HDB</b>: the deposit and mortgage are paid from CPF (not cash), rent stops at purchase and half the freed rent is banked into investing. <b>Rent for life</b>: no flat, and rent continues forever — including in retirement.</span></span></label>
         <select id="i-hdb">
           <option value="own">Buy an HDB flat (BTO)</option>
+          <option value="own-resale">Buy an HDB flat (Resale)</option>
           <option value="have-hdb">I already own an HDB flat</option>
           <option value="have-condo">I already own a condo</option>
           <option value="rent">Rent for life</option>
@@ -898,8 +899,12 @@
         <label id="l-prebuyage">Move out (start paying rent) at age — <output id="o-prebuyage">35</output></label>
         <input type="range" id="i-prebuyage" min="18" max="65" step="1" value="35">
       </div>
+<div class="field" id="f-btowait">
+        <label>Ballot + build wait, in years — <output id="o-btowait">4</output> <span class="hint"><button class="help">?</button><span class="bubble">Real BTO timelines have two separate stages: winning the ballot itself (often several tries for a popular launch, especially for first-timer singles), then 3–5 years of construction before key collection. This slider covers the whole stretch, from first application to actually moving in — 4 years is a fast, uncontested launch; 10 years is a realistic worst case for a popular estate with multiple failed ballot attempts.</span></span></label>
+        <input type="range" id="i-btowait" min="4" max="10" step="1" value="4">
+      </div>
 <div class="field" id="f-flat">
-        <label>Flat size — <output id="o-flat">2-room Flexi</output> <span class="hint"><button class="help">?</button><span class="bubble">Slide from the smallest BTO (2-room Flexi, ~S$140k before grants) to the largest (5-room, ~S$530k). New <b>BTOs</b> restrict singles to the 2-room Flexi — picking a larger size while Single is selected models buying that size on the <b>resale market</b> instead (allowed for singles from age 35), still only qualifying for the smaller singles-rate grant. This lets you compare the retirement-income impact of a bigger home.</span></span></label>
+        <label>Flat size — <output id="o-flat">2-room Flexi</output> <span class="hint"><button class="help">?</button><span class="bubble" id="bub-flat">Slide from the smallest (2-room Flexi, ~S$140k before grants as a new BTO) to the largest (5-room, ~S$530k). New <b>BTOs</b> restrict singles to the 2-room Flexi — picking a larger size while Single is selected models buying that size on the <b>resale market</b> instead (allowed for singles from age 35), still only qualifying for the smaller singles-rate grant. This lets you compare the retirement-income impact of a bigger home.</span></span></label>
         <input type="range" id="i-flat" min="0" max="3" step="1" value="0">
       </div>
 <div class="field" id="f-buy">
@@ -2196,7 +2201,7 @@
   /* ===== SHARED CALCULATOR STATE: local save + shareable scenario links ===== */
   var CALC_INPUT_IDS=[
     ['i-age','a'],['i-sal','s'],['i-spouse','sp'],['i-nw0','nw'],['i-owncsize','oc'],['i-exmort','em'],['i-exyears','ey'],['i-mop','mo'],['i-mortsrc','ms'],['i-mode','m'],['i-raise','r'],['i-sti','si'],['i-job','j'],['i-halfraise','hr'],['i-raisefloor-pct','rf'],
-    ['i-house','h'],['i-hdb','hd'],['i-flat','f'],['i-buy','b'],
+    ['i-house','h'],['i-hdb','hd'],['i-flat','f'],['i-btowait','bw'],['i-buy','b'],
     ['i-prebuy','pb'],['i-prebuyage','pba'],['i-marry','mr'],['i-wed','w'],
     ['i-condo','cd'],['i-csize','cs'],['i-cage','ca'],['i-bto','bt'],
     ['i-car','cr'],['i-carage','cra'],['i-omv','om'],['i-pa','pa'],['i-paage','paa'],
@@ -2740,7 +2745,7 @@
     var $=function(id){return document.getElementById(id);};
     var fmt=function(n){return 'S$'+Math.round(n).toLocaleString('en-US');};
     var fmtK=function(n){var s=n<0?'−':''; n=Math.abs(n); if(n>=1e6) return s+'S$'+(n/1e6).toFixed(2)+'m'; if(n>=1e3) return s+'S$'+Math.round(n/1e3)+'k'; return s+'S$'+Math.round(n);};
-    var FLATS=[{n:'2-room Flexi',p:140000,rent:1800},{n:'3-room BTO',p:260000,rent:2400},{n:'4-room BTO',p:400000,rent:3000},{n:'5-room BTO',p:530000,rent:3300}];
+    var FLATS=[{n:'2-room flat',p:140000,rent:1800},{n:'3-room flat',p:260000,rent:2400},{n:'4-room flat',p:400000,rent:3000},{n:'5-room flat',p:530000,rent:3300}];
     var CONDOS=[{n:'1-bedroom',p:1100000,mcst:300,tax:100},{n:'2-bedroom',p:1500000,mcst:400,tax:160},{n:'3-bedroom',p:2000000,mcst:550,tax:230},{n:'4-bedroom',p:3000000,mcst:800,tax:380}];
     var PROFILES={
       mcd:{s:2400,note:''},
@@ -2910,7 +2915,7 @@
       var _rfEl=$('i-raisefloor-pct'), _rfRaw=_rfEl?_rfEl.value:'';
       if(_rfRaw!==''){ o.raiseFloorPct=+_rfRaw; }
       var hdbMode=$('i-hdb').value;
-      o.own=(hdbMode==='own'||hdbMode==='have-hdb'||hdbMode==='have-condo');
+      o.own=(hdbMode==='own'||hdbMode==='own-resale'||hdbMode==='have-hdb'||hdbMode==='have-condo');
       // 'have-*' = already owns outright: no purchase, no grant, no mortgage, and no rent.
       o.alreadyOwn=(hdbMode==='have-hdb'||hdbMode==='have-condo');
       o.mortgageCash=$('i-mortsrc') ? $('i-mortsrc').value==='cash' : false;
@@ -2923,7 +2928,14 @@
       o.startNW=+$('i-nw0').value;
       o.spouseSal=+$('i-spouse').value;
       o.flatIdx=+$('i-flat').value;
-      o.buyAge=+$('i-buy').value;
+      o.isResale=(hdbMode==='own-resale');
+      // The buy-age slider represents when you APPLY / decide to buy -- for a new BTO,
+      // the flat isn't actually ready until the ballot is won and construction
+      // finishes, so that wait gets added on top here, propagating automatically to
+      // every downstream use of buyAge (rent-until, mortgage-start, grant timing) with
+      // no other engine changes needed. Resale has no such wait -- it's available
+      // immediately, so buyAge is used as-is.
+      o.buyAge=+$('i-buy').value + (o.isResale ? 0 : ($('i-btowait') ? +$('i-btowait').value : 0));
       o.prebuy=$('i-prebuy').value; o.rentStartAge=+$('i-prebuyage').value;
       o.aN=+$('a-need').value/100; o.aW=+$('a-want').value/100; o.aS=+$('a-srs').value/100; o.aI=+$('a-inv').value/100;
       o.marryAge=o.single?999:+$('i-marry').value;
@@ -2969,7 +2981,13 @@
         var sRatioG=(o.spouseSal!==undefined && o.sal0>0)?(o.spouseSal/o.sal0):1;
         var realInc=(spath[bi]*(eB>1?(1+sRatioG):1))/inflB;
         grant=(eB===1)?ehgSingle(spath[bi]/inflB):ehgFamily(realInc);
-        netToday=Math.max(FLATS[o.flatIdx].p-grant, FLATS[o.flatIdx].p*0.2);
+        // Resale: roughly 50% above an equivalent new BTO (matching typical market
+        // gaps -- e.g. 2-room Flexi BTOs launching from ~S$140k against a resale
+        // average nearer S$360k for comparable units), before a CPF Housing Grant
+        // that runs meaningfully smaller than the new-BTO EHG it's built from here.
+        var flatPrice=FLATS[o.flatIdx].p*(o.isResale?1.5:1);
+        if(o.isResale) grant=grant*0.5;
+        netToday=Math.max(flatPrice-grant, flatPrice*0.2);
         netNom=netToday*inflB; deposit=0.2*netNom; loan0=0.8*netNom;
         var rr=0.026/12; mortM=loan0*rr/(1-Math.pow(1+rr,-300));
         // HDB Mortgage Servicing Ratio (MSR): instalment can't exceed 30% of gross household income
@@ -3021,15 +3039,17 @@
         // a standard, negligible approximation for a career-length illustration.
         var th1=sal1-cpfW1*eR-taxNo1, th2=(earners>1)?(sal2-cpfW2*eR-taxNo2):0;
         var thNoSRS=th1+th2;
-        // Opt-in: cap SRS at whichever is SMALLER -- the legal S$1,275/mo max, or the
-        // amount that brings this person's own chargeable income down to the top of the
-        // 0%-tax bracket (S$20,000/yr). Past that point, SRS provides zero additional
-        // tax benefit -- every extra dollar just locks money away with no upside over
-        // open STI, which stays fully liquid. Computed per person (SRS, CPF and tax all
-        // work per-person in Singapore), and only active when o.optimizeSRS is set --
-        // off by default, so every existing scenario computes exactly as it always has.
-        var srsCap1 = o.optimizeSRS ? Math.min(1275, Math.max(0,(chg1-20000)/12)) : 1275;
-        var srsCap2 = o.optimizeSRS ? Math.min(1275, Math.max(0,(chg2-20000)/12)) : 1275;
+        // SRS's actual dollar contribution genuinely tracks the slider, up to the legal
+        // S$1,275/mo cap -- NOT stopped early at the tax-optimal point. Over-allocating
+        // past the point where SRS still saves tax is a real, deliberately visible
+        // consequence: the slider, the dollar figure, and the resulting net worth all
+        // honestly reflect that choice, with the warning note explaining why it happened,
+        // rather than the engine silently protecting the reader from their own slider by
+        // rerouting the "wasted" portion into STI. optimizeSRS now only drives the
+        // tax-optimal preset defaults and the informational warning/tick-mark -- not a
+        // cap on the actual contribution itself.
+        var srsCap1 = 1275;
+        var srsCap2 = 1275;
         var srs1=Math.max(0,Math.min(o.aS*th1,srsCap1));
         var srs2=(earners>1)?Math.max(0,Math.min(o.aS*th2,srsCap2)):0;
         var srsPerPerson=Math.max(srs1,srs2);
@@ -3149,7 +3169,7 @@
           var cprice=cd.p*inflU;
           var equity=0;
           if(o.btoSell){
-            var resale=FLATS[o.flatIdx].p*inflU;
+            var resale=flatPrice*inflU;
             equity=Math.max(resale-hdbLoan,0);
             hdbLoan=0; soldBTO=true;
           } else {
@@ -3298,7 +3318,13 @@
       $('f-raise').style.display=$('i-mode').value==='custom'?'block':'none';
       // Only a genuine future purchase needs flat size, buy age and pre-buy arrangement.
       var hdbMode = $('i-hdb').value;
-      var buying = hdbMode==='own';
+      // Missed when Resale was added as a Housing option: this separate 'buying' flag
+      // drives ALL of the purchase-related fields showing or hiding (flat size,
+      // mortgage funding source, buy age, move-out timing) -- checking only for 'own'
+      // meant every one of those fields silently vanished the moment Resale was
+      // selected, since o.own (in readOpts, used for the actual financial math) was
+      // updated to include 'own-resale' but this UI-only twin wasn't.
+      var buying = hdbMode==='own' || hdbMode==='own-resale';
       var ownsCondoNow = hdbMode==='have-condo';
       var ownsAlready = (hdbMode==='have-hdb'||hdbMode==='have-condo');
       var ownsHdbNow = hdbMode==='have-hdb';
@@ -3370,14 +3396,60 @@
       $('f-paage').style.display=(+$('i-pa').value>0)?'block':'none';
       var flat=$('i-flat');
       flat.disabled=false;
-      var flatNote = single ? (+flat.value>0 ? ' — resale, singles eligible from 35' : ' — BTO') : '';
-      $('o-flat').textContent=FLATS[+flat.value].n+flatNote;
+      // The ballot/build wait only makes sense for a genuine new-BTO purchase -- resale
+      // is immediately available, so that slider (and its effect on buyAge) simply
+      // doesn't apply and stays hidden rather than showing a control with no effect.
+      // BTO/resale and eligibility details (singles restricted to 2-room, age 35+, etc.)
+      // now live only in the help bubble below, not in this selection label itself --
+      // the label is just the room count, kept scheme- and eligibility-neutral.
+      var isResaleUI = $('i-hdb') ? ($('i-hdb').value==='own-resale') : false;
+      $('o-flat').textContent=FLATS[+flat.value].n;
+      // Bubble text genuinely differs for resale, not just the on-screen label: BTO's
+      // rules (singles capped at 2-room Flexi, EHG grant tiers) don't apply once
+      // buying on the open resale market -- any size is available to any eligible
+      // buyer, but the grant is smaller (this app halves the equivalent EHG amount)
+      // and there's no ballot or build wait at all.
+      var bubFlat=$('bub-flat');
+      if(bubFlat){
+        bubFlat.innerHTML = isResaleUI
+          ? 'Slide from the smallest (2-room Flexi) to the largest (5-room) resale flat. Unlike a new <b>BTO</b>, resale has <b>no size restriction for singles</b> and <b>no ballot or build wait</b> — but it costs roughly 50% more than an equivalent BTO, and only qualifies for a smaller CPF Housing Grant (about half the size of the new-BTO EHG grant this app models). This lets you compare the retirement-income impact of a bigger home, or of resale itself, against building from a BTO.'
+          : 'Slide from the smallest BTO (2-room Flexi, ~S$140k before grants) to the largest (5-room, ~S$530k). New <b>BTOs</b> restrict singles to the 2-room Flexi — picking a larger size while Single is selected models buying that size on the <b>resale market</b> instead (allowed for singles from age 35), still only qualifying for the smaller singles-rate grant. This lets you compare the retirement-income impact of a bigger home.';
+      }
+      var fBtoWait=$('f-btowait'); if(fBtoWait) fBtoWait.style.display = isResaleUI ? 'none' : '';
+      // This <output> was never actually being written to after the slider was built --
+      // the underlying calculation always read the slider's real value correctly (so
+      // net worth genuinely moved), but the displayed "4" itself was just static HTML,
+      // permanently frozen at whatever the page shipped with, regardless of how far the
+      // slider was actually dragged.
+      var oBtoWait=$('o-btowait'); if(oBtoWait && $('i-btowait')) oBtoWait.textContent=$('i-btowait').value;
       var buy=$('i-buy'), minBuy=Math.max(single?35:25, age, single?35:+$('i-marry').value);
-      buy.min=minBuy;
+      // Buy age was reaching 200 -- applyCalcState() deliberately widens this slider's
+      // max to 200 before restoring a saved value, so a stale, too-low max from a
+      // previous state can never silently clamp the value being restored (see that
+      // function's own comments) -- but nothing here was ever narrowing it back down
+      // afterward. 65 is a genuine, sensible ceiling: nobody is buying their first
+      // home after their own planned retirement age.
+      buy.min=minBuy; buy.max=65;
       if(+buy.value<minBuy) buy.value=minBuy;
-      $('o-buy').textContent=buy.value+(single?' (singles: from 35)':'');
+      if(+buy.value>65) buy.value=65;
+      // Shows the combined, effective figure -- not just the raw slider value -- so this
+      // number genuinely moves when the ballot/build wait below is adjusted, rather than
+      // silently staying put while a separate internal calculation (buyAge + wait) does
+      // the real work invisibly.
+      var btoWaitYrs = (!isResaleUI && $('i-btowait')) ? +$('i-btowait').value : 0;
+      var buyDisplay = buy.value;
+      if(btoWaitYrs>0) buyDisplay += ' — keys at '+(+buy.value+btoWaitYrs);
+      $('o-buy').textContent=buyDisplay;
+      // max was dynamically tied to buy.value, so this slider's thumb visibly shifted
+      // position on its track every time buy age changed -- even though its own value
+      // never actually moved, a value sitting at, say, 35 out of a max of 35 (thumb at
+      // the far right) versus 35 out of a max of 39 (thumb noticeably left of that)
+      // reads as "it moved" even though nothing about the reader's actual choice did.
+      // A fixed, wide range (matching buy age's own fixed 25-65) keeps the thumb's
+      // visual position honestly tied only to its own value, same fix as SRS's slider
+      // earlier -- only the value itself gets clamped below, never the range.
       var prebuy=$('i-prebuy'), prebuyAge=$('i-prebuyage');
-      prebuyAge.min=age; prebuyAge.max=Math.max(+buy.value,age);
+      prebuyAge.min=age; prebuyAge.max=65;
       if(+prebuyAge.value<age) prebuyAge.value=age;
       if(+prebuyAge.value>+buy.value) prebuyAge.value=buy.value;
       $('l-prebuyage').innerHTML = (prebuy.value==='family')
@@ -3537,13 +3609,13 @@
       var tax0noA=sgTax(ch0a)/12, tax0noB=(e0>1)?sgTax(ch0b)/12:0;
       var th0a=s0a-cpfW0a*sE0-tax0noA, th0b=(e0>1)?(s0b-cpfW0b*sE0-tax0noB):0;
       var th0NoSRS=th0a+th0b;
-      // Mirrors the SAME tax-optimal cap the engine applies for the 45-year projection --
-      // this is a separate, duplicate computation for the year-0 "monthly budget now"
-      // display specifically, which was never updated when that engine fix landed. Caps
-      // SRS at whichever is smaller: the legal S$1,275/mo max, or the amount that brings
-      // THIS person's own chargeable income down to the S$20,000/yr 0%-tax threshold.
-      var srsCap0a = o.optimizeSRS ? Math.min(1275, Math.max(0,(ch0a-20000)/12)) : 1275;
-      var srsCap0b = o.optimizeSRS ? Math.min(1275, Math.max(0,(ch0b-20000)/12)) : 1275;
+      // Mirrors the SAME change the engine now applies for the 45-year projection: the
+      // actual SRS dollar figure genuinely tracks the slider, up to the legal S$1,275/mo
+      // cap only -- not stopped early at the tax-optimal point, so over-allocating is a
+      // real, visible consequence in this "monthly budget now" display too, not silently
+      // absorbed elsewhere.
+      var srsCap0a = 1275;
+      var srsCap0b = 1275;
       var srs0a=Math.max(0,Math.min(o.aS*th0a,srsCap0a));
       var srs0b=(e0>1)?Math.max(0,Math.min(o.aS*th0b,srsCap0b)):0;
       var srsPP0=Math.max(srs0a,srs0b);
@@ -3662,6 +3734,23 @@
       // logic exactly, so the "monthly budget now" table never silently shows money as
       // still going into SRS once it stops earning any tax benefit.
       var srsOverflow0 = Math.max(0,o.aS*th0a-srsCap0a) + (e0>1 ? Math.max(0,o.aS*th0b-srsCap0b) : 0);
+      // A subtle visual cue -- not a warning in itself, since the full explanation
+      // already lives in the note below -- that connects "this number stopped moving"
+      // to "here's why" at a glance, without dimming the figure or nudging the slider
+      // away from where the reader put it. The mistake itself stays fully visible and
+      // fully draggable; this just makes the two related things read as related.
+      // A small tolerance (S$10/mo) absorbs the unavoidable rounding from whole-percent
+      // slider steps -- 9% itself already sits a few dollars past the exact optimal
+      // (8.87%), which would otherwise light this up even at the app's own intended
+      // default, before the reader has made any real choice to push past it at all.
+      var bSrsEl=$('b-srs');
+      // srsOverflow0 now represents overflow past the LEGAL cap specifically (since SRS's
+      // dollar figure genuinely tracks the slider up to that point) -- this cue instead
+      // needs to compare against the TAX-optimal threshold directly, the actual point
+      // this color is meant to flag. Same S$10 tolerance as before, absorbing whole-
+      // percent slider rounding so the app's own optimal-default presets never falsely
+      // light this up.
+      if(bSrsEl) bSrsEl.style.color = (srsCash0 > taxOptimalSRS0*e0 + 10) ? 'var(--brick)' : '';
       var stiOnly0=Math.max(o.aI*disposableBase0,0)+srsOverflow0;
       var needOnly0=Math.max(o.aN*disposableBase0,0);
       var wantOnly0=Math.max(o.aW*disposableBase0,0);
@@ -3903,7 +3992,7 @@
     // that it is, retry once so anyone with a previously-saved A/B comparison actually
     // sees it rendered, rather than the empty placeholder forever.
     if(typeof refreshCompare==='function') refreshCompare();
-    ['i-age','i-sal','i-spouse','i-nw0','i-owncsize','i-exmort','i-exyears','i-mop','i-mortsrc','i-mode','i-raise','i-sti','i-house','i-hdb','i-flat','i-buy',
+    ['i-age','i-sal','i-spouse','i-nw0','i-owncsize','i-exmort','i-exyears','i-mop','i-mortsrc','i-mode','i-raise','i-sti','i-house','i-hdb','i-flat','i-btowait','i-buy',
      'i-marry','i-wed','i-condo','i-csize','i-cage','i-bto','i-car','i-carage','i-omv','i-pa','i-paage',
      'i-prebuy','i-prebuyage'].forEach(function(id){
       var el=$(id); if(el){
@@ -4151,24 +4240,37 @@
         document.querySelectorAll('.hint.open').forEach(function(x){x.classList.remove('open');});
       }
     });
-    document.querySelectorAll('.help').forEach(function(h){
-      h.setAttribute('aria-label','Explain this');
-      h.addEventListener('click',function(e){
-        e.stopPropagation();
-        var hint=h.parentElement, open=hint.classList.contains('open');
-        document.querySelectorAll('.hint.open').forEach(function(x){x.classList.remove('open');});
-        if(!open){
-          hint.classList.add('open');
-          var b=hint.querySelector('.bubble');
-          if(b){
-            b.style.left='0px';
-            var r2=b.getBoundingClientRect(), vw=document.documentElement.clientWidth, shift=0;
-            if(r2.right>vw-10) shift=(vw-10)-r2.right;
-            if(r2.left+shift<10) shift=10-r2.left;
-            b.style.left=shift+'px';
-          }
+    // Delegated on document itself (not attached per-button) so this keeps working for
+    // help buttons that don't exist yet at this point in the page's own load sequence --
+    // several tooltips (MSR's own included) get inserted later via innerHTML, as part of
+    // dynamically-generated budget text, and a one-time querySelectorAll here would never
+    // see them, leaving their "?" silently unclickable. One listener on document catches
+    // every click, present and future, and checks what was actually clicked.
+    document.addEventListener('click',function(e){
+      var h=e.target.closest ? e.target.closest('.help') : null;
+      if(!h) return;
+      if(!h.hasAttribute('aria-label')) h.setAttribute('aria-label','Explain this');
+      // stopPropagation alone only blocks bubbling to PARENT elements -- it does nothing
+      // to stop the "close all open hints" listener further down, since that one is ALSO
+      // attached directly to document (this listener moved here for event delegation,
+      // but the close-all listener didn't move with it). Without stopImmediatePropagation,
+      // both listeners fire on the same click: this one opens the bubble, then the other
+      // immediately closes it again, so nothing ever stayed visible -- for every bubble,
+      // not just the dynamically-inserted ones this delegation was meant to fix.
+      e.stopImmediatePropagation();
+      var hint=h.parentElement, open=hint.classList.contains('open');
+      document.querySelectorAll('.hint.open').forEach(function(x){x.classList.remove('open');});
+      if(!open){
+        hint.classList.add('open');
+        var b=hint.querySelector('.bubble');
+        if(b){
+          b.style.left='0px';
+          var r2=b.getBoundingClientRect(), vw=document.documentElement.clientWidth, shift=0;
+          if(r2.right>vw-10) shift=(vw-10)-r2.right;
+          if(r2.left+shift<10) shift=10-r2.left;
+          b.style.left=shift+'px';
         }
-      });
+      }
     });
     document.addEventListener('click',function(){ document.querySelectorAll('.hint.open').forEach(function(x){x.classList.remove('open');}); });
     recompute();
