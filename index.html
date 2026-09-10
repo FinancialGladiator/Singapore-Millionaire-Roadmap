@@ -4739,14 +4739,24 @@ function openShareModal(drawFn){
     // Same baseline the Calculator defaults to, with only age + wage swapped in, so the
     // cover, the Calculator and the household cards can never tell different stories.
     function opts(age,sal){
-      var buyAge=Math.max(35,age);
+      // +4 years: matches the calculator's own default ballot + build wait (Tab 2,
+      // "Buy at age" section) -- a new BTO isn't actually ready the moment you apply,
+      // so this headline figure shouldn't assume it is either. Was drifting out of
+      // sync with Tab 2 by several thousand dollars once that feature landed, since
+      // this standalone object is never read through Tab 2's own readOpts().
+      var buyAge=Math.max(35,age)+4;
       return {age:age,sal0:sal,mode:'average',cr:0,stiR:0.06,retire:65,
         single:true,hasKid:false,numKids:0,prof:null,se:false,
-        own:true,flatIdx:0,buyAge:buyAge,prebuy:'family',rentStartAge:buyAge,
+        own:true,flatIdx:0,buyAge:buyAge,prebuy:'family',rentStartAge:Math.max(35,age),
         aN:0.5,aW:0.3,aS:0.09,aI:0.11,
         // Matches the calculator's own default (Tab 2, Career & assumptions):
         // at least half of every raise banked from year one, not just once SRS caps.
         saveHalfRaise:true,
+        // Matches Tab 2's own universal default: SRS never contributes past the point
+        // it still saves tax, without needing this object to also carry Tab 2's own
+        // "let the reader override it and see the cost" slider behavior -- there's no
+        // slider here to override.
+        optimizeSRS:true,
         marryAge:999,wedding:0,condo:false,condoIdx:1,condoAge:40,btoSell:true,
         car:false,carAge:30,omv:25000,pa:0,paAge:25};
     }
