@@ -852,6 +852,14 @@
           <option value="singlemom">Single mother + 1 child</option>
         </select>
       </div>
+<div class="field" id="f-marry">
+        <label>Marry at age — <output id="o-marry">28</output> <span class="hint"><button class="help">?</button><span class="bubble">The year household income doubles (two earners) — and the wedding bill lands. If this is at or below your current age, you're treated as already married and the wedding as already paid.</span></span></label>
+        <input type="range" id="i-marry" min="21" max="60" value="28">
+      </div>
+<div class="field" id="f-wed">
+        <label>Net wedding cost — <output id="o-wed">S$30,000</output> <span class="hint"><button class="help">?</button><span class="bubble">Banquet, photography, gowns, rings and customs, <b>net of ang baos</b> (red-packet gifts typically recover 50–70% of the banquet). Singapore weddings commonly net out at S$20k–60k. Paid from your savings in the wedding year.</span></span></label>
+        <input type="range" id="i-wed" min="0" max="100000" step="1000" value="30000">
+      </div>
 <div class="field">
         <label>Housing <span class="hint"><button class="help">?</button><span class="bubble"><b>Buy an HDB</b>: the deposit and mortgage are paid from CPF (not cash), rent stops at purchase and half the freed rent is banked into investing. <b>Rent for life</b>: no flat, and rent continues forever — including in retirement.</span></span></label>
         <select id="i-hdb">
@@ -861,6 +869,10 @@
           <option value="have-condo">I already own a condo</option>
           <option value="rent">Rent for life</option>
         </select>
+      </div>
+<div class="field" id="f-flat">
+        <label>Flat size — <output id="o-flat">2-room Flexi</output> <span class="hint"><button class="help">?</button><span class="bubble" id="bub-flat">Slide from the smallest (2-room Flexi, ~S$140k before grants as a new BTO) to the largest (5-room, ~S$530k). New <b>BTOs</b> restrict singles to the 2-room Flexi — picking a larger size while Single is selected models buying that size on the <b>resale market</b> instead (allowed for singles from age 35), still only qualifying for the smaller singles-rate grant. This lets you compare the retirement-income impact of a bigger home.</span></span></label>
+        <input type="range" id="i-flat" min="0" max="3" step="1" value="0">
       </div>
 <div class="field" id="f-mortsrc">
         <label>Pay the HDB mortgage from <span class="hint"><button class="help">?</button><span class="bubble">By default, an HDB loan is serviced from <b>CPF-OA</b> — the standard approach, and free in the sense that it doesn't touch your take-home cash. Choosing <b>cash</b> instead means you pay it from take-home every month and leave your CPF-OA balance untouched, where it keeps compounding at CPF's <b>2.5%/yr</b>, risk-free. There's a real tradeoff here: CPF-OA growth is guaranteed but capped at 2.5%; cash freed up this way could instead go toward Necessities, Wants, or the STI, which has historically returned more — with real volatility CPF doesn't carry. Neither choice is automatically better; this lets you compare both.</span></span> — <output id="o-mortsrc">CPF-OA</output></label>
@@ -895,30 +907,18 @@
           <option value="family" selected>Stay with family (free)</option>
         </select>
       </div>
-<div class="field" id="f-prebuyage">
-        <label id="l-prebuyage">Move out (start paying rent) at age — <output id="o-prebuyage">35</output></label>
-        <input type="range" id="i-prebuyage" min="18" max="65" step="1" value="35">
-      </div>
-<div class="field" id="f-btowait">
-        <label>Ballot + build wait, in years — <output id="o-btowait">4</output> <span class="hint"><button class="help">?</button><span class="bubble">Real BTO timelines have two separate stages: winning the ballot itself (often several tries for a popular launch, especially for first-timer singles), then 3–5 years of construction before key collection. This slider covers the whole stretch, from first application to actually moving in — 4 years is a fast, uncontested launch; 10 years is a realistic worst case for a popular estate with multiple failed ballot attempts.</span></span></label>
-        <input type="range" id="i-btowait" min="4" max="10" step="1" value="4">
-      </div>
-<div class="field" id="f-flat">
-        <label>Flat size — <output id="o-flat">2-room Flexi</output> <span class="hint"><button class="help">?</button><span class="bubble" id="bub-flat">Slide from the smallest (2-room Flexi, ~S$140k before grants as a new BTO) to the largest (5-room, ~S$530k). New <b>BTOs</b> restrict singles to the 2-room Flexi — picking a larger size while Single is selected models buying that size on the <b>resale market</b> instead (allowed for singles from age 35), still only qualifying for the smaller singles-rate grant. This lets you compare the retirement-income impact of a bigger home.</span></span></label>
-        <input type="range" id="i-flat" min="0" max="3" step="1" value="0">
-      </div>
 <div class="field" id="f-buy">
         <label>Buy at age — <output id="o-buy">35</output> <span class="hint"><button class="help">?</button><span class="bubble">Married couples can buy from their mid-20s. <b>Singles can only buy from 35</b> — HDB's eligibility rule — so the slider's minimum jumps to 35 when Single is selected.</span></span></label>
         <input type="range" id="i-buy" min="25" max="60" step="1" value="35">
         <div class="milestones flow" id="o-grantline" style="margin-top:8px"></div>
       </div>
-<div class="field" id="f-marry">
-        <label>Marry at age — <output id="o-marry">28</output> <span class="hint"><button class="help">?</button><span class="bubble">The year household income doubles (two earners) — and the wedding bill lands. If this is at or below your current age, you're treated as already married and the wedding as already paid.</span></span></label>
-        <input type="range" id="i-marry" min="21" max="60" value="28">
+<div class="field" id="f-btowait">
+        <label>Ballot + build wait, in years — <output id="o-btowait">4</output> <span class="hint"><button class="help">?</button><span class="bubble">Real BTO timelines have two separate stages: winning the ballot itself (often several tries for a popular launch, especially for first-timer singles), then 3–5 years of construction before key collection. This slider covers the whole stretch, from first application to actually moving in — 4 years is a fast, uncontested launch; 10 years is a realistic worst case for a popular estate with multiple failed ballot attempts.</span></span></label>
+        <input type="range" id="i-btowait" min="4" max="10" step="1" value="4">
       </div>
-<div class="field" id="f-wed">
-        <label>Net wedding cost — <output id="o-wed">S$30,000</output> <span class="hint"><button class="help">?</button><span class="bubble">Banquet, photography, gowns, rings and customs, <b>net of ang baos</b> (red-packet gifts typically recover 50–70% of the banquet). Singapore weddings commonly net out at S$20k–60k. Paid from your savings in the wedding year.</span></span></label>
-        <input type="range" id="i-wed" min="0" max="100000" step="1000" value="30000">
+<div class="field" id="f-prebuyage">
+        <label id="l-prebuyage">Move out (start paying rent) at age — <output id="o-prebuyage">35</output> <span class="hint"><button class="help">?</button><span class="bubble" id="bub-prebuyage">Loading...</span></span></label>
+        <input type="range" id="i-prebuyage" min="18" max="65" step="1" value="35">
       </div>
 <div class="field">
         <label>Parental allowance, monthly — <output id="o-pa">S$0</output> <span class="hint"><button class="help">?</button><span class="bubble">The very Singaporean monthly transfer to mum and dad — commonly <b>S$300–800 per household</b>. Modelled from your chosen start age until 65, rising with inflation, funded half from lifestyle and half from investing. Supporting a parent can also earn <b>Parent Relief</b> (S$5.5k–9k/yr off taxable income, conditions apply) — a simplified S$5,500/yr relief is applied automatically when this is above zero.</span></span></label>
@@ -1645,7 +1645,7 @@
 
     <div class="eyebrow">The behaviour gap · possible ≠ probable</div>
     <h1>Everyone can.<br>Almost <em>nobody</em> does.</h1>
-    <p class="standfirst">The first tabs proved the arithmetic works: subsidised flat, grants, CPF, near-zero tax and an index fund give every Singaporean a clean runway. Yet most never get there. The gap isn't the maths — it's the behaviour. Here are the five things that quietly break the plan.</p>
+    <p class="standfirst">The first tabs proved the arithmetic works: subsidised flat, grants, CPF, near-zero tax and an index fund give every Singaporean a clean runway. Yet most never get there. The gap isn't the maths — it's the behaviour. Here are the nine things that quietly break the plan.</p>
     <section>
       <div class="step"><div class="num">1</div><div>
         <h2 class="trap-h">Lifestyle inflation eats every raise</h2>
@@ -1698,11 +1698,21 @@
         <div class="formula">Beats trap #5 (starting late). Start at 20 not 30, same money → ~2× the final pot.</div></div>
       </div></div>
       <div class="step"><div class="num">6</div><div>
-        <h2 class="trap-h">Use the system fully — and protect the plan</h2>
-        <p>Claim the EHG, let CPF-OA fund the flat, and — at this income — skip SRS and CPF cash top-ups (no tax relief when you're barely taxed); invest that money instead. Then guard it all: keep 3–6 months of expenses in cash and buy cheap term insurance, so one emergency never forces a sale at the bottom.</p>
-        <div class="formula">Leverages the grants + CPF · protects against the forced-liquidation that derails most plans.</div>
+        <h2 class="trap-h">No protection against the one risk that isn't a choice</h2>
+        <p>Every trap above is about discipline — a decision, made or missed, over years of compounding. This one is different: a death, total permanent disability, or critical illness doesn't ask permission, and it forces the STI/SRS pot this whole plan spends 45 years building to be liquidated mid-compound, years before it was ever meant to be touched. Nothing above protects against it; only actual cover does.</p>
+        <div class="formula">National guideline (MAS/MoneySense Basic Financial Planning Guide): 9&times; annual income for death/TPD, 4&times; for critical illness &mdash; developed with the CPF Board, the Life Insurance Association, and the Association of Banks.</div>
+        <div id="pg-person-boxes" style="margin-top:14px"></div>
+        <div class="milestones flow" id="pg-gap-note" style="margin-top:8px;background:#E2604F1A;border:1px solid #E2604F55;border-radius:6px;padding:10px 12px;color:var(--brick)"></div>
+        <div class="fix-block"><div class="fix-tag">The fix</div><h3 class="fix-h">Close the gap with cheap term insurance, not whole life</h3>
+        <p>Keep 3&ndash;6 months of expenses in cash for the small emergencies. For the large ones, term insurance is the cost-efficient way to close the gap above -- pure protection with no savings component, priced for exactly the years the plan is most exposed. Compare quotes via CompareFIRST, the MAS-endorsed portal.</p>
+        <div class="formula">A standard national guideline, not personalised advice -- and not wired into this app's own net worth or retirement income projections elsewhere, which assume nothing ever goes wrong. Actual need varies with dependants, debts, and existing employer or personal cover.</div></div>
       </div></div>
       <div class="step"><div class="num">7</div><div>
+        <h2 class="trap-h">Use the system fully</h2>
+        <p>Claim the EHG, let CPF-OA fund the flat, and -- at this income -- skip SRS and CPF cash top-ups (no tax relief when you're barely taxed); invest that money instead. The protection side of "guard it all" now has its own dedicated trap above -- this one is about the accumulation side: not leaving the grants and CPF structure on the table.</p>
+        <div class="formula">Leverages the grants + CPF · the system is generous if you actually use every part of it.</div>
+      </div></div>
+      <div class="step"><div class="num">8</div><div>
         <h2 class="trap-h">Marrying someone unaligned on money</h2>
         <p>Warren Buffett has said the single most important decision in building a life — financial life included — is who you marry: find a partner whose values on saving and spending genuinely match your own, and check that <em>before</em> the wedding, not after. Divorce is one of the most destructive events this plan can suffer, and it rarely gets modelled. Decades of joint compounding get interrupted at the worst possible moment, matrimonial assets are typically split, and rebuilding alone starts the clock over on a chunk of what took half a working life to build.</p>
         <div class="formula">Married and investing together from 25, divorcing at 45 &mdash; splitting ~S$1.35m in joint STI+CPF roughly 50/50, minus ~S$10,000 in legal costs (Singapore's 2026 published range: ~S$1,500&ndash;3,500 uncontested, ~S$10,000&ndash;35,000+ contested), then rebuilding alone on a single income for the last 20 years &mdash; lands near <b>S$1.92m</b> at 65, against <b>~S$3.86m</b> had the marriage continued. Roughly half.</div>
@@ -1712,7 +1722,7 @@
         <p>Talk about saving, spending, debt, and risk honestly and early — ideally before getting married, not years into it. A shared savings rate and a shared instinct for what "enough" looks like is worth more to this plan than almost any investment decision, precisely because it's the one risk that can undo decades of the others at once.</p>
         <div class="formula">Assumptions above are illustrative, not a legal outcome — Singapore courts divide matrimonial assets "justly and equitably" under the Women's Charter, not automatically 50/50, and outcomes vary with the length of the marriage, contributions, and children. Child support has no fixed formula either — the estimate here follows the income-ratio approach used in the leading case ANJ v ANK, but courts weigh caregiving, needs and both parents' means too. Spousal maintenance is even less certain: courts are often reluctant to award it to a self-sufficient earner, so it's modelled here only as a possible cost to the higher earner, never as income to rely on.</div></div>
       </div></div>
-      <div class="step"><div class="num">8</div><div>
+      <div class="step"><div class="num">9</div><div>
         <h2 class="trap-h">The price tag isn't the price</h2>
         <p>A S$18,000 bag doesn't cost S$18,000 — it costs whatever that money would have become. Bought at 35 and invested in the STI instead, ordinary purchases quietly compound into the kind of numbers usually reserved for houses, because thirty years at 6%/yr turns almost anything into six figures. None of this says never buy anything nice; it says know the real price before you decide it's worth it.</p>
         <div class="formula">A Herm&egrave;s Birkin at S$18,000, bought at 35 instead of invested, is <b>~S$103,000</b> of lost retirement wealth by 65 &mdash; about <b>11&ndash;12 classrooms</b> built for children in the developing world (~S$9,000 each, based on published NGO project costs) or <b>108 school libraries stocked</b> (~S$950 each). A daily S$7 artisan coffee on workdays, kept up for just 10 years and then left alone to compound, quietly becomes <b>~S$77,000</b> by 65 &mdash; nobody decides to spend that; it just accumulates one coffee at a time.</div>
@@ -3338,7 +3348,7 @@
       var retRent=rentingOutBTO?(FLATS[o.flatIdx].rent*Math.pow(1.025,yrs)*0.78):0;
       return {yrs:yrs,disc:disc,STI:STI,SRS:SRS,POT:POT,CPF:CPF,cpflife:cpflife,potdraw:potdraw,
         nw:POT+CPF,income:cpflife+potdraw+retRent,taxSaved:taxSaved,spath:spath,
-        nwPath:nwPath,ageAxis:ageAxis,grant:grant,netToday:netToday,mortM:mortM,
+        nwPath:nwPath,ageAxis:ageAxis,grant:grant,netToday:netToday,mortM:mortM,loan0:loan0,
         absd:absdPaid,retRent:retRent,earn0:nEarn(o.age),hdbMsr:hdbMsr,condoMsr:condoMsr,distressYears:distressYears,
         stiPath:stiPath,srsPath:srsPath,cpfPath:cpfPath,stiContrib:stiContrib,srsContrib:srsContrib,
         empCPFcum:empCPFcum,employerCPFcum:employerCPFcum,
@@ -3347,6 +3357,26 @@
 
     function syncUI(){
       var age=+$('i-age').value, single=($('i-house').value==='single'||$('i-house').value==='singlemom');
+      // The PREVIOUS fix here checked mEl.value >= 999 -- but a real <input type="range"
+      // max="60"> clamps any programmatic assignment to its own max IMMEDIATELY, so by
+      // the time this ever read it, a preset's marryAge:999 had already silently become
+      // 60, not 999 -- the check could never fire in an actual browser, only in a test
+      // stub that doesn't enforce native clamping. Tracking the single-to-married
+      // TRANSITION explicitly, in a variable this logic owns end-to-end, sidesteps that
+      // entirely -- no guessing from a value that's already lost the information needed
+      // to tell "genuinely chosen 60" apart from "clamped down from a bad sentinel".
+      if(window.__wasSingleForMarry===undefined) window.__wasSingleForMarry=true;
+      if(!single && window.__wasSingleForMarry && $('i-marry')){
+        // i-marry's own HTML min is 21, but this app's own starting age can be as low
+        // as 20 -- setting the default to exactly the reader's current age would then
+        // get immediately clamped back up to 21 by the slider's own static min, silently
+        // overriding the very default just set. Widen the min down to match whenever the
+        // reader's age is younger than 21, the same "never let a stale constraint clamp
+        // a value this function just set" principle used elsewhere in this file.
+        $('i-marry').min = Math.min(21, age);
+        $('i-marry').value = age;
+      }
+      window.__wasSingleForMarry = single;
       // 'own' must mean "has a home" — buying one OR already owning one — otherwise the
       // condo-upgrade control stays hidden from existing owners.
       var hdbModeV=$('i-hdb').value;
@@ -3502,10 +3532,33 @@
       var prebuy=$('i-prebuy'), prebuyAge=$('i-prebuyage');
       prebuyAge.min=age; prebuyAge.max=65;
       if(+prebuyAge.value<age) prebuyAge.value=age;
-      if(+prebuyAge.value>+buy.value) prebuyAge.value=buy.value;
+      // Was clamped against the APPLICATION age (buy.value) -- but a BTO isn't ready the
+      // moment you apply, so staying with family or renting right up until keys are
+      // actually in hand is a real option this was wrongly cutting off early. Clamp
+      // against the effective "keys at" age (application + ballot/build wait) instead --
+      // the same figure the orange "keys at" display above already shows.
+      var effectiveBuyAge = +buy.value + btoWaitYrs;
+      if(+prebuyAge.value>effectiveBuyAge) prebuyAge.value=effectiveBuyAge;
       $('l-prebuyage').innerHTML = (prebuy.value==='family')
         ? 'Move out (start paying rent) at age — <output id="o-prebuyage">'+prebuyAge.value+'</output>'
         : 'Start paying rent at age — <output id="o-prebuyage">'+prebuyAge.value+'</output>';
+      // Makes the rent assumption explicit rather than leaving the reader to infer it
+      // from two separate numbers on two different sliders. The underlying maths
+      // already handles a move-out age at or past the keys-at age correctly -- the
+      // rent-paying window it computes is naturally empty in that case -- but nothing
+      // told the reader that plainly before now.
+      var bubPrebuyage=$('bub-prebuyage');
+      if(bubPrebuyage){
+        var flatLabel = isResaleUI ? 'resale HDB' : 'BTO';
+        if(!buying){
+          bubPrebuyage.innerHTML = 'You\u2019ve chosen <b>Rent for life</b> under Housing, so this models paying rent continuously from this age onward, with no purchase and no end date to it.';
+        } else if(+prebuyAge.value >= effectiveBuyAge){
+          bubPrebuyage.innerHTML = '\u2705 <b>No rent at all.</b> Staying with family right up to '+effectiveBuyAge+' means moving straight from there into your '+flatLabel+' the moment keys are ready -- no gap in between to rent for.';
+        } else {
+          var rentYears = effectiveBuyAge - +prebuyAge.value;
+          bubPrebuyage.innerHTML = 'Rent applies from age '+prebuyAge.value+' until keys arrive at '+effectiveBuyAge+' -- <b>'+rentYears+' year'+(rentYears===1?'':'s')+' of rent</b> before moving into your '+flatLabel+'. Move this slider up to '+effectiveBuyAge+' to avoid renting altogether, by staying with family until keys are actually in hand.';
+        }
+      }
       // Earliest possible upgrade: a fresh BTO must serve 5 years from purchase, while an
       // existing owner serves whatever MOP they have left from today. Using buyAge+5 for an
       // existing owner produced a nonsense age (and overwrote the correct note below).
@@ -4008,6 +4061,7 @@
         }
         bubCpfLifePlan.innerHTML = txt;
       }
+      if(window.updateProtectionGap) window.updateProtectionGap(o, r);
       $('p-nw-t').textContent=fmtK(r.nw/disc); $('p-nw-n').textContent=fmtK(r.nw);
       var homeTxt = o.alreadyOwn ? (o.condo ? (CONDOS[o.condoIdx].n+' condo (upgraded)') : 'home already owned') : (o.own ? (o.condo ? (CONDOS[o.condoIdx].n+' condo'+(o.btoSell?'':' + BTO rented out')) : FLATS[o.flatIdx].n+' owned') : 'renting for life');
       $('p-home').textContent=homeTxt;
@@ -4136,7 +4190,92 @@
     }
 
     var recompute=function(){ syncUI(); calc(); saveCalcStateLocal(); syncSaveSlider(); refreshWhatIfs(); if(window.refreshGrantLive) window.refreshGrantLive(); };
-    // Expose the engine so the cover page's live projection uses THIS engine — never a
+
+    // Deliberately standalone -- reads income/age/mortgage/household straight from the
+    // same Tab 2 inputs everything else uses, but never touches project() or feeds
+    // back into net worth or retirement income. This is a today's-situation check
+    // against a national guideline, not a projection; wiring it into the 45-year
+    // engine would wrongly imply the app is simulating what happens IF the risk
+    // actually occurs, which it isn't built to do.
+window.updateProtectionGap = function(o, r){
+      var container=$('pg-person-boxes');
+      if(!container) return; // section not present
+      var fmtDollar=function(n){ return 'S$'+Math.round(Math.max(0,n)).toLocaleString('en-US'); };
+      var age=o.age||20;
+      var dpsAt=function(a){ return (a<21||a>65) ? 0 : (a<60 ? 70000 : 55000); };
+      // Mortgage: the ACTUAL debt each person's cover needs to clear, not a snapshot of
+      // today's balance for someone who hasn't bought yet. Already-owns -> the stated
+      // current balance; planning to buy later -> the projected loan principal at the
+      // planned purchase itself (r.loan0), same engine the calculator above already
+      // trusts -- not a second, guessed copy. Renting forever -> no mortgage at all.
+      var mortgage = o.alreadyOwn ? (o.exMort||0) : (o.own ? (r.loan0||0) : 0);
+      // Each earner's OWN income sizes their OWN cover -- the guideline replaces THAT
+      // person's income specifically, not the household's combined total against each
+      // person. A joint mortgage is added to both, since either death leaves the same
+      // debt outstanding; DPS is subtracted per person, since both earners hold it
+      // independently.
+      var people=[{label:o.single?'Your':'Your own', income:(o.sal0||0)*12, age:age}];
+      if(!o.single){
+        var spouseSal=$('i-spouse') ? +$('i-spouse').value : 0;
+        people.push({label:'Your partner\u2019s', income:spouseSal*12, age:age});
+      }
+      var html='';
+      var totalLifeGap=0, totalCiGap=0;
+      people.forEach(function(p, idx){
+        var dps=dpsAt(p.age);
+        var lifeIncomePart=p.income*9;
+        var lifeNeed=Math.max(0, lifeIncomePart+mortgage-dps);
+        var ciNeed=Math.max(0, p.income*4);
+        // Simplified from a range slider + checkbox down to just the checkbox -- a binary
+        // "covered or not" is enough here, and it's simpler for the reader than dialing
+        // in a precise partial-coverage figure. Unchecked means the gap is the full
+        // recommended need; checked means it's fully met.
+        var lifeCoveredId='i-pg-life-covered-'+idx, ciCoveredId='i-pg-ci-covered-'+idx;
+        var prevLifeCovered=$(lifeCoveredId) ? $(lifeCoveredId).checked : false;
+        var prevCiCovered=$(ciCoveredId) ? $(ciCoveredId).checked : false;
+        var lifeHave = prevLifeCovered ? lifeNeed : 0;
+        var ciHave = prevCiCovered ? ciNeed : 0;
+        totalLifeGap += Math.max(0, lifeNeed-lifeHave);
+        totalCiGap += Math.max(0, ciNeed-ciHave);
+        html += '<div class="scard" style="border-top-color:var(--brick);margin-top:'+(idx>0?'14':'0')+'px">'
+          + '<div class="name">'+p.label+' death / TPD cover</div>'
+          + '<div class="hl">Recommended, per MAS/MoneySense guideline</div>'
+          + '<div class="big" style="color:var(--brick)">'+fmtDollar(lifeNeed)+'</div>'
+          + '<div class="rows">'
+          + '<div class="r"><span class="k">9&times; '+(idx===0?'your':'their')+' own annual income</span><span class="v">'+fmtDollar(lifeIncomePart)+'</span></div>'
+          + '<div class="r"><span class="k">+ Household mortgage<span class="hint"><button class="help">?</button><span class="bubble">Either person\u2019s death or TPD leaves the same joint mortgage outstanding, so it\u2019s added to both, not split between them. Uses the actual projected loan for a planned future purchase -- the same figure the calculator above uses -- not just today\u2019s balance, which would be S$0 before buying.</span></span></span><span class="v">'+fmtDollar(mortgage)+'</span></div>'
+          + '<div class="r"><span class="k">&minus; CPF Dependants\u2019 Protection Scheme<span class="hint"><button class="help">?</button><span class="bubble">Automatic term life cover working Singapore Citizens/PRs already have from age 21 -- S$70,000 below 60, S$55,000 from 60-65. Held independently by each earner, so subtracted per person, not once for the household.</span></span></span><span class="v">-'+fmtDollar(dps)+'</span></div>'
+          + '</div></div>'
+          + '<div class="field toggle-field"><label class="toggle-label"><input type="checkbox" id="'+lifeCoveredId+'" '+(prevLifeCovered?'checked':'')+'><span>I\u2019m already fully covered for this</span></label></div>'
+          + '<div class="scard" style="border-top-color:var(--brick)">'
+          + '<div class="name">'+p.label+' critical illness cover</div>'
+          + '<div class="hl">Recommended, per MAS/MoneySense guideline</div>'
+          + '<div class="big" style="color:var(--brick)">'+fmtDollar(ciNeed)+'</div>'
+          + '<div class="rows"><div class="r"><span class="k">4&times; '+(idx===0?'your':'their')+' own annual income<span class="hint"><button class="help">?</button><span class="bubble">Roughly four years of income replacement. No mortgage or DPS offset -- DPS is a death/TPD-only scheme.</span></span></span><span class="v">'+fmtDollar(ciNeed)+'</span></div></div></div>'
+          + '<div class="field toggle-field"><label class="toggle-label"><input type="checkbox" id="'+ciCoveredId+'" '+(prevCiCovered?'checked':'')+'><span>I\u2019m already fully covered for this</span></label></div>';
+      });
+      container.innerHTML=html;
+      // Regenerated via innerHTML every call, so listeners are re-attached each time
+      // rather than relying on delegation -- simpler here since the whole block is
+      // rebuilt together anyway, and the set of ids is small and known immediately after.
+      people.forEach(function(p, idx){
+        ['i-pg-life-covered-'+idx,'i-pg-ci-covered-'+idx].forEach(function(id){
+          if($(id)) $(id).addEventListener('change',function(){ window.updateProtectionGap(o, r); });
+        });
+      });
+      var note=$('pg-gap-note');
+      if(note){
+        if(totalLifeGap<=0 && totalCiGap<=0){
+          note.innerHTML = '\u2705 Based on the figures above, your stated cover already meets or exceeds the national guideline for both death/TPD and critical illness, for everyone in the household.';
+        } else {
+          var parts=[];
+          if(totalLifeGap>0) parts.push('<b>'+fmtDollar(totalLifeGap)+'</b> short on death/TPD cover');
+          if(totalCiGap>0) parts.push('<b>'+fmtDollar(totalCiGap)+'</b> short on critical illness cover');
+          note.innerHTML = '\u26a0\ufe0f Against the guideline above, the household is currently ' + parts.join(' and ') + ' combined. That gap is exactly the scenario the rest of this app doesn\u2019t protect against -- a forced, early liquidation of the STI/SRS pot it spends 45 years compounding.';
+        }
+      }
+    };
+    // Expose the engine so the cover page's live projection uses THIS engine    // Expose the engine so the cover page's live projection uses THIS engine — never a
     // second copy of the maths that could silently drift out of step with the calculator.
     window.SGMR_ENGINE={ project:project, recompute:recompute, readOpts:readOpts, fmtK:fmtK };
     // refreshCompare() bailed out safely earlier (SGMR_ENGINE wasn't set yet) -- now
@@ -4338,6 +4477,12 @@
     $('i-house').addEventListener('change',function(){
       var newVal=$('i-house').value;
       if(__lastHouseVal==='single' && newVal!=='single' && newVal!=='singlemom'){
+        // i-marry is often still sitting at 999 here -- the "never married" sentinel a
+        // single preset writes into it, since presets store marryAge directly rather
+        // than going through this slider. Left untouched, it clamps (in a real browser)
+        // to the slider's own max of 60 the instant marriage is selected, which then
+        // cascades into buy age's own minimum via Math.max(..., marryAge). A sensible,
+        // near-term default belongs here instead -- current age plus 2 years.
         var field=document.getElementById('f-spouse'), nudge=document.getElementById('spouse-nudge');
         if(field && field.getBoundingClientRect){
           // Extra clearance above the field itself -- room for the sticky header plus
@@ -5184,7 +5329,7 @@ function openShareModal(drawFn){
                    o.aN+= t*nr; o.aW+= t-(t*nr); o.paycheckToPaycheck=true; },
       // 4 starting late
       function(o){ o.age=Math.min(60,o.age+5); o.buyAge=Math.max(o.buyAge,o.age); }
-      // Divorce (trap #7) has its own dedicated computation below -- refreshDivorceScenarios --
+      // Divorce (trap #8) has its own dedicated computation below -- refreshDivorceScenarios --
       // rather than a single delta() mutator. A mutator that only touches startNW showed S$0
       // for anyone without existing savings yet, since there was nothing to split -- true for
       // most young readers, and exactly wrong: the real cost isn't in savings already made,
@@ -5202,7 +5347,7 @@ function openShareModal(drawFn){
       });
     };
 
-    /* ===== DIVORCE (trap #7): three chained scenarios, not one delta(). Each runs a
+    /* ===== DIVORCE (trap #8): three chained scenarios, not one delta(). Each runs a
        married phase (accumulating together from the reader's own age/salary) THEN a
        single phase (rebuilding alone to 65) as two separate project() calls -- the only
        way to model a genuine mid-career event with this engine. This is personal to
