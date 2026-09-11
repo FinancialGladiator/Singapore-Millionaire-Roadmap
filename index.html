@@ -1083,7 +1083,7 @@
     <section>
       <div class="sec-label" style="margin-top:28px">Your monthly budget now</div>
       <div class="ded">
-        <div class="ded-row"><span class="lab">Gross salary (household)</span><span class="amt" id="b-gross"></span></div>
+        <div class="ded-row"><span class="lab">Gross salary (household) <span class="hint"><button class="help">?</button><span class="bubble" id="bub-gross">Loading...</span></span></span><span class="amt" id="b-gross"></span></div>
         <div class="ded-row"><span class="lab">− CPF (employee) <span class="hint"><button class="help">?</button><span class="bubble">20% of each salary up to the wage ceiling (~S$8,000/mo). Your <b>employer adds ~17% more</b> into CPF on top — not deducted from pay, but it still builds your retirement.</span></span></span><span class="amt" id="b-cpf"></span></div>
         <div class="ded-row"><span class="lab">− SRS contribution <span class="hint"><button class="help">?</button><span class="bubble">Pre-tax: your SRS slider's monthly amount is subtracted from taxable income <b>before</b> tax is worked out — the same way CPF is. That's why it sits here, above tax, not after Take-home like STI. It's still real money leaving your pocket into a locked, tax-advantaged account.</span></span></span><span class="amt" id="b-srs"></span></div>
         <div class="ded-row"><span class="lab">− Income tax <span class="hint"><button class="help">?</button><span class="bubble" id="bub-tax">Singapore resident tax after CPF relief <b>and SRS relief</b>, per earner. The first <b>S$20,000</b> of chargeable income is tax-free, so modest salaries pay little or nothing — and any SRS contribution lowers this further.</span></span></span><span class="amt" id="b-tax"></span></div>
@@ -3748,6 +3748,24 @@
       var tax0=tax0a+tax0b;
       var th0=(s0a+s0b)-emp0-srsCash0-tax0+pRel0+cRel0-rstuMonthly0+rRel0;
       $('b-gross').textContent=fmt(s0a+s0b)+(e0>1?' · 2 earners':'');
+      // Explains WHY this figure is what it is -- especially the case that reads as a
+      // bug without context: choosing a married household type doesn't by itself mean
+      // the partner's income counts here. This "today's budget" snapshot only includes
+      // it once the marriage has actually happened -- if Marry Age is set later than
+      // the reader's own current age, they're shown as not yet married today, so only
+      // their own income appears here, with the partner's joining from that future year
+      // onward in the 45-year projection below (which is why net worth and retirement
+      // income already reflect it correctly, even when this figure looks low).
+      var bubGross=$('bub-gross');
+      if(bubGross){
+        if(o.single){
+          bubGross.innerHTML = 'Your own income only -- this household has a single earner.';
+        } else if(o.marryAge>o.age){
+          bubGross.innerHTML = 'Your own income only, for now -- <b>Marry Age is set to '+o.marryAge+'</b>, later than your current age of '+o.age+', so you\u2019re modelled as not yet married today. Your partner\u2019s income joins this figure from age '+o.marryAge+' onward in the full projection below, which is why net worth and retirement income already account for it even though this snapshot doesn\u2019t yet.';
+        } else {
+          bubGross.innerHTML = 'Combined household income -- you\u2019re modelled as already married, so both incomes count here.';
+        }
+      }
       $('b-cpf').textContent='− '+fmt(emp0)+(o.se?' (Medisave only)':'');
       $('b-srs').textContent= srsCash0>0 ? ('− '+fmt(srsCash0)) : 'S$0';
       $('b-tax').textContent='− '+fmt(Math.max(tax0-pRel0-cRel0-rRel0,0));
