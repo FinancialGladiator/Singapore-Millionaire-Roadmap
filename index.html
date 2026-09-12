@@ -230,6 +230,13 @@
   .ctl-group>summary:after{content:"⌄";font-size:16px;color:var(--muted);transition:transform .18s ease;
     margin-left:auto;padding-left:10px}
   .ctl-group[open]>summary:after{transform:rotate(180deg)}
+  /* Scoped to this one accordion only -- matches the orange, filled .hero-cta quiz
+     button style, rather than changing every other accordion summary in the app. */
+  #grp-diversify-sim>summary{background:var(--brand);color:var(--brand-ink);
+    border-radius:8px 8px 0 0}
+  #grp-diversify-sim[open]>summary{border-radius:8px 8px 0 0}
+  #grp-diversify-sim:not([open])>summary{border-radius:8px}
+  #grp-diversify-sim>summary:after{color:var(--brand-ink)}
   .ctl-group .cg-body{padding:2px 16px 14px;border-top:1px solid var(--line)}
   .ctl-group[open]{box-shadow:0 1px 3px rgba(0,0,0,.04)}
 
@@ -1038,7 +1045,6 @@
         </div>
       </details>
 
-      <button class="preset" id="btn-preset">↺ Reset to default (fast-food worker, average career growth)</button>
       <button class="preset" id="btn-share" style="margin-top:10px;border-style:solid">🔗 Copy my scenario link</button>
       <div class="milestones flow" id="share-status" style="margin-top:8px"></div>
       <div class="milestones flow" id="save-status" style="margin-top:4px;color:var(--muted)">💾 Your inputs save automatically on this device — come back anytime.</div>
@@ -1076,6 +1082,7 @@
       </div>
       <div class="bar" id="b-bar"></div>
       <div class="milestones flow" id="alloc-gap-note" style="display:none;margin-top:10px;background:#B8C2441A;border:1px solid #B8C24455;border-radius:6px;padding:10px 12px;color:var(--family)"></div>
+      <div class="milestones flow" id="alloc-div-note" style="display:none;margin-top:10px;background:#FF7A331A;border:1px solid #FF7A3355;border-radius:6px;padding:10px 12px;color:var(--brand)"></div>
 
             </div>
     </details>
@@ -1567,7 +1574,7 @@
         <p>Each earner starts at S$2,400/mo, growing 2.5%/yr. CPF takes 37% total; the employee's 20% comes out of pay, the rest is employer-added. What's left is spendable cash.</p>
         <div class="formula">take_home = wage − (wage × 20%) ; CPF-OA inflow = wage × 23% (age &lt;35)</div>
       </div></div>
-      <div class="step"><div class="num">2</div><div>
+<div class="step"><div class="num">2</div><div>
         <h3>Take-home → tax → living costs → surplus</h3>
         <p>Subtract income tax (≈0 for most of the career), then the frugal living budget (and child costs, for the family). What remains is the monthly surplus that gets invested.</p>
         <div class="formula">surplus = take_home − tax − living_costs (− child_costs)</div>
@@ -1645,7 +1652,7 @@
 
     <div class="eyebrow">The behaviour gap · possible ≠ probable</div>
     <h1>Everyone can.<br>Almost <em>nobody</em> does.</h1>
-    <p class="standfirst">The first tabs proved the arithmetic works: subsidised flat, grants, CPF, near-zero tax and an index fund give every Singaporean a clean runway. Yet most never get there. The gap isn't the maths — it's the behaviour. Here are the nine things that quietly break the plan.</p>
+    <p class="standfirst">The first tabs proved the arithmetic works: subsidised flat, grants, CPF, near-zero tax and an index fund give every Singaporean a clean runway. Yet most never get there. The gap isn't the maths — it's the behaviour. Here are the ten things that quietly break the plan.</p>
     <section>
       <div class="step"><div class="num">1</div><div>
         <h2 class="trap-h">Lifestyle inflation eats every raise</h2>
@@ -1698,6 +1705,23 @@
         <div class="formula">Beats trap #5 (starting late). Start at 20 not 30, same money → ~2× the final pot.</div></div>
       </div></div>
       <div class="step"><div class="num">6</div><div>
+        <h2 class="trap-h">No CPF nomination -- so the Public Trustee decides, not you</h2>
+        <p>CPF savings are legally carved out of your estate entirely (Section 25 of the CPF Act) -- a will has <b>zero</b> effect on them, no matter how carefully it's written. Without a nomination, CPF goes to the Public Trustee's Office instead, split by fixed intestacy rules you don't get to override: spouse and children split 50/50 between them; no spouse or children, and it moves to parents, then siblings. This risk doesn't scale with how much you've saved -- it applies from your very first dollar in CPF.</p>
+        <div class="formula">A fee is deducted first (minimum S$15, scaling with balance), and it typically takes 6&ndash;12 months to sort out -- versus free and minutes online, through the CPF website, with a nomination in place.</div>
+        <div class="scard" style="border-top-color:var(--srs);margin-top:14px">
+          <div class="name">Your own projected CPF balance</div>
+          <div class="hl">What's actually at stake, at your own numbers</div>
+          <div class="rows" id="cpf-nom-projection"></div>
+        </div>
+        <div class="field toggle-field">
+          <label class="toggle-label">
+            <input type="checkbox" id="i-cpf-nom-have">
+            <span>I have a current CPF nomination in place</span>
+          </label>
+        </div>
+        <div class="milestones flow" id="cpf-nom-note" style="margin-top:8px"></div>
+      </div></div>
+      <div class="step"><div class="num">7</div><div>
         <h2 class="trap-h">No protection against the one risk that isn't a choice</h2>
         <p>Every trap above is about discipline — a decision, made or missed, over years of compounding. This one is different: a death, total permanent disability, or critical illness doesn't ask permission, and it forces the STI/SRS pot this whole plan spends 45 years building to be liquidated mid-compound, years before it was ever meant to be touched. Nothing above protects against it; only actual cover does.</p>
         <div class="formula">National guideline (MAS/MoneySense Basic Financial Planning Guide): 9&times; annual income for death/TPD, 4&times; for critical illness &mdash; developed with the CPF Board, the Life Insurance Association, and the Association of Banks.</div>
@@ -1707,12 +1731,12 @@
         <p>Keep 3&ndash;6 months of expenses in cash for the small emergencies. For the large ones, term insurance is the cost-efficient way to close the gap above -- pure protection with no savings component, priced for exactly the years the plan is most exposed. Compare quotes via CompareFIRST, the MAS-endorsed portal.</p>
         <div class="formula">A standard national guideline, not personalised advice -- and not wired into this app's own net worth or retirement income projections elsewhere, which assume nothing ever goes wrong. Actual need varies with dependants, debts, and existing employer or personal cover.</div></div>
       </div></div>
-      <div class="step"><div class="num">7</div><div>
+      <div class="step"><div class="num">8</div><div>
         <h2 class="trap-h">Use the system fully</h2>
         <p>Claim the EHG, let CPF-OA fund the flat, and -- at this income -- skip SRS and CPF cash top-ups (no tax relief when you're barely taxed); invest that money instead. The protection side of "guard it all" now has its own dedicated trap above -- this one is about the accumulation side: not leaving the grants and CPF structure on the table.</p>
         <div class="formula">Leverages the grants + CPF · the system is generous if you actually use every part of it.</div>
       </div></div>
-      <div class="step"><div class="num">8</div><div>
+      <div class="step"><div class="num">9</div><div>
         <h2 class="trap-h">Marrying someone unaligned on money</h2>
         <p>Warren Buffett has said the single most important decision in building a life — financial life included — is who you marry: find a partner whose values on saving and spending genuinely match your own, and check that <em>before</em> the wedding, not after. Divorce is one of the most destructive events this plan can suffer, and it rarely gets modelled. Decades of joint compounding get interrupted at the worst possible moment, matrimonial assets are typically split, and rebuilding alone starts the clock over on a chunk of what took half a working life to build.</p>
         <div class="formula">Married and investing together from 25, divorcing at 45 &mdash; splitting ~S$1.35m in joint STI+CPF roughly 50/50, minus ~S$10,000 in legal costs (Singapore's 2026 published range: ~S$1,500&ndash;3,500 uncontested, ~S$10,000&ndash;35,000+ contested), then rebuilding alone on a single income for the last 20 years &mdash; lands near <b>S$1.92m</b> at 65, against <b>~S$3.86m</b> had the marriage continued. Roughly half.</div>
@@ -1722,7 +1746,7 @@
         <p>Talk about saving, spending, debt, and risk honestly and early — ideally before getting married, not years into it. A shared savings rate and a shared instinct for what "enough" looks like is worth more to this plan than almost any investment decision, precisely because it's the one risk that can undo decades of the others at once.</p>
         <div class="formula">Assumptions above are illustrative, not a legal outcome — Singapore courts divide matrimonial assets "justly and equitably" under the Women's Charter, not automatically 50/50, and outcomes vary with the length of the marriage, contributions, and children. Child support has no fixed formula either — the estimate here follows the income-ratio approach used in the leading case ANJ v ANK, but courts weigh caregiving, needs and both parents' means too. Spousal maintenance is even less certain: courts are often reluctant to award it to a self-sufficient earner, so it's modelled here only as a possible cost to the higher earner, never as income to rely on.</div></div>
       </div></div>
-      <div class="step"><div class="num">9</div><div>
+      <div class="step"><div class="num">10</div><div>
         <h2 class="trap-h">The price tag isn't the price</h2>
         <p>A S$18,000 bag doesn't cost S$18,000 — it costs whatever that money would have become. Bought at 35 and invested in the STI instead, ordinary purchases quietly compound into the kind of numbers usually reserved for houses, because thirty years at 6%/yr turns almost anything into six figures. None of this says never buy anything nice; it says know the real price before you decide it's worth it.</p>
         <div class="formula">A Herm&egrave;s Birkin at S$18,000, bought at 35 instead of invested, is <b>~S$103,000</b> of lost retirement wealth by 65 &mdash; about <b>11&ndash;12 classrooms</b> built for children in the developing world (~S$9,000 each, based on published NGO project costs) or <b>108 school libraries stocked</b> (~S$950 each). A daily S$7 artisan coffee on workdays, kept up for just 10 years and then left alone to compound, quietly becomes <b>~S$77,000</b> by 65 &mdash; nobody decides to spend that; it just accumulates one coffee at a time.</div>
@@ -1792,6 +1816,64 @@
         <p>Owning 30 Singapore companies is one bet on one asset class in one country. Equities, property, gold, bills and income each respond <em>differently</em> to growth, recession, inflation and deflation — so in any given season, something in the portfolio is working. Uncorrelated assets don't just smooth the ride; they let you rebalance from winners into losers, which is where extra return quietly comes from.</p>
         <div class="formula">Your income streams end up uncorrelated too: salary + SG dividends + REIT distributions + CPF interest + coupon income — five taps that rarely run dry at once.</div>
       </div></div>
+            <details class="ctl-group" id="grp-diversify-sim">
+        <summary><span class="cg-title">Try it: diversify your own pot</span></summary>
+        <div class="cg-body">
+      <p class="sec-sub">A S$2,000 STI position doesn't need diversifying against concentration risk -- a S$500,000 one does. This activates once your own <b>STI + SRS pot</b> (CPF deliberately excluded -- it sits in government-mandated accounts under its own rules regardless of this choice, so it was never actually yours to redirect in the first place) first crosses <b>S$100,000</b> in your own plan, and applies from that point in your own trajectory onward, not before. The sliders below start at <b>0%</b> -- nothing here changes your calculator numbers on Tab 2 unless you deliberately move them. The orange target marks match the example portfolio above exactly -- <b>45% global equities / 20% SG dividend stocks &amp; REITs / 15% gold / 10% short bonds, T-bills &amp; SSBs</b>, the same four figures shown there. That leaves 10% in STI here rather than a fifth slider for the portfolio's own "volatility &amp; insurance sleeve" -- that 10% is an emergency-cash-plus-term-cover allocation, not an investable asset class, so it's covered by the Protection Gap Check earlier on this tab instead of duplicated here.</p>
+      <div class="scard" style="border-top-color:var(--brand)">
+        <div class="name">Where you stand <span class="hint"><button class="help">?</button><span class="bubble">This age comes directly from your own inputs above -- not a fixed rule. It's simply the year your own STI + SRS contributions, compounding at your own chosen return, first add up to S$100,000. At the base-case profile (S$2,400/mo, starting at 20, roughly 20% of take-home going to SRS + STI combined), that's around <b>10 years of contributions and growth</b> -- landing at age 30. Raise the savings rate, start with existing savings, or earn more, and this age moves earlier; a slower start pushes it later, or off this plan's horizon entirely.</span></span></div>
+        <div class="hl" id="div-status-hl">Loading...</div>
+        <div class="rows" id="div-status-rows"></div>
+      </div>
+      <div class="field">
+        <label>Global equities share of new investing <span class="hint"><button class="help">?</button><span class="bubble">A fund tracking a broad global index like MSCI World -- hundreds of large companies across the US, Europe, and Japan in one holding, the same "growth + value blend" described above. Modelled at ~8%/yr, its long-run nominal average -- genuinely higher than this app's own STI assumption of 6%, since the STI has historically lagged global and US indices. Diversifying here isn't just risk reduction; on the historical record, it's also been a higher-returning choice than staying concentrated in Singapore alone.</span></span> &mdash; <output id="o-div-getf">0%</output></label>
+        <div class="slider-wrap" style="position:relative;padding-bottom:18px">
+          <div style="position:absolute;left:calc(14px + (100% - 28px) * 0.45);top:0;width:2px;height:28px;background:var(--brand);transform:translateX(-1px);pointer-events:none;z-index:2"></div>
+          <input type="range" id="i-div-getf" min="0" max="100" step="5" value="0" style="position:relative;z-index:1">
+          <div style="position:absolute;left:calc(14px + (100% - 28px) * 0.45);top:28px;transform:translateX(-50%);font-size:11px;color:var(--brand);white-space:nowrap;pointer-events:none">Target</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>SG dividend stocks/REITs share of new investing <span class="hint"><button class="help">?</button><span class="bubble">Ordinary SGX-listed shares paying out a meaningful share of earnings (the local banks are the classic example) plus S-REITs -- Singapore Real Estate Investment Trusts, required to distribute at least 90% of taxable income to unitholders. Modelled at ~6%/yr, matching the Singapore S-REIT sector's own long-run distribution-yield average -- the same figure this section's own retirement gold drawdown already uses, so the two stay consistent. This is the "SG dividends + REIT distributions" income stream the principle above describes, given its own slider here rather than folded into global equities.</span></span> &mdash; <output id="o-div-sgdiv">0%</output></label>
+        <div class="slider-wrap" style="position:relative;padding-bottom:18px">
+          <div style="position:absolute;left:calc(14px + (100% - 28px) * 0.2);top:0;width:2px;height:28px;background:var(--brand);transform:translateX(-1px);pointer-events:none;z-index:2"></div>
+          <input type="range" id="i-div-sgdiv" min="0" max="100" step="5" value="0" style="position:relative;z-index:1">
+          <div style="position:absolute;left:calc(14px + (100% - 28px) * 0.2);top:28px;transform:translateX(-50%);font-size:11px;color:var(--brand);white-space:nowrap;pointer-events:none">Target</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Gold share of new investing <span class="hint"><button class="help">?</button><span class="bubble">Modelled at ~7%/yr -- deliberately NOT gold's own historical price return, but the long-run growth rate of the money supply itself (US M2 has compounded at roughly 6.7%/yr over the last 60+ years). The premise: gold itself doesn't grow -- a fixed quantity of scarce metal has no organic reason to appreciate. What looks like gold "gaining value" in nominal terms is largely currency losing value as the money supply backing it expands. The example portfolio above uses 15% here specifically -- toward the upper end of the 5-15% range institutional research most consistently cites for gold's diversification benefit (low correlation with equities), reflecting its own framing of gold as insurance against money-printing and the late stages of the debt cycle.</span></span> &mdash; <output id="o-div-gold">0%</output></label>
+        <div class="slider-wrap" style="position:relative;padding-bottom:18px">
+          <div style="position:absolute;left:calc(14px + (100% - 28px) * 0.15);top:0;width:2px;height:28px;background:var(--brand);transform:translateX(-1px);pointer-events:none;z-index:2"></div>
+          <input type="range" id="i-div-gold" min="0" max="100" step="5" value="0" style="position:relative;z-index:1">
+          <div style="position:absolute;left:calc(14px + (100% - 28px) * 0.15);top:28px;transform:translateX(-50%);font-size:11px;color:var(--brand);white-space:nowrap;pointer-events:none">Target</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Short bonds, T-bills &amp; SSBs share of new investing <span class="hint"><button class="help">?</button><span class="bubble">The "dry powder" sleeve from the example portfolio above -- short-dated Singapore government bonds, Treasury bills, and Singapore Savings Bonds. Modelled at ~2.5%/yr, matching CPF-OA's own rate and recent SSB yields. Deliberately minimal, same reasoning as the example above: CPF is already this plan's big bond allocation, so this sleeve exists to have cash ready to buy a dip, not to earn much on its own.</span></span> &mdash; <output id="o-div-cash">0%</output></label>
+        <div class="slider-wrap" style="position:relative;padding-bottom:18px">
+          <div style="position:absolute;left:calc(14px + (100% - 28px) * 0.1);top:0;width:2px;height:28px;background:var(--brand);transform:translateX(-1px);pointer-events:none;z-index:2"></div>
+          <input type="range" id="i-div-cash" min="0" max="100" step="5" value="0" style="position:relative;z-index:1">
+          <div style="position:absolute;left:calc(14px + (100% - 28px) * 0.1);top:28px;transform:translateX(-50%);font-size:11px;color:var(--brand);white-space:nowrap;pointer-events:none">Target</div>
+        </div>
+      </div>
+      <div class="milestones flow" id="div-note" style="margin-top:8px"></div>
+      <div id="div-post-slider-content" style="display:none">
+      <div class="scard" style="border-top-color:var(--srs);margin-top:14px">
+        <div class="name">Before vs after diversification <span class="hint"><button class="help">?</button><span class="bubble">"Before" is always 0% diversification (100% STI, this app's original baseline). "After" is genuinely dynamic -- it uses whatever you've actually set the four sliders above to, not a fixed target, so this comparison always reflects your own real choice, applied from your own crossover age onward.</span></span></div>
+        <div class="hl" id="div-impact-hl">STI-only vs your own split, from your own crossover age onward</div>
+        <div class="rows" id="div-impact-rows"></div>
+      </div>
+      <div class="scard" style="border-top-color:var(--srs);margin-top:14px">
+        <div class="name">At retirement: gold's own drawdown</div>
+        <div class="hl">What happens to the gold position from age 65</div>
+        <div class="rows" id="div-retire-rows"></div>
+      </div>
+      <p class="sec-sub" style="margin-top:8px">Gold itself pays no dividend or interest -- holding it through retirement under the same 4% safe-withdrawal-rate assumption the rest of the pot uses would overstate what it can actually generate as income. Modelled instead as sold at retirement and reallocated into <b>75% high-yielding dividend stocks/S-REITs<span class="hint"><button class="help">?</button><span class="bubble">S-REITs: Singapore Real Estate Investment Trusts -- listed trusts that own income property (malls, offices, data centres, warehouses) and are required to distribute at least 90% of taxable income to unitholders. The Singapore S-REIT sector has averaged roughly 6-6.5%/yr in distribution yield -- modelled here at 6%. "Dividend stocks" alongside them covers ordinary SGX-listed shares that pay out a meaningful share of earnings, like the local banks.</span></span></b> (~6%/yr) and <b>25% Singapore Savings Bonds (SSB)<span class="hint"><button class="help">?</button><span class="bubble">A government-backed bond retail investors can buy directly, redeemable any month with no penalty. Interest steps up the longer it's held; the 10-year average has recently run around 2-2.3%, modelled here at 2.5%. Capital is fully guaranteed by the Singapore Government -- the safest asset modelled anywhere in this section.</span></span></b> (~2.5%/yr)</b> -- a common institutional split between an income-generating, growth-linked asset and a fully capital-safe one, rather than this app's own invention.</p>
+      </div>
+        <div id="div-sim-end-anchor"></div>
+        </div>
+      </details>
       <div class="step"><div class="num">2</div><div>
         <h2 class="step-h">Growth and value, across currencies</h2>
         <p>Growth stocks compound earnings; value and dividend stocks pay you to wait — over long stretches each takes turns leading, so hold both and stop guessing. Spreading the portfolio across SGD income, USD/EUR/JPY-earning global companies and gold means no single central bank's decisions control your future — multi-currency dividends are a natural hedge nobody charges you for.</p>
@@ -1945,23 +2027,6 @@
       <div class="gloss-item"><div class="gt">PARF <span>Preferential Additional Registration Fee</span></div><div class="gd">A partial rebate of the ARF you get back when the car is deregistered before 10 years old — about half the ARF, in practice. It's why a car's depreciation is spread over the price minus this rebate, not the full price.</div></div>
       <div class="gloss-item"><div class="gt">ERP <span>Electronic Road Pricing</span></div><div class="gd">Singapore's road-toll system — gantries that charge a variable fee at peak times on busy roads, on top of everything else a car already costs.</div></div>
       <div class="gloss-item"><div class="gt">Price-to-income ratio</div><div class="gd">How many years of a typical income it takes to buy a typical home — a quick gauge of how (un)affordable housing is.</div></div>
-    </section>
-
-    <section id="sec-cpf-nomination">
-      <div class="sec-label">CPF nomination check</div>
-      <p class="sec-sub">CPF savings are legally carved out of your estate entirely (Section 25 of the CPF Act) — a will has <b>zero</b> effect on them, no matter how carefully it's written. Without a nomination, your CPF goes to the Public Trustee's Office instead, split by fixed intestacy rules you don't get to override: spouse and children split 50/50 between them; no spouse or children, and it moves to parents, then siblings. A fee is deducted first (minimum S$15, scaling with balance), and it typically takes 6&ndash;12 months to sort out. Making one is free and takes minutes online, through the CPF website. This risk doesn't scale with how much you've saved -- it applies from your very first dollar in CPF, which is why this isn't gated behind any net-worth threshold the way diversification below is.</p>
-      <div class="scard" style="border-top-color:var(--srs)">
-        <div class="name">Your own projected CPF balance</div>
-        <div class="hl">What's actually at stake, at your own numbers</div>
-        <div class="rows" id="cpf-nom-projection"></div>
-      </div>
-      <div class="field toggle-field">
-        <label class="toggle-label">
-          <input type="checkbox" id="i-cpf-nom-have">
-          <span>I have a current CPF nomination in place</span>
-        </label>
-      </div>
-      <div class="milestones flow" id="cpf-nom-note" style="margin-top:8px"></div>
     </section>
 
     <section>
@@ -2186,9 +2251,15 @@
     if(!box) return;
     var calcTab=document.getElementById('tab-calc');
     var isCalc = calcTab && calcTab.classList.contains('active');
-    if(!isCalc){ box.classList.remove('show'); box.style.opacity=0; return; }
+    // The diversify accordion gets the identical treatment as Tab 2 itself -- shown
+    // while it's open, fading out as the reader scrolls past its own content into
+    // whatever section comes next, using the same anchor-based fade math as below.
+    var divAccordion=document.getElementById('grp-diversify-sim');
+    var isDivOpen = divAccordion && divAccordion.hasAttribute('open');
+    if(!isCalc && !isDivOpen){ box.classList.remove('show'); box.style.opacity=0; return; }
     box.classList.add('show');
-    var anchor=document.getElementById('proj65-anchor');
+    var anchorId = isCalc ? 'proj65-anchor' : 'div-sim-end-anchor';
+    var anchor=document.getElementById(anchorId);
     if(!anchor){ box.style.opacity=1; return; }
     var rect=anchor.getBoundingClientRect();
     var vh=window.innerHeight||document.documentElement.clientHeight;
@@ -2198,6 +2269,13 @@
     else op=(t-fadeEnd)/(fadeStart-fadeEnd);
     box.style.opacity=op;
   }
+  // A details element doesn't fire scroll/resize events on its own toggle, so this listener
+  // re-runs the same fade logic the instant the accordion opens or closes -- without
+  // it, the bar wouldn't appear until the reader happened to scroll or resize next.
+  (function(){
+    var divAccordion=document.getElementById('grp-diversify-sim');
+    if(divAccordion) divAccordion.addEventListener('toggle', updateFloatSummary);
+  })();
   window.addEventListener('scroll',updateFloatSummary,{passive:true});
   window.addEventListener('resize',updateFloatSummary);
   document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
@@ -2954,6 +3032,10 @@
       o.saveHalfRaise=$('i-halfraise') ? $('i-halfraise').checked : false;
       o.cpfLifeDefer=$('i-cpflifedefer') ? $('i-cpflifedefer').checked : false;
       o.cpfLifePlan=$('i-cpflifeplan') ? $('i-cpflifeplan').value : 'standard';
+      o.divGetf=$('i-div-getf') ? +$('i-div-getf').value/100 : 0;
+      o.divSgdiv=$('i-div-sgdiv') ? +$('i-div-sgdiv').value/100 : 0;
+      o.divGold=$('i-div-gold') ? +$('i-div-gold').value/100 : 0;
+      o.divCash=$('i-div-cash') ? +$('i-div-cash').value/100 : 0;
       // Universal, not a per-scenario choice: SRS past the point of any further tax
       // benefit is a strict downgrade versus open STI (same investments, but locked away
       // for no reason), so this always applies -- no rational saver would deliberately
@@ -3051,6 +3133,28 @@
       var cd=CONDOS[o.condoIdx], car=o.car?carCalc(o.omv):null;
       // Money already accumulated compounds from day one alongside new contributions.
       var STI=(o.startNW||0),SRS=0,OA=0,RET=0,taxSaved=0;
+      // Diversification (Global ETF, SG Dividend Stocks/REITs, Gold, Cash) as parallel
+      // pots alongside STI, matching the five income streams this app's own "why this
+      // shape" principle describes (salary, SG dividends, REIT distributions, CPF
+      // interest, coupon income) -- SGDIV fills the "SG dividends + REIT distributions"
+      // gap that Global ETF/Gold/Cash alone didn't cover. Each compounds at its own
+      // researched rate: ~8% for a Global ETF (MSCI World's long-run nominal average,
+      // roughly 8-9% -- genuinely higher than this app's own STI assumption, since the
+      // STI has historically lagged global/US indices); ~6% for SG dividend stocks/
+      // S-REITs (the same Singapore S-REIT sector distribution-yield figure already
+      // used for the retirement gold drawdown below, so the two stay consistent with
+      // each other); ~2.5% for cash, matching CPF-OA's own modelled rate as a
+      // reasonable "safe, low-return parking spot" benchmark.
+      // Gold at 7% -- NOT gold's own historical price return, but the long-run growth
+      // rate of the money supply itself (US M2 has compounded at roughly 5-7%/yr over
+      // the last 60+ years, ~6.7% measured directly off Fed data from 1959 to today).
+      // The premise: gold itself doesn't grow -- a fixed quantity of a scarce metal has
+      // no organic reason to appreciate -- what looks like gold "gaining value" in
+      // nominal currency terms is largely currency losing value as the money supply
+      // backing it expands. Modelling gold's return off money-supply growth rather than
+      // its own historical chart captures that mechanism directly, rather than treating
+      // gold as if it were a normal growth asset the way STI or a Global ETF actually are.
+      var GETF=0,SGDIV=0,GOLD=0,CASH=0,diversifyStarted=false;
       // 'already own my home': flat is treated as bought and fully paid at the start,
       // so no deposit leaves CPF-OA, no grant applies, and no mortgage or rent is charged.
       var hdbLoan=0,hdbBought=!!o.alreadyOwn,hdbMortM=0;
@@ -3335,16 +3439,39 @@
         effInvest+=windfall*investShare;
         lifestyle+=windfall*(1-investShare);
         // SRS was already extracted from th above (pre-tax, like CPF), so it's simply
-        // funded directly; open STI gets 100% of whatever's left of effInvest.
+        // funded directly; open STI gets 100% of whatever's left of effInvest, UNLESS
+        // diversification has started.
         SRS=(SRS+srsTargetHH*12)*(1+o.stiR);
-        STI=(STI+effInvest*12)*(1+o.stiR);
+        // STI + SRS only -- deliberately excluding CPF. Diversification is about
+        // reallocating money the reader actually controls day to day; CPF sits in
+        // government-mandated accounts under its own rules regardless of this choice,
+        // so including it here would trigger the feature on money that was never
+        // actually available to redirect in the first place.
+        // The crossover check happens on the pot's value BEFORE this year's own
+        // contribution is added -- deliberately, since it's checking "have prior years
+        // already built a pot worth diversifying," not "will this year's contribution
+        // itself tip it over." Before the crossover, the diversified and undiversified
+        // trajectories are identical (nothing has been split yet), so this needs no
+        // separate baseline pass to find the crossover age -- it's simply the same run.
+        if(!diversifyStarted && (STI+SRS)>=100000) diversifyStarted=true;
+        var divGetf = diversifyStarted ? (o.divGetf||0) : 0;
+        var divSgdiv = diversifyStarted ? (o.divSgdiv||0) : 0;
+        var divGold = diversifyStarted ? (o.divGold||0) : 0;
+        var divCash = diversifyStarted ? (o.divCash||0) : 0;
+        var divSti = Math.max(0, 1-divGetf-divSgdiv-divGold-divCash);
+        var newInvest = effInvest*12;
+        STI=(STI+newInvest*divSti)*(1+o.stiR);
+        GETF=(GETF+newInvest*divGetf)*(1.08);
+        SGDIV=(SGDIV+newInvest*divSgdiv)*(1.06);
+        GOLD=(GOLD+newInvest*divGold)*(1.07);
+        CASH=(CASH+newInvest*divCash)*(1.025);
         stiContrib+=effInvest*12; srsContrib+=srsTargetHH*12;
         OA*=1.025; RET*=1.04;
         prevTH=th;
-        ageAxis.push(a+1); nwPath.push(STI+SRS+OA+RET);
+        ageAxis.push(a+1); nwPath.push(STI+SRS+GETF+SGDIV+GOLD+CASH+OA+RET);
         stiPath.push(STI); srsPath.push(SRS); cpfPath.push(OA+RET);
       }
-      var POT=STI+SRS, CPF=OA+RET, annu=CPF*0.7;
+      var POT=STI+SRS+GETF+SGDIV+GOLD+CASH, CPF=OA+RET, annu=CPF*0.7;
       // Deferring CPF LIFE past 65 raises the monthly payout by roughly 7%/yr of
       // deferral (CPF Board's own published figure) -- 35% more at the full 5-year
       // deferral to 70. This app's CPF LIFE figure is a single, steady-state "monthly
@@ -3361,11 +3488,26 @@
       // smaller annuity premium in exchange for a larger bequest. Both simplifications
       // are explained directly in the help bubble.
       var cpfLifePlanMult = (o.cpfLifePlan==='escalating') ? 0.91 : (o.cpfLifePlan==='basic') ? 0.88 : 1;
-      var cpflife=annu*0.0941*cpfLifePlanMult*(1+cpfLifeDeferBonus)/12, potdraw=POT*0.04/12;
+      // At retirement, the gold position is modelled as sold and reallocated into income-
+      // generating assets rather than continuing to sit as a non-yielding hedge --
+      // 75% high-yielding dividend stocks/S-REITs (~6%/yr, matching the current
+      // Singapore S-REIT sector average of roughly 6-6.5%) and 25% Singapore Savings
+      // Bonds (~2.5%/yr, matching recent SSB 10-year average yields). A blended
+      // ~5.125%/yr on the gold specifically, generating real, explicit income rather
+      // than folding it into the generic 4% safe-withdrawal-rate assumption the rest
+      // of the pot uses -- gold itself pays no dividend or coupon, so treating it like
+      // the rest of the pot under a 4% SWR would overstate what it can actually
+      // generate as retirement income, even though its accumulated VALUE is still
+      // fully counted in net worth above.
+      var goldDivYield=0.06, goldSsbYield=0.025, goldDivShare=0.75, goldSsbShare=0.25;
+      var goldRetireIncome = GOLD*(goldDivShare*goldDivYield+goldSsbShare*goldSsbYield)/12;
+      var potdrawBase = POT-GOLD;
+      var cpflife=annu*0.0941*cpfLifePlanMult*(1+cpfLifeDeferBonus)/12, potdraw=potdrawBase*0.04/12+goldRetireIncome;
       var retRent=rentingOutBTO?(FLATS[o.flatIdx].rent*Math.pow(1.025,yrs)*0.78):0;
       return {yrs:yrs,disc:disc,STI:STI,SRS:SRS,POT:POT,CPF:CPF,cpflife:cpflife,potdraw:potdraw,
         nw:POT+CPF,income:cpflife+potdraw+retRent,taxSaved:taxSaved,spath:spath,
         nwPath:nwPath,ageAxis:ageAxis,grant:grant,netToday:netToday,mortM:mortM,loan0:loan0,
+        GETF:GETF,SGDIV:SGDIV,GOLD:GOLD,CASH:CASH,diversifyStarted:diversifyStarted,goldRetireIncome:goldRetireIncome,
         absd:absdPaid,retRent:retRent,earn0:nEarn(o.age),hdbMsr:hdbMsr,condoMsr:condoMsr,distressYears:distressYears,
         stiPath:stiPath,srsPath:srsPath,cpfPath:cpfPath,stiContrib:stiContrib,srsContrib:srsContrib,
         empCPFcum:empCPFcum,employerCPFcum:employerCPFcum,
@@ -3409,6 +3551,15 @@
         ('Household gross: <b>'+fmt((+$('i-sal').value)+(+$('i-spouse').value))+'</b>/mo. '+
          'CPF, tax and the SRS cap are computed separately for each of you; your '+
          'Necessities / Wants / SRS / STI split is applied equally to both.');
+      // Splits the single combined % back into what it actually means for the two
+      // detailed sliders it writes through to -- not obvious from this one slider
+      // alone, and the ratio it preserves (existing SRS:STI shape) isn't otherwise
+      // visible without opening Allocation & tax below.
+      var saveSrs=+$('a-srs').value, saveInv=+$('a-inv').value, saveTotal=saveSrs+saveInv;
+      $('o-saveline').innerHTML = saveTotal<=0 ? '' :
+        ('That\u2019s <b>'+Math.round(saveSrs)+'%</b> to SRS and <b>'+Math.round(saveInv)+'%</b> to STI, '+
+         'preserving your current split between them -- Necessities and Wants absorb the rest. '+
+         'For hands-on control of all four separately, open Allocation &amp; tax below.');
       $('o-raise').textContent=(+$('i-raise').value)+'%';
       $('o-sti').textContent=(+$('i-sti').value)+'%';
       $('o-jobnote').innerHTML=prof?prof.note:'';
@@ -4057,6 +4208,23 @@
         (pCpfTopUp>0?'<div class="seg seg-cpftopup" style="width:'+pCpfTopUp+'%">'+(pCpfTopUp>=12?pCpfTopUp+'%':'')+'</div>':'')+
         '<div class="seg seg-inv" style="width:'+pI+'%">'+(pI>=12?pI+'%':'')+'</div>'+
         (pGap>0?'<div class="seg seg-gap" style="width:'+pGap+'%">'+(pGap>=12?pGap+'%':'')+'</div>':'');
+      // Read-only summary, not a duplicate set of sliders -- the actual, interactive
+      // diversification sliders only exist once, on the Go Further tab, avoiding
+      // duplicate element ids. Surfaces here only once the reader has actually engaged
+      // with it (any of the three above 0%), since it's genuinely part of what this
+      // allocation is doing to the reader's own numbers at that point; stays hidden
+      // entirely otherwise, keeping this section exactly as simple as before for
+      // anyone who hasn't touched diversification at all.
+      var allocDivNote=$('alloc-div-note');
+      if(allocDivNote){
+        var divActive = (o.divGetf||0)+(o.divSgdiv||0)+(o.divGold||0)+(o.divCash||0) > 0;
+        if(divActive){
+          allocDivNote.style.display='block';
+          allocDivNote.innerHTML = '<b>Diversifying beyond STI</b> (set on the Go Further tab): once your STI+SRS pot crosses S$100,000, new investing splits <b>'+Math.round(o.divGetf*100)+'%</b> global equities / <b>'+Math.round(o.divSgdiv*100)+'%</b> SG dividend stocks/REITs / <b>'+Math.round(o.divGold*100)+'%</b> gold / <b>'+Math.round(o.divCash*100)+'%</b> short bonds/T-bills/SSBs, with the remaining <b>'+Math.round((1-o.divGetf-o.divSgdiv-o.divGold-o.divCash)*100)+'%</b> staying in STI -- already reflected in the net worth and retirement income figures above.';
+        } else {
+          allocDivNote.style.display='none';
+        }
+      }
       // projections
       $('p-sti-t').textContent=fmtK(r.POT/disc); $('p-sti-n').textContent=fmtK(r.POT); $('p-sti-draw').textContent=fmt(r.potdraw/disc);
       $('p-srs').textContent= o.aS>0 ? (fmtK(r.SRS/disc)+' · tax saved '+fmtK(r.taxSaved/disc)) : '—';
@@ -4098,6 +4266,7 @@
       }
       if(window.updateProtectionGap) window.updateProtectionGap(o, r);
       if(window.updateCpfNomination) window.updateCpfNomination(o, r);
+      if(window.updateDiversify) window.updateDiversify(o, r);
       $('p-nw-t').textContent=fmtK(r.nw/disc); $('p-nw-n').textContent=fmtK(r.nw);
       var homeTxt = o.alreadyOwn ? (o.condo ? (CONDOS[o.condoIdx].n+' condo (upgraded)') : 'home already owned') : (o.own ? (o.condo ? (CONDOS[o.condoIdx].n+' condo'+(o.btoSell?'':' + BTO rented out')) : FLATS[o.flatIdx].n+' owned') : 'renting for life');
       $('p-home').textContent=homeTxt;
@@ -4352,6 +4521,96 @@ window.updateProtectionGap = function(o, r){
         }
       }
     };
+
+    window.updateDiversify = function(o, r){
+      var hl=$('div-status-hl');
+      if(!hl) return;
+      var fmtDollar=function(n){ return 'S$'+Math.round(Math.max(0,n)).toLocaleString('en-US'); };
+      // STI+SRS only, deliberately excluding CPF -- matches the engine's own crossover
+      // condition exactly (see project()). o.startNW is STI's own starting value; SRS
+      // always starts at 0 (no separate starting-SRS input exists), so this already
+      // correctly excludes CPF -- the label below was inaccurate before this fix even
+      // though the underlying number happened to already be right.
+      var currentPot = o.startNW||0;
+      // The crossover age only needs to be found in the UNDIVERSIFIED region of the
+      // trajectory -- before it, GETF/GOLD/CASH are all still zero by construction, so
+      // stiPath+srsPath alone fully accounts for the pot with nothing missing. No
+      // separate baseline run needed to locate it.
+      var crossoverAge=null;
+      for(var i=0;i<r.ageAxis.length;i++){
+        if(r.stiPath[i]+r.srsPath[i]>=100000){ crossoverAge=r.ageAxis[i]; break; }
+      }
+      var rows=$('div-status-rows');
+      if(currentPot>=100000){
+        hl.innerHTML = '\u2705 <b>Active now</b> -- your stated current STI+SRS pot already clears S$100,000.';
+        if(rows) rows.innerHTML = '<div class="r"><span class="k">Your current STI+SRS pot</span><span class="v">'+fmtDollar(currentPot)+'</span></div>';
+      } else if(crossoverAge!==null){
+        hl.innerHTML = 'Not yet -- but on your own numbers, this activates at <b>age '+crossoverAge+'</b>.';
+        if(rows) rows.innerHTML = '<div class="r"><span class="k">Your current STI+SRS pot</span><span class="v">'+fmtDollar(currentPot)+'</span></div>'
+          + '<div class="r"><span class="k">Projected to cross S$100,000 at age</span><span class="v">'+crossoverAge+'</span></div>';
+      } else {
+        hl.innerHTML = 'Not on track to cross S$100,000 within this plan\u2019s own horizon -- the sliders below won\u2019t have any effect unless that changes.';
+        if(rows) rows.innerHTML = '<div class="r"><span class="k">Your current STI+SRS pot</span><span class="v">'+fmtDollar(currentPot)+'</span></div>';
+      }
+      // "Before" stays fixed at 0% (100% STI, this app's original baseline) -- the
+      // stable reference point. "After" is now genuinely dynamic: it reads whatever
+      // the four sliders below are ACTUALLY set to right now, not a fixed target, so
+      // moving any slider updates this comparison immediately and honestly reflects
+      // the reader's own real choice, applied from their own crossover age onward.
+      var getfEl=$('i-div-getf'), sgdivEl=$('i-div-sgdiv'), goldEl=$('i-div-gold'), cashEl=$('i-div-cash');
+      var liveGetf=(+getfEl.value)/100, liveSgdiv=(+sgdivEl.value)/100, liveGold=(+goldEl.value)/100, liveCash=(+cashEl.value)/100;
+      var anySliderActive = (liveGetf+liveSgdiv+liveGold+liveCash) > 0;
+      // The whole "before vs after" + gold-drawdown block stays hidden until the
+      // reader has actually engaged with at least one slider -- showing a detailed
+      // breakdown of a 0%-everywhere scenario would just be clutter with nothing to
+      // say, so it only earns its place on the page once there's something to compare.
+      var postContent=$('div-post-slider-content');
+      if(postContent) postContent.style.display = anySliderActive ? 'block' : 'none';
+      var impactRows=$('div-impact-rows');
+      var impactHl=$('div-impact-hl');
+      if(impactRows && anySliderActive){
+        if(currentPot>=100000 || crossoverAge!==null){
+          var rBefore = project(Object.assign({}, o, {divGetf:0, divSgdiv:0, divGold:0, divCash:0}));
+          var rAfter = project(Object.assign({}, o, {divGetf:liveGetf, divSgdiv:liveSgdiv, divGold:liveGold, divCash:liveCash}));
+          var nwBefore = rBefore.nw/rBefore.disc, nwAfter = rAfter.nw/rAfter.disc;
+          var incBefore = rBefore.income/12, incAfter = rAfter.income/12;
+          if(impactHl) impactHl.textContent = 'STI-only vs your own '+getfEl.value+'/'+sgdivEl.value+'/'+goldEl.value+'/'+cashEl.value+' split, from your own crossover age onward';
+          impactRows.innerHTML = '<div class="r" style="padding-top:2px"><span class="k"><b>Before diversification</b> (100% STI)</span><span class="v"></span></div>'
+            + '<div class="r"><span class="k">Net worth at 65</span><span class="v">'+fmtDollar(nwBefore)+'</span></div>'
+            + '<div class="r"><span class="k">Retirement income/mo</span><span class="v">'+fmtDollar(incBefore)+'</span></div>'
+            + '<div class="r" style="padding-top:10px"><span class="k"><b>After diversification</b> (your own split)</span><span class="v"></span></div>'
+            + '<div class="r"><span class="k">Net worth at 65</span><span class="v">'+fmtDollar(nwAfter)+'</span></div>'
+            + '<div class="r"><span class="k">Retirement income/mo</span><span class="v">'+fmtDollar(incAfter)+'</span></div>'
+            + '<div class="r" style="padding-top:10px"><span class="k">Difference</span><span class="v">'+(nwAfter>=nwBefore?'+':'')+fmtDollar(nwAfter-nwBefore)+'</span></div>';
+        } else {
+          impactRows.innerHTML = '<div class="r"><span class="k">Not applicable</span><span class="v">plan never crosses S$100k</span></div>';
+        }
+      }
+      if(getfEl) $('o-div-getf').textContent=getfEl.value+'%';
+      if(sgdivEl) $('o-div-sgdiv').textContent=sgdivEl.value+'%';
+      if(goldEl) $('o-div-gold').textContent=goldEl.value+'%';
+      if(cashEl) $('o-div-cash').textContent=cashEl.value+'%';
+      var note=$('div-note');
+      if(note){
+        var sum=(+getfEl.value)+(+sgdivEl.value)+(+goldEl.value)+(+cashEl.value);
+        var stiShare=Math.max(0,100-sum);
+        note.innerHTML = 'Of every new dollar invested (once active): <b>'+getfEl.value+'%</b> to global equities, <b>'+sgdivEl.value+'%</b> to SG dividend stocks/REITs, <b>'+goldEl.value+'%</b> to gold, <b>'+cashEl.value+'%</b> to short bonds/T-bills/SSBs, and the remaining <b>'+stiShare+'%</b> stays in STI. This only affects money invested from the crossover point onward -- it doesn\u2019t reshuffle what\u2019s already sitting in STI today.';
+      }
+      var retireRows=$('div-retire-rows');
+      if(retireRows){
+        if(r.GOLD>0){
+          var goldToday = r.GOLD/r.disc;
+          var goldIncomeToday = r.goldRetireIncome/r.disc;
+          retireRows.innerHTML = '<div class="r"><span class="k">Projected gold position at 65 (today\u2019s $)</span><span class="v">'+fmtDollar(goldToday)+'</span></div>'
+            + '<div class="r"><span class="k">&rarr; 75% into dividend stocks/S-REITs</span><span class="v">'+fmtDollar(goldToday*0.75)+'</span></div>'
+            + '<div class="r"><span class="k">&rarr; 25% into Singapore Savings Bonds</span><span class="v">'+fmtDollar(goldToday*0.25)+'</span></div>'
+            + '<div class="r"><span class="k">Resulting monthly income (today\u2019s $)</span><span class="v">'+fmtDollar(goldIncomeToday)+'</span></div>';
+        } else {
+          retireRows.innerHTML = '<div class="r"><span class="k">No gold allocated</span><span class="v">S$0</span></div>';
+        }
+      }
+    };
+
     // Expose the engine so the cover page's live projection uses THIS engine — never a
     // second copy of the maths that could silently drift out of step with the calculator.
     window.SGMR_ENGINE={ project:project, recompute:recompute, readOpts:readOpts, fmtK:fmtK };
@@ -4549,6 +4808,23 @@ window.updateProtectionGap = function(o, r){
     if($('i-cpf-nom-have')){
       $('i-cpf-nom-have').addEventListener('change',function(){ recompute(); });
     }
+    // Three sliders sharing one 100% pool (STI takes whatever's left) -- same clamp
+    // pattern used for the four main allocation sliders earlier: each one's own max
+    // is fixed at 100 (never narrowed), and only the VALUE gets clamped to whatever
+    // room the other two haven't already claimed, so the visual range never silently
+    // shifts a thumb's position the way a dynamically-narrowed max would.
+    var DIV_IDS=['i-div-getf','i-div-sgdiv','i-div-gold','i-div-cash'];
+    DIV_IDS.forEach(function(id){
+      if(!$(id)) return;
+      $(id).addEventListener('input',function(){
+        if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets();
+        var otherSum=0;
+        DIV_IDS.forEach(function(otherId){ if(otherId!==id) otherSum+=+$(otherId).value; });
+        var roomLeft=Math.max(0,100-otherSum);
+        if(+$(id).value>roomLeft) $(id).value=roomLeft;
+        recompute();
+      });
+    });
     $('i-job').addEventListener('change',function(){ if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets(); var p=PROFILES[$('i-job').value]; if(p){ $('i-sal').value=p.s; } recompute(); });
     // Partner's Salary sits ABOVE the Household selector on the page -- easy to miss
     // entirely if the reader is working their way downward and only just discovered,
@@ -4594,17 +4870,6 @@ window.updateProtectionGap = function(o, r){
       recompute();
     });
     $('i-sal').addEventListener('input',function(){ $('i-job').value='custom'; });
-    $('btn-preset').addEventListener('click',function(){
-      $('i-age').value=20; $('i-sal').value=2400; $('i-spouse').value=2400; $('i-nw0').value=0; $('i-owncsize').value=1; $('i-exmort').value=0; $('i-exyears').value=0; $('i-mop').value=0; $('i-mode').value='average'; $('i-sti').value=6;
-      $('i-job').value='mcd';
-      $('i-house').value='single'; $('i-hdb').value='own'; $('i-flat').value=0; $('i-buy').value=35;
-      $('i-marry').value=28; $('i-wed').value=30000; $('i-condo').value='no'; $('i-csize').value=1;
-      $('i-cage').value=40; $('i-bto').value='sell'; $('i-car').value='no'; $('i-carage').value=30; $('i-omv').value=25000;
-      $('i-prebuy').value='family'; $('i-prebuyage').value=35;
-      $('i-pa').value=0; $('i-paage').value=25;
-      $('a-need').value=50; $('a-want').value=30; $('a-srs').value=9; $('a-inv').value=11;
-      recompute();
-    });
     $('btn-share').addEventListener('click',function(){
       var url=buildShareURL();
       var status=$('share-status');
@@ -5412,7 +5677,7 @@ function openShareModal(drawFn){
                    o.aN+= t*nr; o.aW+= t-(t*nr); o.paycheckToPaycheck=true; },
       // 4 starting late
       function(o){ o.age=Math.min(60,o.age+5); o.buyAge=Math.max(o.buyAge,o.age); }
-      // Divorce (trap #8) has its own dedicated computation below -- refreshDivorceScenarios --
+      // Divorce (trap #9) has its own dedicated computation below -- refreshDivorceScenarios --
       // rather than a single delta() mutator. A mutator that only touches startNW showed S$0
       // for anyone without existing savings yet, since there was nothing to split -- true for
       // most young readers, and exactly wrong: the real cost isn't in savings already made,
@@ -5430,7 +5695,7 @@ function openShareModal(drawFn){
       });
     };
 
-    /* ===== DIVORCE (trap #8): three chained scenarios, not one delta(). Each runs a
+    /* ===== DIVORCE (trap #9): three chained scenarios, not one delta(). Each runs a
        married phase (accumulating together from the reader's own age/salary) THEN a
        single phase (rebuilding alone to 65) as two separate project() calls -- the only
        way to model a genuine mid-career event with this engine. This is personal to
