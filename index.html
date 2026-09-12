@@ -827,12 +827,12 @@
       </div>
 <div class="field">
         <label>Gross Monthly Salary <span class="hint"><button class="help">?</button><span class="bubble">Your own gross monthly salary, <b>before CPF and income tax</b> are deducted. Moving this slider switches the job profile to My Career.</span></span> — <output id="o-sal">S$2,400</output></label>
-        <input type="range" id="i-sal" min="1200" max="70000" step="100" value="2400">
+        <input type="range" id="i-sal" min="1200" max="40000" step="100" value="2400">
       </div>
       <div class="field" id="f-spouse">
         <div id="spouse-nudge" style="display:none;margin-bottom:8px;padding:8px 10px;border-radius:8px;background:var(--brand);color:var(--brand-ink);font-size:12.5px;font-weight:700">↓ Please set your partner's salary below — it defaults to matching yours until changed.</div>
         <label>Partner’s Salary <span class="hint"><button class="help">?</button><span class="bubble">Your partner’s gross monthly salary, before CPF and tax. CPF, income tax and the SRS cap are worked out <b>separately for each of you</b>, since all three are per-person in Singapore. Your allocation choices (Necessities / Wants / SRS / STI) are applied <b>equally to both</b> — the model assumes you save and invest as one household with the same priorities.</span></span> — <output id="o-spouse">S$2,400</output></label>
-        <input type="range" id="i-spouse" min="0" max="70000" step="100" value="2400">
+        <input type="range" id="i-spouse" min="0" max="40000" step="100" value="2400">
         <div class="milestones flow" id="o-spouseline" style="margin-top:8px"></div>
       </div>
         <div class="field">
@@ -2053,6 +2053,7 @@
         <h2 class="legal-h">Why I built this</h2>
         <p style="font-size:13.5px;color:#E8D4D0;line-height:1.65;margin:0">I built this app to show how well thought out Singapore's housing, tax, CPF, SRS, grants, and transport policies are — well enough integrated that even a fast-food worker can become a homeowner and a millionaire here. Having lived in ten countries, I've never come across a system that pulls together this well.</p>
         <p style="font-size:13.5px;color:#E8D4D0;line-height:1.65;margin:12px 0 0">But making full use of everything Singapore offers is genuinely complex, and most young people don't have the exposure to see how the pieces fit together — so they start late. This app exists to kickstart that: to make the levers visible, so more Singaporeans can minimise tax, maximise returns through consistent, rather boring, safe investing, and reach homeownership and millionaire status well before retirement age.</p>
+        <p style="font-size:13.5px;color:#E8D4D0;line-height:1.65;margin:12px 0 0">Built over the course of a couple of weeks, iterating conversationally with Claude — every formula checked against official CPF, IRAS, and HDB sources along the way, refined step by step rather than written once and left alone.</p>
         <p style="font-size:13.5px;color:#E8D4D0;line-height:1.65;margin:12px 0 0">The wage examples used throughout — "Fast Food Restaurant worker," "Taxi Driver," and others — are generic, illustrative occupational categories, not references to any specific real company or brand. They're chosen to represent realistic entry-level and everyday Singapore wages, so the numbers feel grounded rather than abstract.</p>
       </div>
     </section>
