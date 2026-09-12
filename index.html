@@ -1947,6 +1947,23 @@
       <div class="gloss-item"><div class="gt">Price-to-income ratio</div><div class="gd">How many years of a typical income it takes to buy a typical home — a quick gauge of how (un)affordable housing is.</div></div>
     </section>
 
+    <section id="sec-cpf-nomination">
+      <div class="sec-label">CPF nomination check</div>
+      <p class="sec-sub">CPF savings are legally carved out of your estate entirely (Section 25 of the CPF Act) — a will has <b>zero</b> effect on them, no matter how carefully it's written. Without a nomination, your CPF goes to the Public Trustee's Office instead, split by fixed intestacy rules you don't get to override: spouse and children split 50/50 between them; no spouse or children, and it moves to parents, then siblings. A fee is deducted first (minimum S$15, scaling with balance), and it typically takes 6&ndash;12 months to sort out. Making one is free and takes minutes online, through the CPF website. This risk doesn't scale with how much you've saved -- it applies from your very first dollar in CPF, which is why this isn't gated behind any net-worth threshold the way diversification below is.</p>
+      <div class="scard" style="border-top-color:var(--srs)">
+        <div class="name">Your own projected CPF balance</div>
+        <div class="hl">What's actually at stake, at your own numbers</div>
+        <div class="rows" id="cpf-nom-projection"></div>
+      </div>
+      <div class="field toggle-field">
+        <label class="toggle-label">
+          <input type="checkbox" id="i-cpf-nom-have">
+          <span>I have a current CPF nomination in place</span>
+        </label>
+      </div>
+      <div class="milestones flow" id="cpf-nom-note" style="margin-top:8px"></div>
+    </section>
+
     <section>
       <div class="sec-label">Behaviour &amp; budgeting</div>
       <div class="gloss-item"><div class="gt">Lifestyle inflation <span>creep</span></div><div class="gd">The habit of spending more as you earn more, so raises vanish into a fancier life instead of savings.</div></div>
@@ -4080,6 +4097,7 @@
         bubCpfLifePlan.innerHTML = txt;
       }
       if(window.updateProtectionGap) window.updateProtectionGap(o, r);
+      if(window.updateCpfNomination) window.updateCpfNomination(o, r);
       $('p-nw-t').textContent=fmtK(r.nw/disc); $('p-nw-n').textContent=fmtK(r.nw);
       var homeTxt = o.alreadyOwn ? (o.condo ? (CONDOS[o.condoIdx].n+' condo (upgraded)') : 'home already owned') : (o.own ? (o.condo ? (CONDOS[o.condoIdx].n+' condo'+(o.btoSell?'':' + BTO rented out')) : FLATS[o.flatIdx].n+' owned') : 'renting for life');
       $('p-home').textContent=homeTxt;
@@ -4293,7 +4311,48 @@ window.updateProtectionGap = function(o, r){
         }
       }
     };
-    // Expose the engine so the cover page's live projection uses THIS engine    // Expose the engine so the cover page's live projection uses THIS engine — never a
+
+    // Deliberately NOT gated behind any net-worth or age threshold -- unlike
+    // diversification (which genuinely only matters once concentration risk is real),
+    // the cost of dying without a nomination doesn't scale with balance at all. What
+    // DOES scale is the stakes, which is why this shows the reader's own projected CPF
+    // trajectory rather than a generic warning -- makes the abstract concrete.
+    window.updateCpfNomination = function(o, r){
+      var projEl=$('cpf-nom-projection');
+      if(!projEl) return;
+      var fmtDollar=function(n){ return 'S$'+Math.round(Math.max(0,n)).toLocaleString('en-US'); };
+      var findCpfAt=function(targetAge){
+        for(var i=0;i<r.ageAxis.length;i++){
+          if(r.ageAxis[i]>=targetAge) return r.cpfPath[i]/Math.pow(1.025,i+1);
+        }
+        return r.cpfPath[r.cpfPath.length-1]/r.disc;
+      };
+      var nearAge = Math.min(o.age+10, o.retire);
+      var cpfNear = findCpfAt(nearAge);
+      var cpfAt65 = findCpfAt(o.retire);
+      projEl.innerHTML =
+        '<div class="r"><span class="k">At age '+nearAge+' (today\u2019s $)</span><span class="v">'+fmtDollar(cpfNear)+'</span></div>'
+        + '<div class="r"><span class="k">At age '+o.retire+' (today\u2019s $)</span><span class="v">'+fmtDollar(cpfAt65)+'</span></div>';
+      var have = $('i-cpf-nom-have') ? $('i-cpf-nom-have').checked : false;
+      var willMarry = (!o.single && o.marryAge && o.marryAge<999);
+      var alreadyMarriedForNote = willMarry && o.marryAge<=o.age;
+      var marryNote = alreadyMarriedForNote
+        ? ' One thing worth remembering either way: getting married automatically cancels any existing CPF nomination -- since you\u2019re modelled as already married, double-check any nomination you have is dated AFTER the wedding, not left over from before it.'
+        : (willMarry
+          ? ' One thing worth remembering either way: getting married automatically cancels any existing CPF nomination -- at your own selected marriage age of '+o.marryAge+', whatever nomination is in place before that point stops being valid, and needs redoing after.'
+          : '');
+      var note=$('cpf-nom-note');
+      if(note){
+        if(have){
+          note.style.background='#7CA3C41A'; note.style.border='1px solid #7CA3C455'; note.style.borderRadius='6px'; note.style.padding='10px 12px'; note.style.color='var(--srs)';
+          note.innerHTML = '\u2705 Good -- your CPF savings will go where you actually intend, not through the Public Trustee.'+marryNote;
+        } else {
+          note.style.background='#E2604F1A'; note.style.border='1px solid #E2604F55'; note.style.borderRadius='6px'; note.style.padding='10px 12px'; note.style.color='var(--brick)';
+          note.innerHTML = '\u26a0\ufe0f Without a nomination, the CPF balance shown above -- not your net worth, not your investments, just what\u2019s sitting in CPF -- goes to the Public Trustee\u2019s Office instead of directly to whoever you\u2019d actually choose, after a fee and a 6\u201312 month wait.'+marryNote+' Making one is free and takes minutes at cpf.gov.sg.';
+        }
+      }
+    };
+    // Expose the engine so the cover page's live projection uses THIS engine — never a
     // second copy of the maths that could silently drift out of step with the calculator.
     window.SGMR_ENGINE={ project:project, recompute:recompute, readOpts:readOpts, fmtK:fmtK };
     // refreshCompare() bailed out safely earlier (SGMR_ENGINE wasn't set yet) -- now
@@ -4483,6 +4542,12 @@ window.updateProtectionGap = function(o, r){
         if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets();
         recompute();
       });
+    }
+    // Doesn't feed the main engine at all, but recompute() already re-invokes
+    // updateCpfNomination with fresh state as part of its normal chain, so this is
+    // simpler and more consistent than calling it directly here.
+    if($('i-cpf-nom-have')){
+      $('i-cpf-nom-have').addEventListener('change',function(){ recompute(); });
     }
     $('i-job').addEventListener('change',function(){ if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets(); var p=PROFILES[$('i-job').value]; if(p){ $('i-sal').value=p.s; } recompute(); });
     // Partner's Salary sits ABOVE the Household selector on the page -- easy to miss
