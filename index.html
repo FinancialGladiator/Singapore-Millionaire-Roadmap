@@ -32,7 +32,14 @@
     width:26px;height:26px;border-radius:50%;font-size:16px;line-height:1;cursor:pointer;
     display:flex;align-items:center;justify-content:center;padding:0}
   #breadcrumb .bc-arrow:disabled{opacity:.3;cursor:default}
-  #bc-text{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.02em;min-width:0;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #bc-text{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.02em;
+    min-width:0;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    background:none;border:none;padding:4px 2px;cursor:pointer;display:inline-flex;
+    align-items:center;gap:3px;justify-content:center}
+  /* Was plain, static text before -- now a button (see JS) that opens the same
+     section menu the hamburger does, so "what else is in this app" is one tap away
+     from wherever the reader already is, not only discoverable via the corner icon. */
+  .bc-chevron{font-size:9px;color:var(--muted);transform:translateY(0.5px)}
   .nav-toggle-btn{flex:0 0 auto;width:42px;height:42px;background:var(--brand);border:none;
     border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;
     gap:4px;cursor:pointer;padding:0}
@@ -40,7 +47,14 @@
   .nav-toggle-btn[aria-expanded="true"] span:nth-child(1){transform:translateY(6px) rotate(45deg)}
   .nav-toggle-btn[aria-expanded="true"] span:nth-child(2){opacity:0}
   .nav-toggle-btn[aria-expanded="true"] span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
-  .nav-title{display:flex;flex-direction:column;line-height:1.12;min-width:0}
+  .glossary-open-btn{flex:0 0 auto;width:42px;height:42px;background:var(--panel);
+    border:1px solid var(--line);border-radius:10px;color:var(--ink);cursor:pointer;padding:0;
+    font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:18px;
+    display:flex;align-items:center;justify-content:center}
+  /* flex:1 so the title expands to fill the space between the hamburger and the
+     glossary button -- without it, the glossary button sits right against the title's
+     own width instead of at the tabbar's true far-right edge. */
+  .nav-title{display:flex;flex-direction:column;line-height:1.12;min-width:0;flex:1}
   .nav-title .nt-l1{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:clamp(11px,3.2vw,13px);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .nav-title .nt-l2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(13px,4vw,15.5px);color:var(--couple);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .tabbar{min-width:0}
@@ -115,6 +129,41 @@
   .scard .r .k{color:var(--muted);flex:1 1 0;min-width:0} .scard .r .v{font-family:'Space Mono',monospace;font-weight:700;flex:0 0 auto;white-space:nowrap;padding-left:10px}
   .navcard{cursor:pointer}
   .navcard .go{font-family:'Space Mono',monospace;font-size:11px;color:var(--couple);margin-top:12px}
+
+  /* ---- Impact card: ONE reusable "before/after" comparison component, used
+     everywhere this app shows what a choice actually changes -- diversification,
+     CPF nomination, protection gap, CPF LIFE deferral, CPF LIFE plan choice. Built
+     once, deliberately, after these had each grown their own bespoke layout with
+     no shared visual language, so a reader who learns to read one now recognizes
+     every other one immediately. */
+  .impact-card{border:1px solid var(--line);border-radius:10px;overflow:hidden;
+    margin-top:14px;background:var(--panel)}
+  .impact-head{padding:12px 16px;border-bottom:1px solid var(--line)}
+  .impact-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;
+    font-size:14.5px;color:var(--ink);display:flex;align-items:center;gap:6px;
+    flex-wrap:wrap}
+  .impact-sub{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.5}
+  .impact-block{padding:12px 16px}
+  .impact-block-label{display:inline-block;font-family:'Space Mono',monospace;
+    font-size:10px;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;
+    border-radius:20px;margin-bottom:10px}
+  .impact-block.is-before .impact-block-label{background:#8a918a2e;color:var(--muted)}
+  .impact-block.is-after .impact-block-label{background:var(--brand);color:var(--brand-ink)}
+  .impact-row{display:flex;justify-content:space-between;gap:10px;padding:4px 0;font-size:13px}
+  .impact-row .k{color:var(--muted);flex:1 1 0;min-width:0}
+  .impact-row .v{font-family:'Space Mono',monospace;font-weight:700;flex:0 0 auto;
+    white-space:nowrap;padding-left:10px}
+  .impact-block.is-after .impact-row .v{color:var(--brand)}
+  .impact-divider{text-align:center;color:var(--muted);font-size:15px;line-height:1;
+    padding:0 0 2px}
+  .impact-diff{display:flex;justify-content:space-between;align-items:center;
+    gap:10px;padding:11px 16px;border-top:1px solid var(--line)}
+  .impact-diff .k{font-weight:700;font-size:13px;flex:1 1 0;min-width:0}
+  .impact-diff .v{font-family:'Space Mono',monospace;font-weight:800;font-size:15.5px;
+    flex:0 0 auto;white-space:nowrap;padding-left:10px}
+  .impact-diff.is-up{background:#4CAF5014} .impact-diff.is-up .v{color:#4CAF50}
+  .impact-diff.is-down{background:#E2604F14} .impact-diff.is-down .v{color:var(--brick)}
+  .impact-diff.is-neutral{background:transparent} .impact-diff.is-neutral .v{color:var(--muted)}
 
   /* cover */
   .cover-h1{max-width:20ch}
@@ -274,14 +323,38 @@
   .inline-field input{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
     font-size:clamp(18px,4.6vw,24px);color:var(--brand);background:#ffffff14;
     border:none;border-radius:7px;
-    padding:3px 9px;width:3.5em;text-align:center;-moz-appearance:textfield;outline:none}
-  .inline-field input#h-sal{width:5em}
+    /* No explicit width: sizing comes from the `size` attribute (set in JS via
+       autoSizeField), which the browser resolves natively against its own real,
+       currently-loaded font -- an explicit CSS width here would silently override
+       that and reintroduce the same fixed-width clipping this replaced. */
+    padding:3px 9px;text-align:center;-moz-appearance:textfield;outline:none}
   .inline-field input::-webkit-outer-spin-button,
   .inline-field input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
   .inline-field input:focus{background:#ffffff22;box-shadow:0 0 0 1.5px var(--brand)}
   .inline-pre{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
     font-size:clamp(18px,4.6vw,24px);color:var(--brand)}
   .inline-unit{font-family:'Bricolage Grotesque',sans-serif;font-size:1em;font-weight:500;color:#c3ccc6;margin-left:6px}
+  /* Same visual language as the age/salary inline inputs above, extended to a select
+     -- so the household-type and partner-salary follow-up questions read as part of
+     the same sentence, not a visually different form bolted on afterward. */
+  .inline-field select{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+    font-size:clamp(16px,4vw,20px);color:var(--brand);background:#ffffff14;
+    border:none;border-radius:7px;padding:3px 26px 3px 9px;outline:none;-webkit-appearance:none;
+    -moz-appearance:none;appearance:none;cursor:pointer;
+    /* appearance:none strips the native dropdown arrow entirely -- without some
+       replacement, this reads as plain text rather than a tappable question, which
+       defeats the point of asking it inline. A small chevron, same brand colour as
+       the value itself, restores that "this can change" affordance. */
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23FF7A33' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 9px center}
+  .inline-field select:focus{background-color:#ffffff22;box-shadow:0 0 0 1.5px var(--brand)}
+  /* Real fade for the partner-salary follow-up appearing/disappearing -- display:none
+     can't be transitioned, so this toggles a class instead (see JS) rather than the
+     dead "transition:opacity" rule this replaced, which never actually applied to
+     anything since only .style.display was ever being set. */
+  #hero-q4{max-height:80px;opacity:1;overflow:hidden;
+    transition:opacity .25s ease,max-height .25s ease,margin .25s ease}
+  #hero-q4.hero-q-hidden{max-height:0;opacity:0;margin:0;pointer-events:none}
 
   .hero-result{margin-top:32px}
   .hero-result .hr-label{font-family:'Space Mono',monospace;font-size:10.5px;
@@ -547,6 +620,21 @@
   .note-sg{background:#FF7A331A;border-left:3px solid var(--couple);border-radius:6px;padding:16px 18px;margin-top:16px}
   .note-sg p{font-size:13px;color:#D8E0D2;line-height:1.6}
   .milestones{display:flex;flex-wrap:wrap;gap:9px 18px;margin-top:14px;font-family:'Space Mono',monospace;font-size:11.5px;color:var(--muted)}
+  /* Shared by the four diversification sliders' target markers -- previously each of
+     the four repeated this exact positioning formula twice (once for the tick, once
+     for its "Target" label), with only the target PERCENTAGE itself differing between
+     them, hardcoded as a literal number baked directly into eight separate copies of
+     the same calc() expression. A future change to the formula (say, if the slider
+     thumb's own width ever changes, altering the 14px/28px offsets) previously needed
+     finding and editing all eight by hand; now it's one shared rule, and each marker
+     sets only its own target via the --tp custom property. */
+  .slider-wrap{position:relative;padding-bottom:18px}
+  .div-target-tick{position:absolute;left:calc(14px + (100% - 28px) * var(--tp));top:0;
+    width:2px;height:28px;background:var(--brand);transform:translateX(-1px);
+    pointer-events:none;z-index:2}
+  .div-target-label{position:absolute;left:calc(14px + (100% - 28px) * var(--tp));top:28px;
+    transform:translateX(-50%);font-size:11px;color:var(--brand);white-space:nowrap;
+    pointer-events:none}
   .milestones.flow{display:block;line-height:1.6}
   .milestones b{color:var(--couple)}
   /* einstein quote */
@@ -600,6 +688,19 @@
     background:var(--panel);border:1px solid var(--line);font-size:15px;cursor:pointer;z-index:2;
     display:flex;align-items:center;justify-content:center;padding:0;color:var(--ink)}
   .privacy-modal-inner{max-width:380px;padding:28px 24px 24px;text-align:center}
+  .glossary-modal-inner{max-width:480px;padding:20px 20px 8px;display:flex;flex-direction:column;
+    max-height:85vh}
+  .glossary-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:19px;
+    color:var(--ink);margin:0 32px 12px 0}
+  .glossary-search{width:100%;font-family:'Inter',sans-serif;font-size:15px;padding:11px 14px;
+    border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);
+    outline:none;flex:0 0 auto}
+  .glossary-search:focus{box-shadow:0 0 0 1.5px var(--brand)}
+  .glossary-list{overflow-y:auto;margin-top:4px;flex:1 1 auto}
+  .glossary-list .gloss-item{scroll-margin-top:4px}
+  .glossary-empty{font-size:14px;color:var(--muted);text-align:center;padding:24px 0}
+  .glossary-source-note{font-size:11.5px;color:var(--muted);line-height:1.5;
+    padding:10px 0 4px;margin:0;flex:0 0 auto;border-top:1px solid var(--line)}
   .privacy-icon{font-size:34px;margin-bottom:10px}
   .privacy-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:20px;
     color:var(--ink);margin-bottom:12px}
@@ -638,19 +739,17 @@
       <span class="nt-l1">The Singapore</span>
       <span class="nt-l2">Millionaire Roadmap</span>
     </div>
-    <div id="nav-dropdown" class="nav-dropdown">
-      <button class="nav-item active" data-tab="cover"><span class="n">01</span><span class="nav-txt">The Claim<em>The argument, in one screen</em></span></button>
-      <button class="nav-item" data-tab="calc"><span class="n">02</span><span class="nav-txt">Your Number<em>Model your own retirement</em></span></button>
-      <button class="nav-item" data-tab="buy"><span class="n">03</span><span class="nav-txt">How It Works<em>The playbook and the maths</em></span></button>
-      <button class="nav-item" data-tab="why"><span class="n">04</span><span class="nav-txt">What Breaks It<em>The traps, and the fixes</em></span></button>
-      <button class="nav-item" data-tab="portfolio"><span class="n">05</span><span class="nav-txt">Go Further<em>Portfolio, countries, glossary</em></span></button>
-      <button class="nav-item" data-tab="legal"><span class="n">06</span><span class="nav-txt">Legal &amp; Contact<em>Disclaimer, privacy, contact</em></span></button>
-    </div>
+    <button id="glossary-open" class="glossary-open-btn" aria-label="Open glossary">?</button>
+    <!-- Generated by buildNavDropdown() from TAB_ORDER, right after it's defined below --
+         empty here deliberately, so there is no static copy of these six tabs' labels
+         to accidentally fall out of sync with the array that actually drives the
+         breadcrumb and switchTab() itself. -->
+    <div id="nav-dropdown" class="nav-dropdown"></div>
   </nav>
 
   <div id="breadcrumb">
     <button id="bc-prev" class="bc-arrow" aria-label="Previous tab">‹</button>
-    <span id="bc-text">1 / 11 · Start</span>
+    <button id="bc-text" aria-label="Show all sections">1 / 6 · The Claim <span class="bc-chevron">▾</span></button>
     <button id="bc-next" class="bc-arrow" aria-label="Next tab">›</button>
   </div>
 
@@ -682,6 +781,17 @@
     </div>
   </div>
 
+  <div id="glossary-modal" class="share-modal">
+    <div class="share-modal-inner glossary-modal-inner">
+      <button id="glossary-close" class="share-modal-close" aria-label="Close">✕</button>
+      <h3 class="glossary-title">Glossary</h3>
+      <input type="text" id="glossary-search" class="glossary-search" placeholder="Search a term…" aria-label="Search the glossary" autocomplete="off">
+      <div id="glossary-list" class="glossary-list"></div>
+      <p id="glossary-empty" class="glossary-empty" style="display:none">No terms match that search.</p>
+      <p class="glossary-source-note">Plain-language explanations for orientation, not formal or legal definitions -- confirm specifics with Investopedia for general concepts and CPF, HDB and IRAS for Singapore particulars.</p>
+    </div>
+  </div>
+
   <div id="privacy-modal" class="share-modal">
     <div class="share-modal-inner privacy-modal-inner">
       <button id="privacy-modal-close" class="share-modal-close" aria-label="Close">✕</button>
@@ -708,6 +818,18 @@
             earning <span class="inline-field"><span class="inline-pre">S$</span><input type="text" id="h-sal" value="2,400" aria-label="Your gross monthly salary before CPF and tax" inputmode="numeric" pattern="[0-9,]*" maxlength="8"><span class="inline-unit">gross a month</span></span>.
           </p>
           <p class="hero-warn" id="h-age-warn" style="display:none">This app models working years and retirement — it isn't built for ages past 65.</p>
+          <p class="hero-sentence">
+            And I'm <span class="inline-field"><select id="h-house" aria-label="Your household situation">
+              <option value="single">single</option>
+              <option value="married">married, no kids</option>
+              <option value="kid">married, with 1 kid</option>
+              <option value="kid2">married, with 2 kids</option>
+              <option value="singlemom">single, with 1 kid</option>
+            </select></span>.
+          </p>
+          <p class="hero-sentence hero-q-hidden" id="hero-q4">
+            My partner earns <span class="inline-field"><span class="inline-pre">S$</span><input type="text" id="h-spouse" value="2,400" aria-label="Your partner's gross monthly salary before CPF and tax" inputmode="numeric" pattern="[0-9,]*" maxlength="8"><span class="inline-unit">gross a month too</span></span>.
+          </p>
         </div>
 
         <div class="hero-result" id="hero-result" aria-live="polite">
@@ -1028,11 +1150,19 @@
         </label>
         <div id="halfraise-noeffect" style="display:none;margin-top:8px;font-size:12.5px;color:var(--muted);line-height:1.5">⚠ This toggle currently makes <b>zero difference</b> to your numbers -- most likely because your own STI slider is already set above 50%, so it already exceeds the floor this toggle would enforce. A floor can only ever raise what your sliders would otherwise give you, never add on top of it.</div>
       </div>
+<div class="field toggle-field" id="f-advanced-cpf">
+        <label class="toggle-label">
+          <input type="checkbox" id="i-advanced-cpf">
+          <span>Show advanced CPF controls <span class="hint"><button class="help">?</button><span class="bubble">Three extra choices most people won't need to touch: deferring CPF LIFE payouts to 70, switching CPF LIFE plans (Standard/Escalating/Basic), and a voluntary CPF top-up (RSTU, below in Allocation &amp; tax). Hidden by default to keep this screen simpler for a first look -- switching this on reveals all three, and if any is already set to something other than its default (say, from a shared link), this switches on by itself so nothing you've set stays hidden from you.</span></span></span>
+        </label>
+      </div>
+<div id="advanced-cpf-group-1" style="display:none">
 <div class="field toggle-field" id="f-cpflifedefer">
         <label class="toggle-label">
           <input type="checkbox" id="i-cpflifedefer">
-          <span>Defer CPF LIFE payouts to age 70 <span class="hint"><button class="help">?</button><span class="bubble" id="bub-cpflifedefer">Each year CPF LIFE payouts are deferred past 65 raises the monthly amount by about 7% -- deferring the full 5 years to 70 means roughly 35% more every month, for life, versus starting at 65.</span></span></span>
+          <span>Defer CPF LIFE payouts to age 70 <span class="hint"><button class="help">?</button><span class="bubble">Each year CPF LIFE payouts are deferred past 65 raises the monthly amount by about 7% -- deferring the full 5 years to 70 means roughly 35% more every month, for life, versus starting at 65. The two options only balance out around age 85 -- roughly 15 years after whichever start date you pick -- after which deferring pays more, cumulatively, for every additional year lived. A fact about the two payout streams themselves, not a judgement about anyone's own health or life expectancy.</span></span></span>
         </label>
+        <div id="cpf-defer-card" style="margin-top:10px"></div>
       </div>
 <div class="field" id="f-cpflifeplan">
         <label>CPF LIFE plan <span class="hint"><button class="help">?</button><span class="bubble" id="bub-cpflifeplan">Loading...</span></span></label>
@@ -1041,7 +1171,9 @@
           <option value="escalating">Escalating -- starts lower, +2%/yr for life</option>
           <option value="basic">Basic -- lower payout, bigger bequest</option>
         </select>
+        <div id="cpf-plan-card" style="margin-top:10px"></div>
       </div>
+</div>
         </div>
       </details>
 
@@ -1065,13 +1197,13 @@
           <input type="range" id="a-want" min="0" max="100" step="1" value="30" style="accent-color:var(--family)">
         </div>
         <div class="alloc-row">
-          <div class="alloc-head"><span class="l"><i class="dot" style="background:var(--srs)"></i>SRS <span class="hint"><button class="help">?</button><span class="bubble">The <b>Supplementary Retirement Scheme</b>: contributions (cap ≈ S$1,275/person/mo) are deducted from taxable income now, invested in the STI, and locked until retirement — then only 50% of withdrawals are taxed, usually at little or no tax. Only worth it if you actually pay income tax. The slider's full-right position always maxes out at exactly the legal cap. <b>Gets priority</b> over open STI for its tax benefit.<br><br><b>Married with unequal incomes?</b> This % applies to each partner's own take-home separately, not household income — so the same % can max out the higher earner's S$1,275 cap while falling well short of it for the lower earner. To have both hit S$1,275 (S$2,550 combined), the % needs to be high enough for the lower earner's smaller income too.</span></span></span><span class="amt"><output id="ao-srs">9%</output> · <span id="ad-srs"></span></span></div>
+          <div class="alloc-head"><span class="l"><i class="dot" style="background:var(--srs)"></i>SRS <span class="hint"><button class="help">?</button><span class="bubble">The <b>Supplementary Retirement Scheme</b>: contributions (cap ≈ S$1,275/person/mo) are deducted from taxable income now, invested in the STI, and locked until retirement — then only 50% of withdrawals are taxed, usually at little or no tax. Only worth it if you actually pay income tax. The slider's full-right position always maxes out at exactly the legal cap. <b>Gets priority</b> over open STI for its tax benefit.<br><br><b>Married with unequal incomes?</b> This % sets the primary earner's own contribution, up to their own S$1,275 cap — the partner then contributes the SAME dollar amount, not the same %, so whenever both incomes can support it, the slider's full-right position reaches the genuine S$2,550 household maximum between the two of you, whichever of you earns more.</span></span></span><span class="amt"><output id="ao-srs">9%</output> · <span id="ad-srs"></span></span></div>
           <input type="range" id="a-srs" min="0" max="100" step="1" value="9" style="accent-color:var(--srs)" list="a-srs-ticks">
           <datalist id="a-srs-ticks"><option value="9"></option></datalist>
           <div class="milestones flow" id="a-srsnote" style="margin-top:8px"></div>
           <div class="milestones flow" id="srs-excess-note" style="display:none;margin-top:8px;background:#E2604F1A;border:1px solid #E2604F55;border-radius:6px;padding:10px 12px;color:var(--brick)"></div>
         </div>
-        <div class="alloc-row">
+        <div class="alloc-row" id="advanced-cpf-group-2" style="display:none">
           <div class="alloc-head"><span class="l"><i class="dot" style="background:var(--srs)"></i>CPF top-up (RSTU), monthly <span class="hint"><button class="help">?</button><span class="bubble" id="bub-cpftopup">A voluntary cash top-up to your own CPF Special Account — a separate relief from SRS, up to S$8,000/yr (~S$667/mo). Draws from the same shared budget as Necessities/Wants/SRS/STI below.</span></span></span><span class="amt"><output id="o-cpftopup">S$0/mo</output></span></div>
           <input type="range" id="i-cpftopup" min="0" max="667" step="10" value="0" style="accent-color:var(--srs)">
         </div>
@@ -1708,11 +1840,7 @@
         <h2 class="trap-h">No CPF nomination -- so the Public Trustee decides, not you</h2>
         <p>CPF savings are legally carved out of your estate entirely (Section 25 of the CPF Act) -- a will has <b>zero</b> effect on them, no matter how carefully it's written. Without a nomination, CPF goes to the Public Trustee's Office instead, split by fixed intestacy rules you don't get to override: spouse and children split 50/50 between them; no spouse or children, and it moves to parents, then siblings. This risk doesn't scale with how much you've saved -- it applies from your very first dollar in CPF.</p>
         <div class="formula">A fee is deducted first (minimum S$15, scaling with balance), and it typically takes 6&ndash;12 months to sort out -- versus free and minutes online, through the CPF website, with a nomination in place.</div>
-        <div class="scard" style="border-top-color:var(--srs);margin-top:14px">
-          <div class="name">Your own projected CPF balance</div>
-          <div class="hl">What's actually at stake, at your own numbers</div>
-          <div class="rows" id="cpf-nom-projection"></div>
-        </div>
+        <div id="cpf-nom-projection"></div>
         <div class="field toggle-field">
           <label class="toggle-label">
             <input type="checkbox" id="i-cpf-nom-have">
@@ -1827,43 +1955,39 @@
       </div>
       <div class="field">
         <label>Global equities share of new investing <span class="hint"><button class="help">?</button><span class="bubble">A fund tracking a broad global index like MSCI World -- hundreds of large companies across the US, Europe, and Japan in one holding, the same "growth + value blend" described above. Modelled at ~8%/yr, its long-run nominal average -- genuinely higher than this app's own STI assumption of 6%, since the STI has historically lagged global and US indices. Diversifying here isn't just risk reduction; on the historical record, it's also been a higher-returning choice than staying concentrated in Singapore alone.</span></span> &mdash; <output id="o-div-getf">0%</output></label>
-        <div class="slider-wrap" style="position:relative;padding-bottom:18px">
-          <div style="position:absolute;left:calc(14px + (100% - 28px) * 0.45);top:0;width:2px;height:28px;background:var(--brand);transform:translateX(-1px);pointer-events:none;z-index:2"></div>
+        <div class="slider-wrap">
+          <div class="div-target-tick" style="--tp:0.45"></div>
           <input type="range" id="i-div-getf" min="0" max="100" step="5" value="0" style="position:relative;z-index:1">
-          <div style="position:absolute;left:calc(14px + (100% - 28px) * 0.45);top:28px;transform:translateX(-50%);font-size:11px;color:var(--brand);white-space:nowrap;pointer-events:none">Target</div>
+          <div class="div-target-label" style="--tp:0.45">Target</div>
         </div>
       </div>
       <div class="field">
         <label>SG dividend stocks/REITs share of new investing <span class="hint"><button class="help">?</button><span class="bubble">Ordinary SGX-listed shares paying out a meaningful share of earnings (the local banks are the classic example) plus S-REITs -- Singapore Real Estate Investment Trusts, required to distribute at least 90% of taxable income to unitholders. Modelled at ~6%/yr, matching the Singapore S-REIT sector's own long-run distribution-yield average -- the same figure this section's own retirement gold drawdown already uses, so the two stay consistent. This is the "SG dividends + REIT distributions" income stream the principle above describes, given its own slider here rather than folded into global equities.</span></span> &mdash; <output id="o-div-sgdiv">0%</output></label>
-        <div class="slider-wrap" style="position:relative;padding-bottom:18px">
-          <div style="position:absolute;left:calc(14px + (100% - 28px) * 0.2);top:0;width:2px;height:28px;background:var(--brand);transform:translateX(-1px);pointer-events:none;z-index:2"></div>
+        <div class="slider-wrap">
+          <div class="div-target-tick" style="--tp:0.2"></div>
           <input type="range" id="i-div-sgdiv" min="0" max="100" step="5" value="0" style="position:relative;z-index:1">
-          <div style="position:absolute;left:calc(14px + (100% - 28px) * 0.2);top:28px;transform:translateX(-50%);font-size:11px;color:var(--brand);white-space:nowrap;pointer-events:none">Target</div>
+          <div class="div-target-label" style="--tp:0.2">Target</div>
         </div>
       </div>
       <div class="field">
         <label>Gold share of new investing <span class="hint"><button class="help">?</button><span class="bubble">Modelled at ~7%/yr -- deliberately NOT gold's own historical price return, but the long-run growth rate of the money supply itself (US M2 has compounded at roughly 6.7%/yr over the last 60+ years). The premise: gold itself doesn't grow -- a fixed quantity of scarce metal has no organic reason to appreciate. What looks like gold "gaining value" in nominal terms is largely currency losing value as the money supply backing it expands. The example portfolio above uses 15% here specifically -- toward the upper end of the 5-15% range institutional research most consistently cites for gold's diversification benefit (low correlation with equities), reflecting its own framing of gold as insurance against money-printing and the late stages of the debt cycle.</span></span> &mdash; <output id="o-div-gold">0%</output></label>
-        <div class="slider-wrap" style="position:relative;padding-bottom:18px">
-          <div style="position:absolute;left:calc(14px + (100% - 28px) * 0.15);top:0;width:2px;height:28px;background:var(--brand);transform:translateX(-1px);pointer-events:none;z-index:2"></div>
+        <div class="slider-wrap">
+          <div class="div-target-tick" style="--tp:0.15"></div>
           <input type="range" id="i-div-gold" min="0" max="100" step="5" value="0" style="position:relative;z-index:1">
-          <div style="position:absolute;left:calc(14px + (100% - 28px) * 0.15);top:28px;transform:translateX(-50%);font-size:11px;color:var(--brand);white-space:nowrap;pointer-events:none">Target</div>
+          <div class="div-target-label" style="--tp:0.15">Target</div>
         </div>
       </div>
       <div class="field">
         <label>Short bonds, T-bills &amp; SSBs share of new investing <span class="hint"><button class="help">?</button><span class="bubble">The "dry powder" sleeve from the example portfolio above -- short-dated Singapore government bonds, Treasury bills, and Singapore Savings Bonds. Modelled at ~2.5%/yr, matching CPF-OA's own rate and recent SSB yields. Deliberately minimal, same reasoning as the example above: CPF is already this plan's big bond allocation, so this sleeve exists to have cash ready to buy a dip, not to earn much on its own.</span></span> &mdash; <output id="o-div-cash">0%</output></label>
-        <div class="slider-wrap" style="position:relative;padding-bottom:18px">
-          <div style="position:absolute;left:calc(14px + (100% - 28px) * 0.1);top:0;width:2px;height:28px;background:var(--brand);transform:translateX(-1px);pointer-events:none;z-index:2"></div>
+        <div class="slider-wrap">
+          <div class="div-target-tick" style="--tp:0.1"></div>
           <input type="range" id="i-div-cash" min="0" max="100" step="5" value="0" style="position:relative;z-index:1">
-          <div style="position:absolute;left:calc(14px + (100% - 28px) * 0.1);top:28px;transform:translateX(-50%);font-size:11px;color:var(--brand);white-space:nowrap;pointer-events:none">Target</div>
+          <div class="div-target-label" style="--tp:0.1">Target</div>
         </div>
       </div>
       <div class="milestones flow" id="div-note" style="margin-top:8px"></div>
       <div id="div-post-slider-content" style="display:none">
-      <div class="scard" style="border-top-color:var(--srs);margin-top:14px">
-        <div class="name">Before vs after diversification <span class="hint"><button class="help">?</button><span class="bubble">"Before" is always 0% diversification (100% STI, this app's original baseline). "After" is genuinely dynamic -- it uses whatever you've actually set the four sliders above to, not a fixed target, so this comparison always reflects your own real choice, applied from your own crossover age onward.</span></span></div>
-        <div class="hl" id="div-impact-hl">STI-only vs your own split, from your own crossover age onward</div>
-        <div class="rows" id="div-impact-rows"></div>
-      </div>
+      <div id="div-impact-card"></div>
       <div class="scard" style="border-top-color:var(--srs);margin-top:14px">
         <div class="name">At retirement: gold's own drawdown</div>
         <div class="hl">What happens to the gold position from age 65</div>
@@ -1961,15 +2085,22 @@
       </ul>
     </div>
 
-    <div class="part-divider"><span>Glossary — every term, plain English</span></div>
+    <div class="part-divider"><span>One more thing</span></div>
 
-    <div class="eyebrow">Plain English · every term explained</div>
-    <h2 class="part-title">The jargon,<br><em>de-jargoned.</em></h2>
-    <p class="standfirst">Every technical term used across this dashboard, explained the way you'd explain it to a friend. Definitions are plain-language versions of standard sources (Investopedia, CPF, HDB, IRAS) — check the official sites for exact rules and current figures.</p>
+    <div class="eyebrow">Test yourself</div>
+    <h2 class="part-title">How much of this<br><em>actually stuck?</em></h2>
+    <p class="standfirst">Every term used across this dashboard -- CPF, SRS, HDB jargon and the rest -- is one tap away now, in the glossary behind the <b>?</b> in the header, wherever you are in the app.</p>
 
     <button type="button" class="hero-cta quiz-open-btn" id="btn-open-quiz" style="width:100%;margin:16px 0 24px">Test your financial knowledge →</button>
 
-    <section>
+    <!-- The 48 entries below are the glossary's actual, only copy -- no longer shown
+         here visually (see the "?" button in the header instead), but deliberately
+         still real, present DOM content rather than deleted: the global glossary
+         modal reads these exact elements directly at open-time, rather than keeping
+         a second, separately-maintained list of the same definitions. Removing them
+         outright would silently break that modal, leaving it permanently empty. -->
+    <div id="glossary-source-data" style="display:none" aria-hidden="true">
+<section>
       <div class="sec-label">Investing &amp; markets</div>
       <div class="gloss-item"><div class="gt">STI <span>Straits Times Index</span></div><div class="gd">A basket tracking the 30 biggest companies listed in Singapore — shorthand for "the Singapore stock market." When people say the market rose or fell, this is usually what they mean.</div></div>
       <div class="gloss-item"><div class="gt">ETF <span>Exchange-Traded Fund</span></div><div class="gd">A single fund you buy like a share that holds many companies at once. An STI ETF (e.g. ES3 or G3B) lets you own all 30 STI companies in one cheap purchase instead of buying each stock separately.</div></div>
@@ -2036,8 +2167,7 @@
       <div class="gloss-item"><div class="gt">Present bias</div><div class="gd">The wiring that makes us value a reward now far more than a bigger reward later — which is why saving for a distant retirement feels so hard.</div></div>
       <div class="gloss-item"><div class="gt">Necessities vs. wants <span>the 50/30/20 guide</span></div><div class="gd">A budgeting rule of thumb: roughly 50% of take-home on needs, 30% on wants, 20% invested. Needs are unavoidable (housing, food, transport); wants are the nice-to-haves.</div></div>
     </section>
-
-    <div class="note"><p>Plain-language explanations for orientation, not formal or legal definitions. Rules, rates and thresholds change — confirm specifics with Investopedia for general concepts and CPF, HDB and IRAS for Singapore particulars.</p></div>
+    </div>
   </div>
 
   <!-- ===== SECTION : LEGAL & CONTACT ===== -->
@@ -2110,11 +2240,35 @@
   </footer>
 
 <script>
+  // Single source of truth for every tab's identity -- name, label, AND now the
+  // section-menu subtitle too. Previously the dropdown menu's subtitles only existed
+  // as separately hand-written HTML, with no connection to this array at all beyond
+  // happening to list the same six tabs in the same order -- exactly the kind of
+  // two-places-define-the-same-thing setup that let the SRS and tax-relief
+  // calculations drift apart earlier this session, just for navigation text instead
+  // of financial math. The dropdown's own HTML is now generated from this array
+  // (see buildNavDropdown() below) rather than hand-duplicated alongside it.
   var TAB_ORDER=[
-    ['cover','The Claim'],['calc','Your Number'],['buy','How It Works'],
-    ['why','What Breaks It'],['portfolio','Go Further'],['legal','Legal & Contact']
+    ['cover','The Claim','The argument, in one screen'],
+    ['calc','Your Number','Housing, career and allocation sliders -- your own live projection'],
+    ['buy','How It Works','The playbook and the maths, step by step'],
+    ['why','What Breaks It','Ten traps that derail the plan -- and the fixes'],
+    ['portfolio','Go Further','Six principles, a diversification simulator, and the glossary'],
+    ['legal','Legal & Contact','Disclaimer, privacy, and why this was built']
   ];
+  function buildNavDropdown(){
+    var dd=document.getElementById('nav-dropdown');
+    if(!dd) return;
+    dd.innerHTML = TAB_ORDER.map(function(t, idx){
+      var num = String(idx+1).padStart(2,'0');
+      var activeClass = (t[0]===CURRENT_TAB) ? ' active' : '';
+      return '<button class="nav-item'+activeClass+'" data-tab="'+t[0]+'">'+
+        '<span class="n">'+num+'</span>'+
+        '<span class="nav-txt">'+t[1]+'<em>'+t[2]+'</em></span></button>';
+    }).join('');
+  }
   var CURRENT_TAB='cover';
+  buildNavDropdown();
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function switchTab(name, opts){
     opts=opts||{};
@@ -2162,7 +2316,7 @@
     var idx=TAB_ORDER.findIndex(function(t){return t[0]===name;});
     if(idx<0) idx=0;
     var txt=document.getElementById('bc-text'), prev=document.getElementById('bc-prev'), next=document.getElementById('bc-next');
-    if(txt) txt.textContent=(idx+1)+' / '+TAB_ORDER.length+' · '+TAB_ORDER[idx][1];
+    if(txt) txt.innerHTML=(idx+1)+' / '+TAB_ORDER.length+' \u00b7 '+TAB_ORDER[idx][1]+' <span class="bc-chevron">\u25be</span>';
     if(prev) prev.disabled=(idx===0);
     if(next) next.disabled=(idx===TAB_ORDER.length-1);
   }
@@ -2281,6 +2435,11 @@
   window.addEventListener('resize',updateFloatSummary);
   document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
   document.getElementById('nav-toggle').addEventListener('click',(e)=>{ e.stopPropagation(); toggleNavDropdown(); });
+  // Same menu the hamburger opens, reachable from the always-visible breadcrumb too --
+  // so seeing what else the app covers (ten traps on Tab 4, a diversification
+  // simulator on Tab 5) never requires first noticing the separate corner icon.
+  var bcTextBtn=document.getElementById('bc-text');
+  if(bcTextBtn) bcTextBtn.addEventListener('click',(e)=>{ e.stopPropagation(); toggleNavDropdown(); });
   document.addEventListener('click',(e)=>{
     var dd=document.getElementById('nav-dropdown'), tg=document.getElementById('nav-toggle');
     if(dd && dd.classList.contains('open') && !dd.contains(e.target) && e.target!==tg && !tg.contains(e.target)){
@@ -2497,9 +2656,27 @@
   };
   function applyScenarioPreset(key){
     var preset=SCENARIO_PRESETS[key]; if(!preset) return;
-    applyCalcState(preset);
+    // Persona presets describe a SAVINGS TRAJECTORY -- discipline, allocation, and the
+    // housing/car pace that goes with it -- not who the reader actually is. a/s/sp/h/mr
+    // (age, salary, partner salary, household type, marry age) are excluded here so
+    // clicking between Survival, Classic Saver, and FIRE Chaser always preserves
+    // whatever profile the reader has already entered, rather than quietly reverting
+    // it to this preset's own generic single-at-20-on-$2,400 stand-in every time. Safe
+    // for the one other caller too (the app's own first-visit default, applied before
+    // the reader has touched anything) -- the fresh HTML defaults for those five
+    // fields already match this preset's own values, so omitting them here changes
+    // nothing observable on that path.
+    var trajectory=Object.assign({},preset);
+    delete trajectory.a; delete trajectory.s; delete trajectory.sp;
+    delete trajectory.h; delete trajectory.mr;
+    applyCalcState(trajectory);
     if(window.SGMR_ENGINE && window.SGMR_ENGINE.recompute) window.SGMR_ENGINE.recompute();
   }
+  // Explicit, rather than relying on a top-level function declaration implicitly
+  // becoming a window property -- other code (the cover page's own hero-cta handler)
+  // needs to reliably call this from a different part of the file, and an implicit
+  // attachment isn't guaranteed across every execution context.
+  window.applyScenarioPreset = applyScenarioPreset;
 
   // Script runs at the end of body, after these elements already exist in the DOM --
   // waiting for DOMContentLoaded here would wire nothing, since that event has already
@@ -2539,6 +2716,11 @@
       markPresetActive(key);
       presetJustClicked=false;
     }
+    // Exposed for the same reason applyScenarioPreset is: the cover page's hero-cta
+    // needs the FULL preset-click behaviour (state + button highlight + correctly
+    // suppressing the "My Career" deviation flag while it runs), not just the state
+    // half, so it calls this rather than applyScenarioPreset directly.
+    window.clickPreset = clickPreset;
     // Exposed globally: any genuinely manual edit -- not a preset click, not a restored
     // session or shared link on page load -- means the reader has deviated from every
     // preset's own exact numbers, so none of the three personas honestly describes this
@@ -2816,6 +2998,62 @@
     pModal.addEventListener('click', function(e){ if(e.target===pModal) closePrivacyModal(); });
   })();
 
+  // Global glossary, reachable from every tab via the "?" button in the header --
+  // previously the 48 terms already written up on the Go Further tab were only ever
+  // visible to someone who happened to scroll there; a reader confused by an
+  // unfamiliar term anywhere else (a help bubble on Tab 2, a trap on Tab 4) had no
+  // way to look it up without leaving that screen to go hunting for it. Reads the
+  // existing .gloss-item elements directly, once, rather than duplicating their text
+  // into a second, separately-maintained list -- so this can never drift out of sync
+  // with the Go Further tab's own glossary; there remains exactly one place that
+  // actually defines any given term.
+  (function(){
+    var gModal=document.getElementById('glossary-modal');
+    if(!gModal) return;
+    var gOpenBtn=document.getElementById('glossary-open'),
+        gCloseBtn=document.getElementById('glossary-close'),
+        gSearch=document.getElementById('glossary-search'),
+        gList=document.getElementById('glossary-list'),
+        gEmpty=document.getElementById('glossary-empty');
+    var GLOSSARY_ENTRIES=null; // built lazily, once, on first open
+    function buildEntries(){
+      var nodes=document.querySelectorAll('.gloss-item');
+      GLOSSARY_ENTRIES=[];
+      nodes.forEach(function(node){
+        // Skip re-collecting from inside the modal's own, already-rendered copies,
+        // in case this ever runs a second time.
+        if(gList.contains(node)) return;
+        var termEl=node.querySelector('.gt'), defEl=node.querySelector('.gd');
+        var termText=termEl?termEl.textContent:'', defText=defEl?defEl.textContent:'';
+        GLOSSARY_ENTRIES.push({html:node.outerHTML, searchText:(termText+' '+defText).toLowerCase()});
+      });
+      // Alphabetical, so the full, unfiltered list is genuinely browsable -- the
+      // order terms happen to appear in on the Go Further tab is a reading sequence
+      // for that page, not a sensible order for a standalone reference list.
+      GLOSSARY_ENTRIES.sort(function(a,b){ return a.searchText.localeCompare(b.searchText); });
+    }
+    function renderList(query){
+      var q=(query||'').trim().toLowerCase();
+      var matches=q ? GLOSSARY_ENTRIES.filter(function(e){ return e.searchText.indexOf(q)>=0; }) : GLOSSARY_ENTRIES;
+      gList.innerHTML=matches.map(function(e){ return e.html; }).join('');
+      gEmpty.style.display = matches.length===0 ? 'block' : 'none';
+    }
+    function openGlossary(){
+      if(!GLOSSARY_ENTRIES) buildEntries();
+      gSearch.value='';
+      renderList('');
+      gModal.classList.add('open');
+      // A short delay avoids the on-screen keyboard popping up mid-open-transition
+      // on mobile, which otherwise fights the modal's own entrance for the viewport.
+      setTimeout(function(){ gSearch.focus(); }, 60);
+    }
+    function closeGlossary(){ gModal.classList.remove('open'); }
+    if(gOpenBtn) gOpenBtn.addEventListener('click', openGlossary);
+    if(gCloseBtn) gCloseBtn.addEventListener('click', closeGlossary);
+    gModal.addEventListener('click', function(e){ if(e.target===gModal) closeGlossary(); });
+    gSearch.addEventListener('input', function(){ renderList(gSearch.value); });
+  })();
+
   function stateFromURL(){
     try{
       var params=new URLSearchParams(location.search);
@@ -2893,9 +3131,101 @@
       if(rem>0) tt+=rem*0.24;
       return Math.max(tt,0);
     }
-    function empRate(a){ if(a<55)return .20; if(a<60)return .15; if(a<65)return .095; return .075; }
-    function totRate(a){ if(a<55)return .37; if(a<60)return .325; if(a<65)return .235; return .165; }
-    function oaShare(a){ if(a<35)return .62; if(a<45)return .57; if(a<50)return .51; if(a<55)return .40; return .35; }
+// Shared, single source of truth for a household's per-person CPF/tax/SRS math --
+    // previously this exact ~15-line block (CPF wage ceiling, chargeable income, SRS
+    // capped at S$1,275/person with the partner mirroring the primary earner's own
+    // dollar amount, tax after SRS relief) was independently duplicated between the
+    // year-0 "monthly budget now" display and the full 45-year projection loop, just
+    // under different variable names (sal1/sal2 vs s0a/s0b). That duplication is
+    // exactly what let the SRS-mirroring fix require two separate, easy-to-miss edits
+    // earlier -- a class of bug this function is meant to close off going forward.
+    // Both call sites destructure this into the same local names they always used, so
+    // nothing downstream of either needed to change.
+    function computeEarnerFinances(sal1, sal2, earners, cpfCap, empRatePct, srsAllocFrac){
+      var cpfW1=Math.min(sal1,cpfCap), cpfW2=(earners>1)?Math.min(sal2,cpfCap):0;
+      var chg1=Math.max(sal1*12-cpfW1*empRatePct*12-1000,0);
+      var chg2=(earners>1)?Math.max(sal2*12-cpfW2*empRatePct*12-1000,0):0;
+      var taxNo1=sgTax(chg1)/12, taxNo2=(earners>1)?sgTax(chg2)/12:0;
+      var th1=sal1-cpfW1*empRatePct-taxNo1, th2=(earners>1)?(sal2-cpfW2*empRatePct-taxNo2):0;
+      var srsCap=1275;
+      var srs1=Math.max(0,Math.min(srsAllocFrac*th1,srsCap));
+      var srs2=(earners>1)?srs1:0;
+      var srsOverflow=Math.max(0,srsAllocFrac*th1-srsCap);
+      var tax1=sgTax(Math.max(chg1-srs1*12,0))/12;
+      var tax2=(earners>1)?sgTax(Math.max(chg2-srs2*12,0))/12:0;
+      return {cpfW1:cpfW1, cpfW2:cpfW2, chg1:chg1, chg2:chg2, th1:th1, th2:th2,
+        thNoSRS:th1+th2, srs1:srs1, srs2:srs2, srsPerPerson:Math.max(srs1,srs2),
+        srsTargetHH:srs1+srs2, srsOverflow:srsOverflow, tax1:tax1, tax2:tax2,
+        taxNo1:taxNo1, taxNo2:taxNo2};
+    }
+    // Second shared function, same reasoning as computeEarnerFinances above: Qualifying
+    // Child Relief + Working Mother's Child Relief, Parent Relief, and CPF top-up (RSTU)
+    // relief were each independently duplicated between the 45-year engine and the
+    // year-0 display -- same formulas, same stacking order (child, then parent, then
+    // RSTU, each measured against the base already reduced by the ones before it),
+    // just under different variable names. rstuMonthlyOverride lets the year-0 display's
+    // own "unalloc0 room" correction reuse this too, by passing a constrained top-up
+    // amount instead of reading o.cpfTopUp directly -- so that refinement no longer
+    // needs its own, third hand-copy of the RSTU relief formula either.
+    function computeTaxReliefs(chg1, srs1Monthly, o, rstuMonthlyOverride){
+      var childReliefHH=0;
+      if(o.hasKid){
+        for(var kidN=1;kidN<=o.numKids;kidN++){
+          var qcr=4000, wmcr=(kidN===1)?8000:(kidN===2)?10000:12000;
+          childReliefHH+=Math.min(qcr+wmcr,50000);
+        }
+      }
+      var srs1Annual=srs1Monthly*12;
+      var cRel=(childReliefHH>0)?(sgTax(Math.max(chg1-srs1Annual,0))-sgTax(Math.max(chg1-srs1Annual-childReliefHH,0)))/12:0;
+      var pRel=(o.pa>0)?(sgTax(Math.max(chg1-srs1Annual-childReliefHH,0))-sgTax(Math.max(chg1-srs1Annual-childReliefHH-5500,0)))/12:0;
+      var rstuMonthly = (rstuMonthlyOverride!==undefined) ? rstuMonthlyOverride : (o.cpfTopUp||0);
+      var rstuRelief = Math.min(rstuMonthly*12, 8000);
+      var rRel=(rstuRelief>0)?(sgTax(Math.max(chg1-srs1Annual-childReliefHH-(o.pa>0?5500:0),0))-sgTax(Math.max(chg1-srs1Annual-childReliefHH-(o.pa>0?5500:0)-rstuRelief,0)))/12:0;
+      return {childReliefHH:childReliefHH, cRel:cRel, pRel:pRel,
+        rstuMonthly:rstuMonthly, rstuRelief:rstuRelief, rRel:rRel};
+    }
+    // Data-driven list of every slider whose output display is a plain, one-line
+    // mirror of its own input value -- nothing computed, nothing conditional, just a
+    // formatter applied to the current value. Previously each of these was its own,
+    // separately hand-written line inside syncUI(), which meant a new slider added
+    // later could easily be forgotten from this list entirely (there was no single,
+    // checkable place enumerating "every simple mirror this page has"). Deliberately
+    // excludes anything with real logic behind it -- o-marry's "(already married)"
+    // suffix, or any of the derived-value displays (b-th, ad-need, p-sti-t, etc.)
+    // whose figures come from a multi-step calculation, not a direct mirror -- those
+    // stay as their own explicit statements, where that logic is easiest to read.
+    var SIMPLE_MIRROR_FIELDS=[
+      ['i-sal','o-sal', fmt],
+      ['i-spouse','o-spouse', fmt],
+      ['i-raise','o-raise', function(v){ return v+'%'; }],
+      ['i-sti','o-sti', function(v){ return v+'%'; }],
+      ['i-wed','o-wed', fmt],
+      ['i-carage','o-carage', function(v){ return v; }],
+      ['i-omv','o-omv', fmt],
+      ['i-pa','o-pa', function(v){ return fmt(v)+'/mo'; }],
+      ['i-cpftopup','o-cpftopup', function(v){ return fmt(v)+'/mo'; }],
+      ['i-paage','o-paage', function(v){ return v; }],
+      ['i-btowait','o-btowait', function(v){ return v; }]
+    ];
+    function updateSimpleMirrors(){
+      SIMPLE_MIRROR_FIELDS.forEach(function(f){
+        var inEl=$(f[0]), outEl=$(f[1]);
+        if(!inEl || !outEl) return;
+        outEl.textContent = f[2](+inEl.value);
+      });
+    }
+    // Updated to the CPF Board's official contribution rate table effective 1 January
+    // 2026 (cpf.gov.sg). The 55-60 and 60-65 bands rose 1.5 percentage points each as
+    // part of the government's senior-worker CPF roadmap -- 32.5%->34% and
+    // 23.5%->25% respectively -- while under-55 (37%) and 65-70 (16.5%) were
+    // unchanged. Previously this used the pre-2026 (2025) rates for those two bands.
+    function empRate(a){ if(a<55)return .20; if(a<60)return .18; if(a<65)return .125; return .075; }
+    function totRate(a){ if(a<55)return .37; if(a<60)return .34; if(a<65)return .25; return .165; }
+    // OA allocation share also updated to the same 1-Jan-2026 official table -- the
+    // previous flat 35% for everyone 55+ significantly overstated how much of an
+    // older worker's own CPF actually lands in OA (spendable for housing) rather
+    // than the Retirement Account: the real split falls off sharply with age.
+    function oaShare(a){ if(a<35)return .62; if(a<45)return .57; if(a<50)return .51; if(a<55)return .40; if(a<60)return .353; if(a<65)return .14; if(a<70)return .0607; return .08; }
     function growth(y,yrs,mode,cr){
       if(mode==='custom') return cr;
       if(mode==='unambitious') return 0.02;
@@ -3181,43 +3511,17 @@
         // is computed separately. The partner's salary tracks the same growth curve, scaled
         // to their starting pay. With equal salaries this reduces exactly to the old maths.
         var sal1=sal, sal2=(earners>1)? sal*spouseRatio : 0;
-        var cpfW1=Math.min(sal1,cap), cpfW2=(earners>1)?Math.min(sal2,cap):0;
+        var ef=computeEarnerFinances(sal1, sal2, earners, cap, eR, o.aS);
+        var cpfW1=ef.cpfW1, cpfW2=ef.cpfW2;
         var emp=(cpfW1+cpfW2)*eR, tot=(cpfW1+cpfW2)*tR;
         var oaC=tot*oS, retC=tot-oaC;
         empCPFcum+=emp*12; employerCPFcum+=(tot-emp)*12;
-        var chg1=Math.max(sal1*12-cpfW1*eR*12-1000,0);
-        var chg2=(earners>1)?Math.max(sal2*12-cpfW2*eR*12-1000,0):0;
-        var taxNo1=sgTax(chg1)/12, taxNo2=(earners>1)?sgTax(chg2)/12:0;
-        // SRS target: a %-of-take-home slider, capped at the legal S$1,275/person/mo max.
-        // Estimated off take-home-before-SRS-relief to sidestep a circular tax dependency —
-        // a standard, negligible approximation for a career-length illustration.
-        var th1=sal1-cpfW1*eR-taxNo1, th2=(earners>1)?(sal2-cpfW2*eR-taxNo2):0;
-        var thNoSRS=th1+th2;
-        // SRS's actual dollar contribution genuinely tracks the slider, up to the legal
-        // S$1,275/mo cap -- NOT stopped early at the tax-optimal point. Over-allocating
-        // past the point where SRS still saves tax is a real, deliberately visible
-        // consequence: the slider, the dollar figure, and the resulting net worth all
-        // honestly reflect that choice, with the warning note explaining why it happened,
-        // rather than the engine silently protecting the reader from their own slider by
-        // rerouting the "wasted" portion into STI. optimizeSRS now only drives the
-        // tax-optimal preset defaults and the informational warning/tick-mark -- not a
-        // cap on the actual contribution itself.
-        var srsCap1 = 1275;
-        var srsCap2 = 1275;
-        var srs1=Math.max(0,Math.min(o.aS*th1,srsCap1));
-        var srs2=(earners>1)?Math.max(0,Math.min(o.aS*th2,srsCap2)):0;
-        var srsPerPerson=Math.max(srs1,srs2);
-        var srsTargetHH=srs1+srs2;
-        // Whatever the SRS slider asked for but this cap wouldn't allow -- whether the
-        // legal per-person max, or (with optimizeSRS on) the point past which SRS stops
-        // saving any tax -- redirected straight into open STI below, rather than falling
-        // back into the general pool to be re-split by Necessities/Wants/STI's own
-        // percentages. The slider represents investing intent; a capped tax wrapper
-        // shouldn't dilute that intent into ordinary lifestyle spending just because the
-        // preferred vehicle is full (or has stopped being worth using further).
-        var srsOverflowHH = Math.max(0,o.aS*th1-srsCap1) + (earners>1 ? Math.max(0,o.aS*th2-srsCap2) : 0);
-        var tax1=sgTax(Math.max(chg1-srs1*12,0))/12;
-        var tax2=(earners>1)?sgTax(Math.max(chg2-srs2*12,0))/12:0;
+        var chg1=ef.chg1, chg2=ef.chg2;
+        var th1=ef.th1, th2=ef.th2, thNoSRS=ef.thNoSRS;
+        var srs1=ef.srs1, srs2=ef.srs2, srsPerPerson=ef.srsPerPerson, srsTargetHH=ef.srsTargetHH;
+        var srsOverflowHH=ef.srsOverflow;
+        var tax1=ef.tax1, tax2=ef.tax2;
+        var taxNo1=ef.taxNo1, taxNo2=ef.taxNo2;
         // Qualifying Child Relief (S$4,000/child, flat, any birth order) plus Working
         // Mother's Child Relief (2024+ rules: S$8,000/1st child, S$10,000/2nd,
         // S$12,000/3rd+ -- a flat amount per child now, not a % of income as it used
@@ -3231,25 +3535,9 @@
         // tax brackets rather than each being measured in isolation and summed
         // (which would slightly misstate the combined saving, since tax brackets
         // aren't linear).
-        var childReliefHH=0;
-        if(o.hasKid){
-          for(var kidN=1;kidN<=o.numKids;kidN++){
-            var qcr=4000, wmcr=(kidN===1)?8000:(kidN===2)?10000:12000;
-            childReliefHH+=Math.min(qcr+wmcr,50000);
-          }
-        }
-        var cRel=(childReliefHH>0)?(sgTax(Math.max(chg1-srs1*12,0))-sgTax(Math.max(chg1-srs1*12-childReliefHH,0)))/12:0;
-        var pRel=(o.pa>0)?(sgTax(Math.max(chg1-srs1*12-childReliefHH,0))-sgTax(Math.max(chg1-srs1*12-childReliefHH-5500,0)))/12:0;
-        // CPF Cash Top-Up Relief (RSTU): up to S$8,000/yr for a self top-up to SA/RA,
-        // a separate relief bucket from SRS -- both can be claimed from the same income
-        // in the same year. Stacked last, on top of every other relief already
-        // subtracted above, so its own incremental saving is measured correctly against
-        // the fully-reduced base rather than in isolation. Scoped to self top-ups only
-        // for now -- the scheme also allows topping up a spouse, parent, or sibling for
-        // another S$8,000/yr, which this doesn't yet model.
-        var rstuMonthly = o.cpfTopUp || 0;
-        var rstuRelief = Math.min(rstuMonthly*12, 8000);
-        var rRel=(rstuRelief>0)?(sgTax(Math.max(chg1-srs1*12-childReliefHH-(o.pa>0?5500:0),0))-sgTax(Math.max(chg1-srs1*12-childReliefHH-(o.pa>0?5500:0)-rstuRelief,0)))/12:0;
+        var tr=computeTaxReliefs(chg1, srs1, o);
+        var childReliefHH=tr.childReliefHH, cRel=tr.cRel, pRel=tr.pRel;
+        var rstuMonthly=tr.rstuMonthly, rstuRelief=tr.rstuRelief, rRel=tr.rRel;
         taxSaved+=((taxNo1-tax1)+(taxNo2-tax2))*12;
         // Take-home is now genuinely SRS-exclusive: SRS comes off the top like CPF (and
         // lowers the tax base above), so it's never double-subtracted further down. The
@@ -3515,7 +3803,46 @@
         curMortCPF:curMortCPF,curMortCash:curMortCash,curRentOffset:curRentOffset,curCarCost:curCarCost,curPaCost:curPaCost};
     }
 
+    // Three fields hidden by default (CPF LIFE deferral, CPF LIFE plan choice, CPF
+    // top-up) to keep the first screen simpler -- but auto-revealed ONCE, the very
+    // first time this runs, if any of them is already set to something other than its
+    // own default (a shared link or restored session), so a value the reader actually
+    // chose never starts out hidden from them.
+    //
+    // That auto-reveal check deliberately only ever runs once, gated by
+    // __advancedCpfInitialized below -- re-running it on every call (as the first
+    // version of this did) meant that the instant a reader turned this on, glanced at
+    // Escalating or Basic, or nudged the top-up slider, and then tried to turn the
+    // section back OFF, this would immediately see that value still sitting non-default
+    // and force the toggle straight back on -- making it, in effect, permanently stuck
+    // on and impossible to ever switch off again once touched. After this first
+    // decision, the toggle is the reader's own, plain on/off switch: what's shown is
+    // simply whatever they last set it to, full stop, never re-derived from the values
+    // underneath it.
+    function updateAdvancedCpfVisibility(){
+      var toggle=$('i-advanced-cpf');
+      if(!toggle) return;
+      if(!window.__advancedCpfInitialized){
+        window.__advancedCpfInitialized=true;
+        var deferOn = $('i-cpflifedefer') ? $('i-cpflifedefer').checked : false;
+        var planNonDefault = $('i-cpflifeplan') ? $('i-cpflifeplan').value!=='standard' : false;
+        var topUpOn = $('i-cpftopup') ? (+$('i-cpftopup').value)>0 : false;
+        if(deferOn || planNonDefault || topUpOn) toggle.checked=true;
+      }
+      var show=toggle.checked;
+      var g1=$('advanced-cpf-group-1'), g2=$('advanced-cpf-group-2');
+      if(g1) g1.style.display = show ? 'block' : 'none';
+      if(g2) g2.style.display = show ? '' : 'none';
+    }
     function syncUI(){
+      // Guarded: this is new code, running at the very top of syncUI() on every
+      // single interaction across the whole page -- if it were ever to throw for a
+      // reason not caught during testing, an unguarded call here would silently
+      // abort everything that follows it in this same function, including the parts
+      // that actually update net worth. A failure here should, at worst, leave the
+      // advanced-CPF section's own visibility stale -- never take the rest of the
+      // page's numbers down with it.
+      try{ updateAdvancedCpfVisibility(); }catch(e){}
       var age=+$('i-age').value, single=($('i-house').value==='single'||$('i-house').value==='singlemom');
       // The PREVIOUS fix here checked mEl.value >= 999 -- but a real <input type="range"
       // max="60"> clamps any programmatic assignment to its own max IMMEDIATELY, so by
@@ -3544,9 +3871,8 @@
       var prof=PROFILES[$('i-job').value];
       var condoOn=(own && $('i-condo').value==='yes');
       $('o-age').textContent=age;
-      $('o-sal').textContent=fmt(+$('i-sal').value);
+      updateSimpleMirrors();
       $('o-nw0').textContent=fmtK(+$('i-nw0').value);
-      $('o-spouse').textContent=fmt(+$('i-spouse').value);
       var fsp=$('f-spouse'); if(fsp) fsp.style.display = single ? 'none' : 'block';
       $('o-spouseline').innerHTML = single ? '' :
         ('Household gross: <b>'+fmt((+$('i-sal').value)+(+$('i-spouse').value))+'</b>/mo. '+
@@ -3561,9 +3887,7 @@
         ('That\u2019s <b>'+Math.round(saveSrs)+'%</b> to SRS and <b>'+Math.round(saveInv)+'%</b> to STI, '+
          'preserving your current split between them -- Necessities and Wants absorb the rest. '+
          'For hands-on control of all four separately, open Allocation &amp; tax below.');
-      $('o-raise').textContent=(+$('i-raise').value)+'%';
-      $('o-sti').textContent=(+$('i-sti').value)+'%';
-      $('o-jobnote').innerHTML=prof?prof.note:'';
+            $('o-jobnote').innerHTML=prof?prof.note:'';
       $('f-raise').style.display=$('i-mode').value==='custom'?'block':'none';
       // Only a genuine future purchase needs flat size, buy age and pre-buy arrangement.
       var hdbMode = $('i-hdb').value;
@@ -3577,6 +3901,12 @@
       var ownsCondoNow = hdbMode==='have-condo';
       var ownsAlready = (hdbMode==='have-hdb'||hdbMode==='have-condo');
       var ownsHdbNow = hdbMode==='have-hdb';
+      // Ballot + build wait only means anything for a NEW BTO specifically -- a resale
+      // flat has no ballot to win and no construction to wait out (it's move-in ready,
+      // modulo the seller's own timeline), and someone who already owns isn't buying
+      // anything at all right now. Shown only for hdbMode==='own'.
+      var fBtoWait=$('f-btowait');
+      if(fBtoWait) fBtoWait.style.display = (hdbMode==='own') ? 'block' : 'none';
       // The mortgage-funding-source choice only means anything for an HDB loan --
       // a condo loan is already always cash regardless of this toggle.
       var fMortSrc=$('f-mortsrc');
@@ -3623,7 +3953,6 @@
       var alreadyMarried = (!single && (+$('i-marry').value) <= age);
       $('f-wed').style.display=(single || alreadyMarried)?'none':'block';
       $('o-marry').textContent=$('i-marry').value + (alreadyMarried?' (already married)':'');
-      $('o-wed').textContent=fmt(+$('i-wed').value);
       // Upgrading to a condo is open to anyone who owns a home — single, couple, or family.
       $('f-condo').style.display=own?'block':'none';
       $('l-condo').textContent = ownsCondoNow ? 'Move to a different condo?' : 'Upgrade to a condo?';
@@ -3638,12 +3967,7 @@
       var carOn=$('i-car').value==='yes';
       $('f-carage').style.display=carOn?'block':'none';
       $('f-omv').style.display=carOn?'block':'none';
-      $('o-carage').textContent=$('i-carage').value;
-      $('o-omv').textContent=fmt(+$('i-omv').value);
-      $('o-pa').textContent=fmt(+$('i-pa').value)+'/mo';
-      var oCpfTopUp=$('o-cpftopup'); if(oCpfTopUp && $('i-cpftopup')) oCpfTopUp.textContent=fmt(+$('i-cpftopup').value)+'/mo';
-      $('o-paage').textContent=$('i-paage').value;
-      $('f-paage').style.display=(+$('i-pa').value>0)?'block':'none';
+            $('f-paage').style.display=(+$('i-pa').value>0)?'block':'none';
       var flat=$('i-flat');
       flat.disabled=false;
       // The ballot/build wait only makes sense for a genuine new-BTO purchase -- resale
@@ -3665,13 +3989,10 @@
           ? 'Slide from the smallest (2-room Flexi) to the largest (5-room) resale flat. Unlike a new <b>BTO</b>, resale has <b>no size restriction for singles</b> and <b>no ballot or build wait</b> — but it costs roughly 50% more than an equivalent BTO, and only qualifies for a smaller CPF Housing Grant (about half the size of the new-BTO EHG grant this app models). This lets you compare the retirement-income impact of a bigger home, or of resale itself, against building from a BTO.'
           : 'Slide from the smallest BTO (2-room Flexi, ~S$140k before grants) to the largest (5-room, ~S$530k). New <b>BTOs</b> restrict singles to the 2-room Flexi — picking a larger size while Single is selected models buying that size on the <b>resale market</b> instead (allowed for singles from age 35), still only qualifying for the smaller singles-rate grant. This lets you compare the retirement-income impact of a bigger home.';
       }
-      var fBtoWait=$('f-btowait'); if(fBtoWait) fBtoWait.style.display = isResaleUI ? 'none' : '';
-      // This <output> was never actually being written to after the slider was built --
-      // the underlying calculation always read the slider's real value correctly (so
-      // net worth genuinely moved), but the displayed "4" itself was just static HTML,
-      // permanently frozen at whatever the page shipped with, regardless of how far the
-      // slider was actually dragged.
-      var oBtoWait=$('o-btowait'); if(oBtoWait && $('i-btowait')) oBtoWait.textContent=$('i-btowait').value;
+      // f-btowait's visibility is now fully handled earlier in this same function
+      // (hdbMode==='own' specifically) -- this older line only ever covered the
+      // resale case and silently ran a second time, after and overriding that fix,
+      // for every other mode (including "already own", which it never handled at all).
       var buy=$('i-buy'), minBuy=Math.max(single?35:25, age, single?35:+$('i-marry').value);
       // Buy age was reaching 200 -- applyCalcState() deliberately widens this slider's
       // max to 200 before restoring a saved value, so a stale, too-low max from a
@@ -3875,45 +4196,23 @@
       // Mirrors the engine: CPF, tax and the SRS cap are worked out per person.
       var sRatio0=(o.spouseSal!==undefined && o.sal0>0)?(o.spouseSal/o.sal0):1;
       var s0a=s0, s0b=(e0>1)? s0*sRatio0 : 0;
-      var cpfW0a=Math.min(s0a,8000), cpfW0b=(e0>1)?Math.min(s0b,8000):0;
+      // Same shared function the 45-year engine calls -- see its own definition,
+      // near sgTax, for why this is now one function instead of two independently
+      // maintained copies of the same math.
+      var ef0=computeEarnerFinances(s0a, s0b, e0, 8000, sE0, o.aS);
+      var cpfW0a=ef0.cpfW1, cpfW0b=ef0.cpfW2;
       var emp0=(cpfW0a+cpfW0b)*sE0;
-      var ch0a=Math.max(s0a*12-cpfW0a*sE0*12-1000,0);
-      var ch0b=(e0>1)?Math.max(s0b*12-cpfW0b*sE0*12-1000,0):0;
-      var tax0noA=sgTax(ch0a)/12, tax0noB=(e0>1)?sgTax(ch0b)/12:0;
-      var th0a=s0a-cpfW0a*sE0-tax0noA, th0b=(e0>1)?(s0b-cpfW0b*sE0-tax0noB):0;
-      var th0NoSRS=th0a+th0b;
-      // Mirrors the SAME change the engine now applies for the 45-year projection: the
-      // actual SRS dollar figure genuinely tracks the slider, up to the legal S$1,275/mo
-      // cap only -- not stopped early at the tax-optimal point, so over-allocating is a
-      // real, visible consequence in this "monthly budget now" display too, not silently
-      // absorbed elsewhere.
-      var srsCap0a = 1275;
-      var srsCap0b = 1275;
-      var srs0a=Math.max(0,Math.min(o.aS*th0a,srsCap0a));
-      var srs0b=(e0>1)?Math.max(0,Math.min(o.aS*th0b,srsCap0b)):0;
-      var srsPP0=Math.max(srs0a,srs0b);
-      var srsCash0=srs0a+srs0b;
+      var ch0a=ef0.chg1, ch0b=ef0.chg2;
+      var th0a=ef0.th1, th0b=ef0.th2, th0NoSRS=ef0.thNoSRS;
+      var srs0a=ef0.srs1, srs0b=ef0.srs2, srsPP0=ef0.srsPerPerson, srsCash0=ef0.srsTargetHH;
       var ch0=ch0a; // primary earner's chargeable income, used for the SRS guidance notes
-      var tax0a=sgTax(Math.max(ch0a-srs0a*12,0))/12;
-      var tax0b=(e0>1)?sgTax(Math.max(ch0b-srs0b*12,0))/12:0;
+      var tax0a=ef0.tax1, tax0b=ef0.tax2;
       // Same QCR + WMCR relief as the projection engine -- mirrored here for the
       // year-0 "monthly budget now" display specifically, subtracted first so Parent
       // Relief's own incremental saving is correctly measured on top of it.
-      var childReliefHH0=0;
-      if(o.hasKid){
-        for(var kidN0=1;kidN0<=o.numKids;kidN0++){
-          var qcr0=4000, wmcr0=(kidN0===1)?8000:(kidN0===2)?10000:12000;
-          childReliefHH0+=Math.min(qcr0+wmcr0,50000);
-        }
-      }
-      var cRel0=(childReliefHH0>0)?(sgTax(Math.max(ch0a-srs0a*12,0))-sgTax(Math.max(ch0a-srs0a*12-childReliefHH0,0)))/12:0;
-      var pRel0=(o.pa>0)?(sgTax(Math.max(ch0a-srs0a*12-childReliefHH0,0))-sgTax(Math.max(ch0a-srs0a*12-childReliefHH0-5500,0)))/12:0;
-      // Same CPF top-up (RSTU) relief as the projection engine -- mirrored here for the
-      // year-0 "monthly budget now" display specifically, stacked last on the fully-
-      // reduced base for the same reason cRel0/pRel0 already are.
-      var rstuMonthly0 = o.cpfTopUp || 0;
-      var rstuRelief0 = Math.min(rstuMonthly0*12, 8000);
-      var rRel0=(rstuRelief0>0)?(sgTax(Math.max(ch0a-srs0a*12-childReliefHH0-(o.pa>0?5500:0),0))-sgTax(Math.max(ch0a-srs0a*12-childReliefHH0-(o.pa>0?5500:0)-rstuRelief0,0)))/12:0;
+      var tr0=computeTaxReliefs(ch0a, srs0a, o);
+      var childReliefHH0=tr0.childReliefHH, cRel0=tr0.cRel, pRel0=tr0.pRel;
+      var rstuMonthly0=tr0.rstuMonthly, rstuRelief0=tr0.rstuRelief, rRel0=tr0.rRel;
       var tax0=tax0a+tax0b;
       var th0=(s0a+s0b)-emp0-srsCash0-tax0+pRel0+cRel0-rstuMonthly0+rRel0;
       $('b-gross').textContent=fmt(s0a+s0b)+(e0>1?' · 2 earners':'');
@@ -4031,7 +4330,7 @@
       // redirected straight into this STI figure, mirroring the engine's own overflow
       // logic exactly, so the "monthly budget now" table never silently shows money as
       // still going into SRS once it stops earning any tax benefit.
-      var srsOverflow0 = Math.max(0,o.aS*th0a-srsCap0a) + (e0>1 ? Math.max(0,o.aS*th0b-srsCap0b) : 0);
+      var srsOverflow0 = ef0.srsOverflow;
       // A subtle visual cue -- not a warning in itself, since the full explanation
       // already lives in the note below -- that connects "this number stopped moving"
       // to "here's why" at a glance, without dimming the figure or nudging the slider
@@ -4085,8 +4384,8 @@
       window.__cpfTopUpRoom = unalloc0;
       var rstuMonthly0Constrained = Math.min(rstuMonthly0, unalloc0);
       if(rstuMonthly0Constrained !== rstuMonthly0){
-        var rstuRelief0c = Math.min(rstuMonthly0Constrained*12, 8000);
-        var rRel0c=(rstuRelief0c>0)?(sgTax(Math.max(ch0a-srs0a*12-childReliefHH0-(o.pa>0?5500:0),0))-sgTax(Math.max(ch0a-srs0a*12-childReliefHH0-(o.pa>0?5500:0)-rstuRelief0c,0)))/12:0;
+        var tr0c=computeTaxReliefs(ch0a, srs0a, o, rstuMonthly0Constrained);
+        var rstuRelief0c=tr0c.rstuRelief, rRel0c=tr0c.rRel;
         th0=th0-(rstuMonthly0-rstuMonthly0Constrained)-(rRel0-rRel0c);
         tax0=tax0a+tax0b; // unchanged, but re-stated for clarity alongside the corrected figures below
         rRel0=rRel0c;
@@ -4130,15 +4429,17 @@
       // SRS: max % this slider could sensibly reach before the legal cap kicks in + tax-zero hint
       var neededAnnual=Math.max(ch0-20000,0), neededMonthly=neededAnnual/12;
       var atCap = (+srsEl.value>=srsCapPct && srsCapPct<100);
-      // The S$1,275/mo cap is PER PERSON. The slider's own stopping point is set by
-      // whichever earner reaches it first — but with two earners, the household total
-      // shown above can run higher than S$1,275, since each of you has your own cap.
+      // The S$1,275/mo cap is PER PERSON. The slider's own stopping point is set by the
+      // primary earner's own income specifically -- the partner's contribution then
+      // mirrors that same dollar amount rather than applying the % to their own,
+      // different take-home, so with two earners the household total genuinely
+      // reaches the full S$2,550 whenever maxed out, not just an approximation of it.
       var capExplainer = e0>1
-        ? ' Each of you has your own S$1,275/mo cap, so as a household you can shelter up to S$'+(1275*e0).toLocaleString()+'/mo between you \u2014 shown as '+fmt(srsCash0)+' above.'
+        ? ' Your partner\u2019s SRS contribution mirrors your own dollar amount, so as a household you can shelter up to S$'+(1275*e0).toLocaleString()+'/mo between you.'
         : '';
       var capNote = atCap
         ? ' <b>Maxed out</b> \u2014 S$1,275/mo is the legal SRS limit per person, so the slider stops here; the rest of your income still flows to the other three.'+capExplainer
-        : (srsCapPct<100 ? ' The slider now stops at <b>'+srsCapPct+'%</b>, the point where SRS hits the S$1,275/mo legal cap'+(e0>1?' for the higher earner':'')+'.'+capExplainer : '');
+        : (srsCapPct<100 ? ' The slider now stops at <b>'+srsCapPct+'%</b>, the point where SRS hits your own S$1,275/mo legal cap.'+capExplainer : '');
       if(ch0<=20000){
         $('a-srsnote').innerHTML='Max-to-zero: already <b>S$0 tax</b> at this income \u2014 SRS gives no tax benefit here.'+capNote;
       } else if(neededMonthly<=1275){
@@ -4235,13 +4536,20 @@
       // only the toggle flipped, so the bubble shows the reader's OWN two real figures
       // rather than a generic example. Cheap: project() is already fast enough to run
       // twice per recompute without any perceptible lag.
-      var bubCpfLifeDefer=$('bub-cpflifedefer');
-      if(bubCpfLifeDefer){
+      if($('cpf-defer-card')){
         var rCompare=project(Object.assign({},o,{cpfLifeDefer:!o.cpfLifeDefer}));
         var cpflife65 = (o.cpfLifeDefer ? rCompare.cpflife : r.cpflife)/disc;
         var cpflife70 = (o.cpfLifeDefer ? r.cpflife : rCompare.cpflife)/disc;
-        bubCpfLifeDefer.innerHTML = 'At your own numbers: <b>'+fmt(cpflife65)+'/mo</b> starting at 65, versus <b>'+fmt(cpflife70)+'/mo</b> for life if deferred to 70 \u2014 about 35% more, but nothing at all from CPF LIFE during those 5 extra years (this app doesn\u2019t model bridging that gap from your STI/SRS pot, which a real deferral would need). '
-          + 'The two options only balance out around <b>age 85</b> \u2014 roughly 15 years after whichever start date you pick \u2014 after which deferring pays more, cumulatively, for every additional year lived; before that, starting at 65 gives more total income. This is a straightforward crossover-age fact about the two payout streams themselves, not a judgement about anyone\u2019s own health or life expectancy \u2014 worth weighing against your own family history and how you feel about the risk of dying before the crossover versus living well past it.';
+        var deferGain = cpflife70 - cpflife65;
+        window.renderImpactCard('cpf-defer-card', {
+          beforeLabel: 'Start at 65',
+          beforeRows: [{k:'CPF LIFE payout/mo', v:fmt(cpflife65)}],
+          afterLabel: 'Defer to 70',
+          afterRows: [{k:'CPF LIFE payout/mo', v:fmt(cpflife70)}],
+          diffLabel: 'Extra per month, for life',
+          diffValue: '+'+fmt(deferGain),
+          diffDirection: 'up'
+        });
       }
       // Same personalized-comparison approach as the deferral bubble above: a second,
       // lightweight projection with only the plan switched, so the dollar figures shown
@@ -4252,18 +4560,36 @@
       // 2%/yr-growth rates alone. Verified directly: monthly payout itself overtakes
       // Standard at 70; CUMULATIVE total overtakes at 76.
       var bubCpfLifePlan=$('bub-cpflifeplan');
+      var planCard=$('cpf-plan-card');
       if(bubCpfLifePlan){
         var rStd = (o.cpfLifePlan==='standard') ? r : project(Object.assign({},o,{cpfLifePlan:'standard'}));
         var stdLife = rStd.cpflife/disc, thisLife = r.cpflife/disc;
-        var txt;
         if(o.cpfLifePlan==='standard'){
-          txt = 'The default, and this app\u2019s baseline above: a level payout for life, the highest starting amount of the three, with no further growth or decline built in. <b>Escalating</b> starts lower but rises 2%/yr for life -- a hedge against inflation eroding a fixed payout over a long retirement. <b>Basic</b> starts lower still and keeps more of your Retirement Account balance as a bequest, rather than converting as much of it into guaranteed lifetime income.';
+          bubCpfLifePlan.innerHTML = 'The default: a level payout for life, the highest starting amount of the three. <b>Escalating</b> starts lower but rises 2%/yr for life -- a hedge against inflation over a long retirement. <b>Basic</b> starts lower still and keeps more of your Retirement Account balance as a bequest, rather than converting it into guaranteed lifetime income.';
+          if(planCard) planCard.innerHTML='';
         } else if(o.cpfLifePlan==='escalating'){
-          txt = 'At your own numbers: <b>'+fmt(thisLife)+'/mo</b> to start, versus <b>'+fmt(stdLife)+'/mo</b> under Standard -- roughly 9% less on day one. It then grows 2%/yr for life. Two crossover points worth knowing, fixed by the rates themselves rather than your own numbers: the monthly payout itself overtakes Standard\u2019s fixed amount at <b>age 70</b>; the running cumulative total \u2014 what you\u2019ve actually received so far, adding it all up \u2014 only overtakes Standard\u2019s around <b>age 76</b>. Before 76, Standard has paid out more in total; after it, Escalating pulls ahead for every year lived beyond that. Same framing as deferral above: a fact about the two payout streams, not a judgement about anyone\u2019s own life expectancy.';
+          bubCpfLifePlan.innerHTML = 'Starts lower, then grows 2%/yr for life. Fixed by the rates alone, not your own numbers: the monthly payout itself overtakes Standard at age 70; the running cumulative total only overtakes around age 76. A fact about the two payout streams, not a judgement about anyone\u2019s own life expectancy.';
+          if(planCard) window.renderImpactCard('cpf-plan-card', {
+            beforeLabel: 'Standard',
+            beforeRows: [{k:'CPF LIFE payout/mo', v:fmt(stdLife)}],
+            afterLabel: 'Escalating',
+            afterRows: [{k:'CPF LIFE payout/mo (to start)', v:fmt(thisLife)}],
+            diffLabel: 'Less on day one',
+            diffValue: fmt(stdLife-thisLife),
+            diffDirection: 'down'
+          });
         } else {
-          txt = 'At your own numbers: <b>'+fmt(thisLife)+'/mo</b>, versus <b>'+fmt(stdLife)+'/mo</b> under Standard -- roughly 12% less every month, for life (and this app\u2019s single steady-state figure doesn\u2019t capture Basic\u2019s real-world further decline once Retirement Account balances fall below S$60k, since less of it converts to guaranteed lifetime income up front). This isn\u2019t a \u201cwait and get more\u201d trade-off like Escalating -- it\u2019s a straight swap of monthly income for a larger bequest to your beneficiaries, since Basic keeps more of your own balance unconverted rather than pooling it into the annuity.';
+          bubCpfLifePlan.innerHTML = 'Starts lower and keeps more of your Retirement Account as a bequest. Not a \u201cwait and get more\u201d trade-off like Escalating -- a straight swap of monthly income for a larger inheritance to your beneficiaries. This app\u2019s single steady-state figure doesn\u2019t capture Basic\u2019s real-world further decline once balances fall below S$60k.';
+          if(planCard) window.renderImpactCard('cpf-plan-card', {
+            beforeLabel: 'Standard',
+            beforeRows: [{k:'CPF LIFE payout/mo', v:fmt(stdLife)}],
+            afterLabel: 'Basic',
+            afterRows: [{k:'CPF LIFE payout/mo', v:fmt(thisLife)}],
+            diffLabel: 'Less every month, for life',
+            diffValue: fmt(stdLife-thisLife),
+            diffDirection: 'down'
+          });
         }
-        bubCpfLifePlan.innerHTML = txt;
       }
       if(window.updateProtectionGap) window.updateProtectionGap(o, r);
       if(window.updateCpfNomination) window.updateCpfNomination(o, r);
@@ -4395,7 +4721,16 @@
       $('stack-chart').innerHTML=g;
     }
 
-    var recompute=function(){ syncUI(); calc(); saveCalcStateLocal(); syncSaveSlider(); refreshWhatIfs(); if(window.refreshGrantLive) window.refreshGrantLive(); };
+    // Deliberately NOT calling updateFloatSummary() from here -- it forces a layout
+    // reflow (getBoundingClientRect), and recompute() itself fires on every single
+    // keystroke and slider-drag tick across the whole page. Doing that on every one
+    // of those, not just the rare cases that actually change page height, risks
+    // exactly the kind of visible jank/stutter in the floating bar this was meant to
+    // fix in the first place. Called instead, once, specifically from wherever
+    // showing/hiding the advanced CPF section actually happens (see i-advanced-cpf's
+    // own listener below) -- the one interaction that genuinely shifts enough layout
+    // to need it.
+    var recompute=function(){ syncUI(); calc(); saveCalcStateLocal(); syncSaveSlider(); refreshWhatIfs(); if(window.refreshGrantLive) window.refreshGrantLive(); if(window.__syncCoverFromCalc) window.__syncCoverFromCalc(); };
 
     // Deliberately standalone -- reads income/age/mortgage/household straight from the
     // same Tab 2 inputs everything else uses, but never touches project() or feeds
@@ -4403,7 +4738,40 @@
     // against a national guideline, not a projection; wiring it into the 45-year
     // engine would wrongly imply the app is simulating what happens IF the risk
     // actually occurs, which it isn't built to do.
-window.updateProtectionGap = function(o, r){
+// Single, shared "before/after" renderer -- every comparison in this app (diversify,
+    // CPF nomination, protection gap, CPF LIFE deferral, CPF LIFE plan choice) calls
+    // this one function rather than hand-building its own innerHTML, so they all share
+    // exactly the same visual language: a labelled BEFORE block, an AFTER block picked
+    // out in the app's own brand colour, and one bottom-line difference row that's
+    // colour-coded by direction. cfg = {icon, title, sub, beforeLabel, beforeRows,
+    // afterLabel, afterRows, diffLabel, diffValue, diffDirection:'up'|'down'|'neutral'}.
+    // beforeRows/afterRows are arrays of {k,v}. Omitting diffValue skips the diff row
+    // entirely, for cases with nothing meaningful to subtract.
+    window.renderImpactCard = function(containerId, cfg){
+      var el = $(containerId);
+      if(!el) return;
+      var rowsHtml = function(rows){
+        return (rows||[]).map(function(r){
+          return '<div class="impact-row"><span class="k">'+r.k+'</span><span class="v">'+r.v+'</span></div>';
+        }).join('');
+      };
+      var html = '<div class="impact-card">';
+      if(cfg.title){
+        html += '<div class="impact-head"><div class="impact-title">'+(cfg.icon?cfg.icon+' ':'')+cfg.title+'</div>';
+        if(cfg.sub) html += '<div class="impact-sub">'+cfg.sub+'</div>';
+        html += '</div>';
+      }
+      html += '<div class="impact-block is-before"><span class="impact-block-label">'+cfg.beforeLabel+'</span>'+rowsHtml(cfg.beforeRows)+'</div>';
+      html += '<div class="impact-divider">&darr;</div>';
+      html += '<div class="impact-block is-after"><span class="impact-block-label">'+cfg.afterLabel+'</span>'+rowsHtml(cfg.afterRows)+'</div>';
+      if(cfg.diffValue!==undefined){
+        html += '<div class="impact-diff is-'+(cfg.diffDirection||'neutral')+'"><span class="k">'+(cfg.diffLabel||'Difference')+'</span><span class="v">'+cfg.diffValue+'</span></div>';
+      }
+      html += '</div>';
+      el.innerHTML = html;
+    };
+
+    window.updateProtectionGap = function(o, r){
       var container=$('pg-person-boxes');
       if(!container) return; // section not present
       var fmtDollar=function(n){ return 'S$'+Math.round(Math.max(0,n)).toLocaleString('en-US'); };
@@ -4427,6 +4795,7 @@ window.updateProtectionGap = function(o, r){
       }
       var html='';
       var totalLifeGap=0, totalCiGap=0;
+      var cardData=[];
       people.forEach(function(p, idx){
         var dps=dpsAt(p.age);
         var lifeIncomePart=p.income*9;
@@ -4443,27 +4812,51 @@ window.updateProtectionGap = function(o, r){
         var ciHave = prevCiCovered ? ciNeed : 0;
         totalLifeGap += Math.max(0, lifeNeed-lifeHave);
         totalCiGap += Math.max(0, ciNeed-ciHave);
-        html += '<div class="scard" style="border-top-color:var(--brick);margin-top:'+(idx>0?'14':'0')+'px">'
-          + '<div class="name">'+p.label+' death / TPD cover</div>'
-          + '<div class="hl">Recommended, per MAS/MoneySense guideline</div>'
-          + '<div class="big" style="color:var(--brick)">'+fmtDollar(lifeNeed)+'</div>'
-          + '<div class="rows">'
-          + '<div class="r"><span class="k">9&times; '+(idx===0?'your':'their')+' own annual income</span><span class="v">'+fmtDollar(lifeIncomePart)+'</span></div>'
-          + '<div class="r"><span class="k">+ Household mortgage<span class="hint"><button class="help">?</button><span class="bubble">Either person\u2019s death or TPD leaves the same joint mortgage outstanding, so it\u2019s added to both, not split between them. Uses the actual projected loan for a planned future purchase -- the same figure the calculator above uses -- not just today\u2019s balance, which would be S$0 before buying.</span></span></span><span class="v">'+fmtDollar(mortgage)+'</span></div>'
-          + '<div class="r"><span class="k">&minus; CPF Dependants\u2019 Protection Scheme<span class="hint"><button class="help">?</button><span class="bubble">Automatic term life cover working Singapore Citizens/PRs already have from age 21 -- S$70,000 below 60, S$55,000 from 60-65. Held independently by each earner, so subtracted per person, not once for the household.</span></span></span><span class="v">-'+fmtDollar(dps)+'</span></div>'
-          + '</div></div>'
+        var lifeGapVal = lifeNeed - lifeHave;
+        var ciGapVal = ciNeed - ciHave;
+        cardData.push({idx:idx, p:p, lifeIncomePart:lifeIncomePart, mortgage:mortgage, dps:dps,
+          lifeNeed:lifeNeed, lifeHave:lifeHave, lifeGapVal:lifeGapVal,
+          ciNeed:ciNeed, ciHave:ciHave, ciGapVal:ciGapVal});
+        html += '<div id="pg-life-card-'+idx+'"></div>'
           + '<div class="field toggle-field"><label class="toggle-label"><input type="checkbox" id="'+lifeCoveredId+'" '+(prevLifeCovered?'checked':'')+'><span>I\u2019m already fully covered for this</span></label></div>'
-          + '<div class="scard" style="border-top-color:var(--brick)">'
-          + '<div class="name">'+p.label+' critical illness cover</div>'
-          + '<div class="hl">Recommended, per MAS/MoneySense guideline</div>'
-          + '<div class="big" style="color:var(--brick)">'+fmtDollar(ciNeed)+'</div>'
-          + '<div class="rows"><div class="r"><span class="k">4&times; '+(idx===0?'your':'their')+' own annual income<span class="hint"><button class="help">?</button><span class="bubble">Roughly four years of income replacement. No mortgage or DPS offset -- DPS is a death/TPD-only scheme.</span></span></span><span class="v">'+fmtDollar(ciNeed)+'</span></div></div></div>'
+          + '<div id="pg-ci-card-'+idx+'" style="margin-top:14px"></div>'
           + '<div class="field toggle-field"><label class="toggle-label"><input type="checkbox" id="'+ciCoveredId+'" '+(prevCiCovered?'checked':'')+'><span>I\u2019m already fully covered for this</span></label></div>';
       });
       container.innerHTML=html;
       // Regenerated via innerHTML every call, so listeners are re-attached each time
       // rather than relying on delegation -- simpler here since the whole block is
       // rebuilt together anyway, and the set of ids is small and known immediately after.
+      // Impact cards render AFTER innerHTML is set, since they need their container
+      // divs (pg-life-card-N / pg-ci-card-N) to already exist in the live DOM.
+      cardData.forEach(function(cd){
+        var idxWord = cd.idx===0 ? 'your' : 'their';
+        window.renderImpactCard('pg-life-card-'+cd.idx, {
+          title: cd.p.label+' death / TPD cover',
+          sub: 'National guideline (MAS/MoneySense): 9\u00d7 '+idxWord+' own annual income, plus any joint mortgage, minus the automatic CPF Dependants\u2019 Protection Scheme.',
+          beforeLabel: 'Recommended',
+          beforeRows: [
+            {k:'9\u00d7 '+idxWord+' own annual income', v:fmtDollar(cd.lifeIncomePart)},
+            {k:'+ Household mortgage', v:fmtDollar(cd.mortgage)},
+            {k:'\u2212 CPF Dependants\u2019 Protection Scheme', v:'-'+fmtDollar(cd.dps)}
+          ],
+          afterLabel: 'Your stated cover',
+          afterRows: [{k:'Current cover', v:fmtDollar(cd.lifeHave)}],
+          diffLabel: cd.lifeGapVal>0 ? 'Shortfall' : 'Fully covered',
+          diffValue: cd.lifeGapVal>0 ? fmtDollar(cd.lifeGapVal) : '\u2705 S$0',
+          diffDirection: cd.lifeGapVal>0 ? 'down' : 'up'
+        });
+        window.renderImpactCard('pg-ci-card-'+cd.idx, {
+          title: cd.p.label+' critical illness cover',
+          sub: 'National guideline: 4\u00d7 '+idxWord+' own annual income. No mortgage or DPS offset -- DPS is a death/TPD-only scheme.',
+          beforeLabel: 'Recommended',
+          beforeRows: [{k:'4\u00d7 '+idxWord+' own annual income', v:fmtDollar(cd.ciNeed)}],
+          afterLabel: 'Your stated cover',
+          afterRows: [{k:'Current cover', v:fmtDollar(cd.ciHave)}],
+          diffLabel: cd.ciGapVal>0 ? 'Shortfall' : 'Fully covered',
+          diffValue: cd.ciGapVal>0 ? fmtDollar(cd.ciGapVal) : '\u2705 S$0',
+          diffDirection: cd.ciGapVal>0 ? 'down' : 'up'
+        });
+      });
       people.forEach(function(p, idx){
         ['i-pg-life-covered-'+idx,'i-pg-ci-covered-'+idx].forEach(function(id){
           if($(id)) $(id).addEventListener('change',function(){ window.updateProtectionGap(o, r); });
@@ -4500,9 +4893,18 @@ window.updateProtectionGap = function(o, r){
       var nearAge = Math.min(o.age+10, o.retire);
       var cpfNear = findCpfAt(nearAge);
       var cpfAt65 = findCpfAt(o.retire);
-      projEl.innerHTML =
-        '<div class="r"><span class="k">At age '+nearAge+' (today\u2019s $)</span><span class="v">'+fmtDollar(cpfNear)+'</span></div>'
-        + '<div class="r"><span class="k">At age '+o.retire+' (today\u2019s $)</span><span class="v">'+fmtDollar(cpfAt65)+'</span></div>';
+      var cpfGrowth = cpfAt65 - cpfNear;
+      window.renderImpactCard('cpf-nom-projection', {
+        title: 'Your own projected CPF balance',
+        sub: 'What\u2019s actually at stake, growing larger every year -- at your own numbers, today\u2019s dollars.',
+        beforeLabel: 'At age '+nearAge,
+        beforeRows: [{k:'CPF balance', v:fmtDollar(cpfNear)}],
+        afterLabel: 'At age '+o.retire+' (retirement)',
+        afterRows: [{k:'CPF balance', v:fmtDollar(cpfAt65)}],
+        diffLabel: 'Growth over that stretch',
+        diffValue: '+'+fmtDollar(cpfGrowth),
+        diffDirection: 'up'
+      });
       var have = $('i-cpf-nom-have') ? $('i-cpf-nom-have').checked : false;
       var willMarry = (!o.single && o.marryAge && o.marryAge<999);
       var alreadyMarriedForNote = willMarry && o.marryAge<=o.age;
@@ -4567,24 +4969,27 @@ window.updateProtectionGap = function(o, r){
       // say, so it only earns its place on the page once there's something to compare.
       var postContent=$('div-post-slider-content');
       if(postContent) postContent.style.display = anySliderActive ? 'block' : 'none';
-      var impactRows=$('div-impact-rows');
-      var impactHl=$('div-impact-hl');
-      if(impactRows && anySliderActive){
+      var impactContainer=$('div-impact-card');
+      if(impactContainer && anySliderActive){
         if(currentPot>=100000 || crossoverAge!==null){
           var rBefore = project(Object.assign({}, o, {divGetf:0, divSgdiv:0, divGold:0, divCash:0}));
           var rAfter = project(Object.assign({}, o, {divGetf:liveGetf, divSgdiv:liveSgdiv, divGold:liveGold, divCash:liveCash}));
           var nwBefore = rBefore.nw/rBefore.disc, nwAfter = rAfter.nw/rAfter.disc;
           var incBefore = rBefore.income/12, incAfter = rAfter.income/12;
-          if(impactHl) impactHl.textContent = 'STI-only vs your own '+getfEl.value+'/'+sgdivEl.value+'/'+goldEl.value+'/'+cashEl.value+' split, from your own crossover age onward';
-          impactRows.innerHTML = '<div class="r" style="padding-top:2px"><span class="k"><b>Before diversification</b> (100% STI)</span><span class="v"></span></div>'
-            + '<div class="r"><span class="k">Net worth at 65</span><span class="v">'+fmtDollar(nwBefore)+'</span></div>'
-            + '<div class="r"><span class="k">Retirement income/mo</span><span class="v">'+fmtDollar(incBefore)+'</span></div>'
-            + '<div class="r" style="padding-top:10px"><span class="k"><b>After diversification</b> (your own split)</span><span class="v"></span></div>'
-            + '<div class="r"><span class="k">Net worth at 65</span><span class="v">'+fmtDollar(nwAfter)+'</span></div>'
-            + '<div class="r"><span class="k">Retirement income/mo</span><span class="v">'+fmtDollar(incAfter)+'</span></div>'
-            + '<div class="r" style="padding-top:10px"><span class="k">Difference</span><span class="v">'+(nwAfter>=nwBefore?'+':'')+fmtDollar(nwAfter-nwBefore)+'</span></div>';
+          var nwDiff = nwAfter - nwBefore;
+          window.renderImpactCard('div-impact-card', {
+            title: 'Before vs after diversification',
+            sub: '"Before" is always 100% STI, this app\u2019s original baseline. "After" uses exactly what you\u2019ve set the four sliders above to -- '+getfEl.value+'/'+sgdivEl.value+'/'+goldEl.value+'/'+cashEl.value+' -- applied from your own crossover age onward.',
+            beforeLabel: 'Before \u00b7 100% STI',
+            beforeRows: [{k:'Net worth at 65', v:fmtDollar(nwBefore)}, {k:'Retirement income/mo', v:fmtDollar(incBefore)}],
+            afterLabel: 'After \u00b7 your own split',
+            afterRows: [{k:'Net worth at 65', v:fmtDollar(nwAfter)}, {k:'Retirement income/mo', v:fmtDollar(incAfter)}],
+            diffLabel: 'Difference in net worth',
+            diffValue: (nwDiff>=0?'+':'')+fmtDollar(nwDiff),
+            diffDirection: nwDiff>=0 ? 'up' : 'down'
+          });
         } else {
-          impactRows.innerHTML = '<div class="r"><span class="k">Not applicable</span><span class="v">plan never crosses S$100k</span></div>';
+          impactContainer.innerHTML = '<div class="milestones flow">Not applicable -- this plan never crosses S$100,000.</div>';
         }
       }
       if(getfEl) $('o-div-getf').textContent=getfEl.value+'%';
@@ -4791,6 +5196,18 @@ window.updateProtectionGap = function(o, r){
       var rf=$('i-raisefloor-pct'); if(rf) rf.value='';
       recompute();
     });
+    if($('i-advanced-cpf')){
+      $('i-advanced-cpf').addEventListener('change',function(){
+        recompute();
+        // The one interaction that genuinely shifts enough page height to need this --
+        // see the comment on recompute()'s own definition for why this isn't called
+        // from every recompute() instead. Guarded, like updateAdvancedCpfVisibility
+        // below, so an unexpected failure here can never take the rest of the page's
+        // own update (in particular, calc() re-running and net worth changing) down
+        // with it.
+        try{ updateFloatSummary(); }catch(e){}
+      });
+    }
     if($('i-cpflifedefer')){
       $('i-cpflifedefer').addEventListener('change',function(){
         if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets();
@@ -5389,12 +5806,16 @@ function openShareModal(drawFn){
     // salEl is now a formatted text field (commas as typed) rather than a native number
     // input, so every read needs the commas stripped back out before parsing.
     function parseNum(v){ return parseInt(String(v||'').replace(/,/g,''),10); }
-    function formatSalaryField(){
-      var raw=salEl.value.replace(/[^\d]/g,'').slice(0,6);
-      var caretFromEnd=salEl.value.length-salEl.selectionStart;
-      salEl.value=raw?Number(raw).toLocaleString('en-US'):'';
-      var pos=Math.max(0,salEl.value.length-caretFromEnd);
-      try{ salEl.setSelectionRange(pos,pos); }catch(e){}
+    // Takes an element rather than hardcoding salEl, so both the reader's own salary
+    // field AND the partner's salary field get identical comma-formatting -- the
+    // partner field previously called neither this nor anything like it, which is
+    // why it alone showed a bare, unformatted number.
+    function formatSalaryField(el){
+      var raw=el.value.replace(/[^\d]/g,'').slice(0,6);
+      var caretFromEnd=el.value.length-el.selectionStart;
+      el.value=raw?Number(raw).toLocaleString('en-US'):'';
+      var pos=Math.max(0,el.value.length-caretFromEnd);
+      try{ el.setSelectionRange(pos,pos); }catch(e){}
     }
     // Age was a type="number" input, which has a well-known cross-browser quirk
     // (especially on mobile) where backspacing to empty can silently get rejected or
@@ -5410,19 +5831,53 @@ function openShareModal(drawFn){
       try{ ageEl.setSelectionRange(pos,pos); }catch(e){}
     }
 
+    // Sizes an inline field to fit whatever it's actually showing right now -- typed
+    // digits, or the selected option's own label -- rather than a fixed width that's
+    // inevitably wrong for some values (a 3-digit age vs a 6-digit salary; "single"
+    // vs "married, with 2 kids"). Deliberately uses the browser's OWN native sizing
+    // rather than a hand-measured pixel width: a custom measurement can be caught out
+    // by webfont load timing, sub-pixel rounding, or platform-specific rendering --
+    // this instead asks the browser itself, which always knows its own real layout.
+    function autoSizeField(el){
+      if(el.tagName==='SELECT'){
+        // A <select> with no explicit width already sizes itself natively to fit its
+        // currently-selected option -- so the fix here is simply to stop overriding
+        // that with a hand-computed width at all, not to compute a better one.
+        el.style.width = '';
+        return;
+      }
+      // Native text inputs don't auto-size to their value the way selects do, so the
+      // `size` attribute is used instead of a pixel width -- it tells the browser
+      // "make room for N characters" and the browser resolves that using its own,
+      // always-accurate font metrics, live, however that font ends up rendering.
+      var len = (el.value||'').length;
+      el.size = Math.max(2, len + 1);
+    }
+
     // Same baseline the Calculator defaults to, with only age + wage swapped in, so the
     // cover, the Calculator and the household cards can never tell different stories.
-    function opts(age,sal){
+    function opts(age,sal,house,spouseSal){
       // +4 years: matches the calculator's own default ballot + build wait (Tab 2,
       // "Buy at age" section) -- a new BTO isn't actually ready the moment you apply,
       // so this headline figure shouldn't assume it is either. Was drifting out of
       // sync with Tab 2 by several thousand dollars once that feature landed, since
       // this standalone object is never read through Tab 2's own readOpts().
       var buyAge=Math.max(35,age)+4;
-      return {age:age,sal0:sal,mode:'average',cr:0,stiR:0.06,retire:65,
-        single:true,hasKid:false,numKids:0,prof:null,se:false,
+      // Mirrors Tab 1's own derivation exactly (readOpts(), where i-house is read) --
+      // same five values, same logic -- so a household type answered here always means
+      // precisely what selecting it on Tab 1 itself would mean, never an approximation.
+      var isSingle = (house==='single' || house==='singlemom');
+      var hasKid = (house==='kid' || house==='kid2' || house==='singlemom');
+      var numKids = house==='kid' ? 1 : (house==='kid2' ? 2 : (house==='singlemom' ? 1 : 0));
+      return {age:age,sal0:sal,mode:'average',cr:0,stiR:0.06,retire:65,house:house,
+        single:isSingle,hasKid:hasKid,numKids:numKids,prof:null,se:false,
+        spouseSal:isSingle?0:(spouseSal||0), marryAge:isSingle?999:age,
         own:true,flatIdx:0,buyAge:buyAge,prebuy:'family',rentStartAge:Math.max(35,age),
-        aN:0.5,aW:0.3,aS:0.09,aI:0.11,
+        // Pulled directly from the Classic Saver preset (SCENARIO_PRESETS.conservative)
+        // rather than duplicated as separate numbers -- so if that preset's own split
+        // is ever tuned, this claim can never silently drift out of sync with it again.
+        aN:(+SCENARIO_PRESETS.conservative.an)/100, aW:(+SCENARIO_PRESETS.conservative.aw)/100,
+        aS:(+SCENARIO_PRESETS.conservative.as)/100, aI:(+SCENARIO_PRESETS.conservative.ai)/100,
         // Matches the calculator's own default (Tab 2, Career & assumptions):
         // at least half of every raise banked from year one, not just once SRS caps.
         saveHalfRaise:true,
@@ -5431,7 +5886,7 @@ function openShareModal(drawFn){
         // "let the reader override it and see the cost" slider behavior -- there's no
         // slider here to override.
         optimizeSRS:true,
-        marryAge:999,wedding:0,condo:false,condoIdx:1,condoAge:40,btoSell:true,
+        wedding:0,condo:false,condoIdx:1,condoAge:40,btoSell:true,
         car:false,carAge:30,omv:25000,pa:0,paAge:25};
     }
 
@@ -5454,18 +5909,49 @@ function openShareModal(drawFn){
       if(warnEl) warnEl.style.display=(rawAge>65)?'block':'none';
       var age=Math.max(18,Math.min(65, rawAge||20));
       var sal=Math.max(800,Math.min(70000, parseNum(salEl.value)||2400));
-      var r, o=opts(age,sal);
+      var houseEl=document.getElementById('h-house'), spouseEl=document.getElementById('h-spouse'),
+          q4=document.getElementById('hero-q4');
+      var house=houseEl?houseEl.value:'single';
+      var isMarried=(house==='married'||house==='kid'||house==='kid2');
+      if(q4) q4.classList.toggle('hero-q-hidden', !isMarried);
+      var spouseSal=(isMarried&&spouseEl)?Math.max(0,Math.min(70000,parseNum(spouseEl.value)||2400)):0;
+      var r, o=opts(age,sal,house,spouseSal);
       try{ r=window.SGMR_ENGINE.project(o); }catch(e){ return; }
       var d=r.disc, yrs=65-age;
 
       // Keep the calculator in sync live, not just when the CTA is clicked -- so it's
-      // already showing your own numbers by the time you get there, however you arrive.
-      var calcAgeEl=document.getElementById('i-age'), calcSalEl=document.getElementById('i-sal');
-      if(calcAgeEl && calcSalEl && (+calcAgeEl.value!==age || +calcSalEl.value!==sal)){
+      // already showing your own numbers by the time you get there, however you arrive
+      // (including navigating there directly, without ever pressing the CTA button --
+      // this was previously only wired up for age/salary, never household type or
+      // partner salary, which is exactly why selecting "married" here and switching
+      // tabs directly used to leave the Calculator showing single).
+      var calcAgeEl=document.getElementById('i-age'), calcSalEl=document.getElementById('i-sal'),
+          calcHouseEl=document.getElementById('i-house'), calcSpouseEl=document.getElementById('i-spouse'),
+          calcMarryEl=document.getElementById('i-marry');
+      var houseChanged = calcHouseEl && calcHouseEl.value!==house;
+      var spouseChanged = isMarried && calcSpouseEl && +calcSpouseEl.value!==spouseSal;
+      if(calcAgeEl && calcSalEl && (+calcAgeEl.value!==age || +calcSalEl.value!==sal || houseChanged || spouseChanged)){
         calcAgeEl.value=age; calcSalEl.value=sal;
         var calcJobEl=document.getElementById('i-job');
         if(calcJobEl && sal!==2400) calcJobEl.value='custom';
+        if(calcHouseEl) calcHouseEl.value=house;
+        if(calcSpouseEl && isMarried) calcSpouseEl.value=spouseSal;
+        if(calcMarryEl && isMarried) calcMarryEl.value=age;
+        // Reentrancy guard: i-sal/i-age are real range inputs with their own narrower
+        // min/max (e.g. i-sal is 1200-40000), which silently clamps whatever gets
+        // written here while the reader is still mid-keystroke -- typing "35000" digit
+        // by digit passes through "3", "35", "350" along the way, every one of which
+        // sits below that 1200 floor. Without this guard, the browser's own clamp
+        // (e.g. up to 1200) would immediately get read back by __syncCoverFromCalc
+        // below and shoved into THIS field, overwriting the very characters just
+        // typed -- which is exactly the "can't backspace / typing gets corrected to
+        // some other number" bug this fixes. The values sitting in i-age/i-sal/etc.
+        // right now are a lossy, clamped MIRROR of what's typed here, not an
+        // independent edit made on Tab 1 -- so the reverse direction has nothing
+        // genuinely new to report back for this specific tick.
+        window.__coverToCalcInProgress = true;
         if(window.SGMR_ENGINE.recompute) window.SGMR_ENGINE.recompute();
+        window.__coverToCalcInProgress = false;
       }
 
       countTo(document.getElementById('hero-nw'), r.nw/d);
@@ -5504,7 +5990,7 @@ function openShareModal(drawFn){
         CANDIDATES.forEach(function(c){
           if(age+c.years>65+1e-9) return; // filtered out -- no time left for this delay
           var yearAge=Math.min(65,age+c.years);
-          var rYear=window.SGMR_ENGINE.project(opts(yearAge,sal));
+          var rYear=window.SGMR_ENGINE.project(opts(yearAge,sal,house,spouseSal));
           var correctedNW = rYear.STI/d + rYear.SRS/d + r.CPF/d;
           var correctedPotdraw = (rYear.STI + rYear.SRS) * 0.04/12;
           var correctedIncome = r.cpflife/d + correctedPotdraw/d + r.retRent/d;
@@ -5515,7 +6001,7 @@ function openShareModal(drawFn){
         // "Never invest": the limit of the same sequence above as the delay approaches
         // the full career -- redirect BOTH the STI allocation (aI) and the SRS allocation
         // (aS) into spending, for the whole career, leaving only mandatory CPF running.
-        var oNever=opts(age,sal); oNever.aI=0; oNever.aS=0; oNever.aW+=0.20; oNever.paycheckToPaycheck=true;
+        var oNever=opts(age,sal,house,spouseSal); oNever.aI=0; oNever.aS=0; oNever.aW+=0.20; oNever.paycheckToPaycheck=true;
         var rNever=window.SGMR_ENGINE.project(oNever);
         var correctedNeverPotdraw = 0; // both STI and SRS are zero in this scenario
         var correctedNeverIncome = r.cpflife/d + correctedNeverPotdraw/d + r.retRent/d;
@@ -5575,20 +6061,92 @@ function openShareModal(drawFn){
       set('cb-compound',  'Pure compounding added '+moneyK(growth)+' more.');
     }
 
-    salEl.addEventListener('input',function(){ formatSalaryField(); render(); });
+    salEl.addEventListener('input',function(){ formatSalaryField(salEl); autoSizeField(salEl); render(); });
     salEl.addEventListener('change',render);
-    ageEl.addEventListener('input',function(){ formatAgeField(); render(); });
+    ageEl.addEventListener('input',function(){ formatAgeField(); autoSizeField(ageEl); render(); });
     ageEl.addEventListener('change',render);
+    var houseEl3=document.getElementById('h-house'), spouseEl3=document.getElementById('h-spouse');
+    if(houseEl3) houseEl3.addEventListener('change',function(){ autoSizeField(houseEl3); render(); });
+    if(spouseEl3){
+      spouseEl3.addEventListener('input',function(){ formatSalaryField(spouseEl3); autoSizeField(spouseEl3); render(); });
+      spouseEl3.addEventListener('change',render);
+    }
+    // Initial sizing on load, for whatever each field starts out showing -- otherwise
+    // every box would sit at the browser's default width until the reader's first edit.
+    // Native sizing (the `size` attribute for inputs, no explicit width for the
+    // select) is resolved fresh by the browser on every render against whatever font
+    // is actually in place at that moment -- unlike a hand-measured pixel width, there
+    // is no earlier, wrong answer left over from before the webfont finished loading,
+    // so a single pass here is enough.
+    [ageEl, salEl, houseEl3, spouseEl3].forEach(function(el){ if(el) autoSizeField(el); });
+
+    // The reverse direction: whatever changes on Tab 1 (a different age, salary,
+    // household type, or partner salary -- however the reader got there, not only via
+    // the CTA below) flows back here too, so navigating back to the cover never shows
+    // a stale claim built on numbers Tab 1 has since moved past. Called from Tab 1's
+    // own recompute() on every change there; the equality checks below keep this cheap
+    // on the many Tab 1 edits (any other slider, a checkbox) that touch none of these
+    // four fields at all.
+    window.__syncCoverFromCalc = function(){
+      // See the matching guard in render() above: while THIS tick's Tab 1 values are
+      // only a clamped mirror of what the reader is actively typing here on the cover
+      // (not a genuine, independent edit made on Tab 1 itself), reporting them back
+      // would silently overwrite the reader's own in-progress keystrokes.
+      if(window.__coverToCalcInProgress) return;
+      var iAge=document.getElementById('i-age'), iSal=document.getElementById('i-sal'),
+          iHouse=document.getElementById('i-house'), iSpouse=document.getElementById('i-spouse');
+      if(!iAge || !iSal || !iHouse) return;
+      var changed=false;
+      if(ageEl.value!==iAge.value){ ageEl.value=iAge.value; autoSizeField(ageEl); changed=true; }
+      var iSalFmt = iSal.value ? Number(iSal.value).toLocaleString('en-US') : '';
+      if(salEl.value!==iSalFmt){ salEl.value=iSalFmt; autoSizeField(salEl); changed=true; }
+      if(houseEl3 && houseEl3.value!==iHouse.value){ houseEl3.value=iHouse.value; changed=true; }
+      var isMarried3=(iHouse.value==='married'||iHouse.value==='kid'||iHouse.value==='kid2');
+      if(spouseEl3){
+        var iSpouseFmt = (isMarried3 && iSpouse && iSpouse.value) ? Number(iSpouse.value).toLocaleString('en-US') : spouseEl3.value;
+        if(isMarried3 && spouseEl3.value!==iSpouseFmt){ spouseEl3.value=iSpouseFmt; autoSizeField(spouseEl3); changed=true; }
+      }
+      if(changed) render();
+    };
 
     // Carry what they typed into the Calculator, so the CTA continues their thought
     // rather than resetting it.
     document.getElementById('hero-cta').addEventListener('click',function(){
+      // Captured BEFORE clickPreset runs below, into plain local values rather than
+      // re-reading ageEl/salEl/houseEl3/spouseEl3 afterward -- clickPreset's own
+      // recompute() fires __syncCoverFromCalc as a side effect, which would otherwise
+      // overwrite these very fields with Classic Saver's own reset defaults (age 20,
+      // salary 2,400) before this handler gets to the lines below that mean to carry
+      // the reader's *own* answers across, silently discarding them back to the
+      // preset's baseline instead.
+      var coverAge=ageEl.value, coverSal=salEl.value,
+          coverHouse=houseEl3?houseEl3.value:'single', coverSpouse=spouseEl3?spouseEl3.value:'2400';
+      // Classic Saver first, as a clean, known baseline -- whatever Tab 1 was left in
+      // from earlier poking around (a different preset, a half-customised slider)
+      // gets reset, so the cover's claim always means "age/salary/household on top of
+      // Classic Saver specifically", never "on top of whatever state happened to be
+      // sitting there". The reader's own captured answers are then set on top of that
+      // baseline, matching how the presets themselves already carry their own a/s fields.
+      if(window.clickPreset) window.clickPreset('conservative');
       var a=document.getElementById('i-age'), s=document.getElementById('i-sal'),
-          j=document.getElementById('i-job'), b=document.getElementById('i-buy');
-      if(a) a.value=Math.max(18,Math.min(65,parseInt(ageEl.value,10)||20));
-      if(s) s.value=Math.max(800,Math.min(70000,parseNum(salEl.value)||2400));
+          j=document.getElementById('i-job'), b=document.getElementById('i-buy'),
+          h=document.getElementById('i-house'), sp=document.getElementById('i-spouse'),
+          ma=document.getElementById('i-marry');
+      if(a) a.value=Math.max(18,Math.min(65,parseInt(coverAge,10)||20));
+      if(s) s.value=Math.max(800,Math.min(70000,parseNum(coverSal)||2400));
       if(j && s && +s.value!==2400) j.value='custom';
       if(b) b.value=Math.max(35,+a.value);
+      // Same household-type question just answered on the cover carries straight into
+      // Tab 1's own controls -- set directly (not dispatched), same as the persona
+      // presets already do, since syncUI() inside recompute() below picks these up
+      // regardless, and already knows how to set a sensible marry age for someone
+      // transitioning from single.
+      // Values now match i-house's own one-to-one, so no translation is needed --
+      // whatever was answered here IS Tab 1's own setting, not an approximation of it.
+      if(h) h.value = coverHouse;
+      var isMarried2 = (coverHouse==='married' || coverHouse==='kid' || coverHouse==='kid2');
+      if(sp && isMarried2) sp.value=Math.max(0,Math.min(70000,parseNum(coverSpouse)||2400));
+      if(ma && isMarried2) ma.value=Math.max(18,Math.min(65,parseInt(coverAge,10)||20));
       if(window.SGMR_ENGINE.recompute) window.SGMR_ENGINE.recompute();
       switchTab('calc');
     });
