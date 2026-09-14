@@ -12,7 +12,7 @@
 <style>
   :root{
     color-scheme: dark only;
-    --paper:#0B0D0B;--panel:#17191A;--ink:#F3F5F0;
+    --paper:#000000;--panel:#17191A;--ink:#F3F5F0;
     --single:#9AACBA;--couple:#FF7A33;--family:#B8C244;--brick:#E2604F;--srs:#7CA3C4;
     --brand:#FF7A33;--brand-ink:#1A1410;
     --muted:#A5ADA6;--dim:#7F877E;
@@ -311,8 +311,12 @@
   .whatif .wi-d.neg{color:var(--brick)}
 
   /* ===== HERO: full-bleed dark "reveal" band, orange as the single accent ===== */
+  /* Was #0E120F -- a separate, hardcoded colour entirely independent of --paper, so
+     changing --paper to pure black earlier didn't touch it. Its green channel (0x12)
+     sat slightly above red and blue (0x0E/0x0F), which is exactly the faint greenish
+     tint being reported here -- this hero band is what the screenshot is showing. */
   .hero-dark{width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
-    background:#0E120F;color:#fff;margin-top:-1px}
+    background:#000000;color:#fff;margin-top:-1px}
   .hero-dark-in{max-width:1080px;margin:0 auto;padding:0 16px 36px}
   .hero-dark .cover-h1{color:#fff;max-width:19ch}
   .hero-dark .cover-h1 em{color:var(--brand);font-style:italic}
@@ -596,7 +600,11 @@
   .insight h4{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;margin-bottom:10px;color:var(--couple);line-height:1.25}
   .insight p{font-size:13.5px;color:#D8E0D2;line-height:1.65;margin-bottom:8px}
   .insight p:last-child{margin-bottom:0}
-  .note{background:#B8C2441A;border-left:3px solid var(--family);border-radius:6px;padding:16px 18px;margin-top:16px}
+  /* Background switched from a pale, greenish tint (#B8C2441A) to the app's own
+     standard dark panel colour -- .note is the shared class behind every disclaimer
+     box across all six tabs, so this one change makes all of them consistently dark,
+     rather than the one greenish-looking outlier. */
+  .note{background:var(--panel);border-left:3px solid var(--family);border-radius:6px;padding:16px 18px;margin-top:16px}
   .note p{font-size:13px;color:#E4E6C8;line-height:1.6}
 
   footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);font-family:'Space Mono',monospace;font-size:11px;color:var(--dim);line-height:1.75}
@@ -905,58 +913,6 @@
       </div>
     </div>
 
-    <p class="cover-sub" style="margin-top:34px">Four things — all within reach of a minimum-wage worker — make it possible:</p>
-    <div class="cards cards-2col">
-      <div class="scard s1" style="border-top-color:var(--brand)"><div class="name">1 · Discipline</div><div class="setup" style="margin-bottom:0">Live below your means for the long haul: bank the raises, skip the car, buy the cheapest flat and stay. Boring, on purpose.</div></div>
-      <div class="scard s2"><div class="name">2 · The grants</div><div class="setup" style="margin-bottom:0">Leverage Singapore's scaffolding: a subsidised HDB flat, a grant that erases a third of the price, CPF, and near-zero income tax.</div></div>
-      <div class="scard s3" style="border-top-color:var(--brand)"><div class="name">3 · Invest in the STI</div><div class="setup" style="margin-bottom:0">Put every spare dollar into the index consistently, reinvest the dividends, and never flinch — for 45 years.</div></div>
-      <div class="scard" style="border-top-color:var(--brand)"><div class="name">4 · Maximise SRS</div><div class="setup" style="margin-bottom:0">Shelter income in the SRS every year — contribute enough and income tax can fall to as little as S$0 — while it keeps compounding in the STI until retirement.</div></div>
-    </div>
-    <div class="sec-label" style="margin-top:26px">What that adds up to</div>
-    <p class="sec-sub">Every figure below is computed live from the age and wage you entered above.</p>
-    <div class="proof">
-      <div class="p"><div class="p-val-row"><span class="p-name">HDB</span><span class="pv" id="pf-hdb">S$140k</span><span class="hint"><button class="help">?</button><span class="bubble">Today's dollars, not a future/nominal figure. A 2-room Flexi bought at 35, financed via an HDB loan serviced from CPF-OA, and owned outright by 65. The figure shown is the flat's gross market value before subsidy — what the buyer pays out of pocket, plus the EHG (Enhanced CPF Housing Grant) they receive. Assumed to hold its real value over time rather than being projected to a larger future price.</span></span></div><div class="p-desc">2-room Flexi, owned outright</div></div>
-      <div class="p"><div class="p-val-row"><span class="p-name">CPF</span><span class="pv" id="pf-cpf">S$572k</span><span class="hint"><button class="help">?</button><span class="bubble">Today's dollars — discounted from the nominal balance at 65 back to today's purchasing power at 2.5%/yr inflation. Includes the employee's own 20% contribution, the employer's ~17% match, and CPF interest compounding on both.</span></span></div><div class="p-desc">Retirement + healthcare savings</div></div>
-      <div class="p"><div class="p-val-row"><span class="p-name">STI + SRS</span><span class="pv" id="pf-sti">S$676k</span><span class="hint"><button class="help">?</button><span class="bubble">Today's dollars — discounted from the nominal balance at 65. Every year from your current age to 65, investing 11% of take-home into the STI at an assumed 6%/yr total return, plus 9% into SRS (also STI-invested), dividends reinvested throughout.</span></span></div><div class="p-desc">Index fund + tax-sheltered pot</div></div>
-      <div class="p"><div class="p-val-row"><span class="p-name">Net worth</span><span class="pv" id="pf-nw">S$1.25m</span><span class="hint"><button class="help">?</button><span class="bubble">Today's dollars. The STI + SRS pot plus the CPF total combined. Excludes the flat itself, which is treated as housing secured rather than an appreciating asset to add on top.</span></span></div><div class="p-desc">STI + CPF combined</div></div>
-      <div class="p"><div class="p-val-row"><span class="p-name">Retirement income</span><span class="pv" id="pf-inc">S$5,390/mo</span><span class="hint"><button class="help">?</button><span class="bubble">Today's dollars, for life. Combines a 4%/yr drawdown on the STI + SRS pot with the CPF LIFE annuity. SRS is set at 9% of take-home in this baseline, enough to bring income tax close to S$0; the rest of the invest budget (11%) goes to open STI.</span></span></div><div class="p-desc">STI/SRS drawdown + CPF LIFE, for life</div></div>
-    </div>
-
-    <figure class="quote-block">
-      <blockquote>"Compound interest is the eighth wonder of the world. He who understands it, earns it; he who doesn't, pays it."</blockquote>
-      <figcaption>
-        <span class="sig">Albert Einstein</span>
-        <span class="sig-note">widely attributed (and likely apocryphal) — but the maths is very real</span>
-      </figcaption>
-    </figure>
-
-    <div class="compound-box">
-      <div class="cb-label">45 years, in contributions vs. pure compounding</div>
-      <div class="cb-rows">
-        <div class="cb-row"><span class="cb-k">CPF — employee's own 20% <span class="hint"><button class="help">?</button><span class="bubble">20% of gross wages, deducted automatically from every paycheck into CPF, over 45 years.</span></span></span><span class="cb-v" id="cb-empcpf">S$519k</span></div>
-        <div class="cb-row"><span class="cb-k">CPF — employer's ~17% match <span class="hint"><button class="help">?</button><span class="bubble">Real money, but not his own — and not compounding. It still counts fully toward his eventual CPF LIFE payout, already folded into the S$572k CPF figure above.</span></span></span><span class="cb-v" id="cb-ercpf">S$502k</span></div>
-        <div class="cb-row"><span class="cb-k">STI — from take-home pay <span class="hint"><button class="help">?</button><span class="bubble">The 11%-of-take-home surplus actually invested into the open STI account over 45 years.</span></span></span><span class="cb-v" id="cb-sti">S$333k</span></div>
-        <div class="cb-row"><span class="cb-k">SRS — from take-home pay <span class="hint"><button class="help">?</button><span class="bubble">9% of take-home, deducted before tax and invested in the STI within the SRS wrapper — enough to bring income tax close to S$0.</span></span></span><span class="cb-v" id="cb-srs">S$220k</span></div>
-        <div class="cb-row total"><span class="cb-k">Total contributed, by anyone <span class="hint"><button class="help">?</button><span class="bubble">The sum of all four lines above — every dollar that came from either his paycheck or his employer, before any investment growth.</span></span></span><span class="cb-v" id="cb-total">S$1.57m</span></div>
-        <div class="cb-row total grow"><span class="cb-k">Pure compounding <span class="hint"><button class="help">?</button><span class="bubble">The final balance minus every dollar contributed by anyone — pure CPF interest and STI/SRS investment gains, nothing else.</span></span></span><span class="cb-v" id="cb-growth">S$2.22m</span></div>
-        <div class="cb-row total grand"><span class="cb-k">Grand total at 65, nominal <span class="hint"><button class="help">?</button><span class="bubble">Contributed + pure compounding, added together. The same total behind the net worth figure shown in today's dollars above — just not yet discounted for inflation here.</span></span></span><span class="cb-v" id="cb-grand">S$3.79m</span></div>
-      </div>
-      <div class="cb-headline">
-        <span class="cb-you" id="cb-you">S$1.57m was contributed, by him and his employer.</span>
-        <span class="cb-compound" id="cb-compound">Pure compounding added S$2.22m more.</span>
-      </div>
-    </div>
-
-    <section>
-      <div class="sec-label">Where next?</div>
-      <div class="cards cards-2col" style="margin-top:12px">
-        <div class="scard navcard" data-goto="calc"><div class="name" style="font-size:15px">02 · Your Number</div><div class="setup" style="margin-bottom:0">Put in your own age, wage and choices — see your projection to 65, live.</div><div class="go">open →</div></div>
-        <div class="scard navcard" data-goto="buy"><div class="name" style="font-size:15px">03 · How It Works</div><div class="setup" style="margin-bottom:0">The step-by-step playbook, and every calculation behind it.</div><div class="go">open →</div></div>
-        <div class="scard navcard" data-goto="why"><div class="name" style="font-size:15px">04 · What Breaks It</div><div class="setup" style="margin-bottom:0">The five traps that derail the plan — and how to beat each one.</div><div class="go">open →</div></div>
-        <div class="scard navcard" data-goto="portfolio"><div class="name" style="font-size:15px">05 · Go Further</div><div class="setup" style="margin-bottom:0">Beyond one index fund: diversification, global comparison, glossary.</div><div class="go">open →</div></div>
-      </div>
-    </section>
-    <div class="note" style="margin-top:24px"><p>An illustration of how Singapore's housing, CPF, grant and tax system behaves alongside decades of index compounding — a demonstration of what's <em>possible</em>, not a forecast or financial advice. Every assumption is laid out in tabs 02 and 03.</p></div>
   </div>
 
   <!-- ===== SECTION : YOUR NUMBER ===== -->
@@ -1863,13 +1819,6 @@
         </div>
 </details>
     </section>
-    <section>
-      <div class="sec-label">The whole plan, in one breath</div>
-      <div class="insight"><h3>Start early · automate · stay frugal · own the cheapest home and transport · buy the index · never flinch</h3>
-        <p>That's it. No step requires a big salary, a hot stock, or perfect timing — only the willingness to do dull things consistently while the people around you visibly don't. The Singapore system supplies the tailwind; discipline supplies the distance. Six habits, forty-five years, and a fast-food wage genuinely is enough.</p>
-      </div>
-      <div class="note"><p>Best-practice guidance for illustration, not personalised financial advice. The right specifics depend on your circumstances — verify grants, CPF rules and product choices against official HDB/CPF sources, and consider a licensed adviser for decisions that matter.</p></div>
-    </section>
   </div>
 
   <!-- ===== SECTION : GO FURTHER ===== -->
@@ -2406,7 +2355,14 @@
     var isDivOpen = divAccordion && divAccordion.hasAttribute('open');
     if(!isCalc && !isDivOpen){ box.classList.remove('show'); box.style.opacity=0; return; }
     box.classList.add('show');
-    var anchorId = isCalc ? 'proj65-anchor' : 'div-sim-end-anchor';
+    // Was 'proj65-anchor' -- but that anchor sits at the very START of the accordion
+    // group (right after Allocation & tax), so the fade began as soon as the reader
+    // was still near the top of Tab 2, long before reaching anything the floating
+    // bar duplicates. Anchoring on the "My Financial Scorecard" button instead means
+    // the bar now stays visible through Projected at 65 and What if scenarios both,
+    // only beginning to fade once the reader has actually reached the scorecard --
+    // any element works here, getBoundingClientRect doesn't care what kind it is.
+    var anchorId = isCalc ? 'btn-share-card' : 'div-sim-end-anchor';
     var anchor=document.getElementById(anchorId);
     if(!anchor){ box.style.opacity=1; return; }
     var rect=anchor.getBoundingClientRect();
@@ -2631,6 +2587,24 @@
     delete trajectory.a; delete trajectory.s; delete trajectory.sp;
     delete trajectory.h; delete trajectory.mr;
     applyCalcState(trajectory);
+    // The three advanced-CPF fields (deferral, plan choice, top-up) have no key in
+    // any preset object at all, so applyCalcState above never touches them -- if a
+    // reader had set any of them away from its own default at some earlier point,
+    // clicking a persona preset left them exactly as they were, with the "Show
+    // advanced CPF controls" toggle still auto-revealed from that earlier session,
+    // rather than genuinely giving a clean, default calculator. Explicit here so
+    // every preset click resets to the calculator's true defaults, same as it
+    // already does for the allocation sliders and every other trajectory field.
+    // document.getElementById directly, not $ -- this function sits at the top level
+    // of the script, outside the IIFE(s) where the $ shorthand helper is defined, so
+    // $ isn't actually in scope here (confirmed the hard way: this threw a
+    // ReferenceError in testing before this fix).
+    var cld=document.getElementById('i-cpflifedefer'), clp=document.getElementById('i-cpflifeplan'),
+        ct=document.getElementById('i-cpftopup'), advCpf=document.getElementById('i-advanced-cpf');
+    if(cld) cld.checked=false;
+    if(clp) clp.value='standard';
+    if(ct) ct.value='0';
+    if(advCpf) advCpf.checked=false;
     if(window.SGMR_ENGINE && window.SGMR_ENGINE.recompute) window.SGMR_ENGINE.recompute();
   }
   // Explicit, rather than relying on a top-level function declaration implicitly
@@ -5425,7 +5399,15 @@
           return;
         }
         var pct=Math.max(r.yr/maxY*100,2).toFixed(1);
-        var outside=(r.yr/maxY)<0.18;
+        // 0.35, not the original 0.18 -- at the old threshold, a bar wide enough to
+        // pass the check (e.g. Australia at roughly 30% of the widest bar) still
+        // wasn't actually wide enough in pixels to comfortably fit "X.X yrs" inside
+        // it on a narrow phone screen, so the label overflowed its own bar. Checked
+        // against every country currently in this list: this value places Singapore
+        // and Australia outside (where the true problem was) while leaving the four
+        // wider bars (US and up) inside, matching how they already rendered
+        // correctly.
+        var outside=(r.yr/maxY)<0.35;
         h+='<div class="cmp-row"><div class="cmp-who"><span class="cmp-rank">'+('0'+(i+1)).slice(-2)+'</span><span class="cmp-flag">'+r.f+'</span><span class="cmp-cty">'+r.c+'</span></div>'+
            '<div class="cmp-barwrap"><div class="cmp-bar" style="width:'+pct+'%;background:'+col(r.yr)+'">'+(outside?'':'<span class="cmp-val">'+r.yr.toFixed(1)+' yrs</span>')+'</div>'+
            (outside?'<span class="cmp-val out">'+r.yr.toFixed(1)+' yrs</span>':'')+'</div>'+
