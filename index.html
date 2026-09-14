@@ -5646,7 +5646,14 @@
     // moment.
     function drawShareCard(isStory){
       var canvas=document.getElementById('share-canvas');
-      canvas.width=1080; canvas.height=isStory?1920:1600;
+      // Height raised 1600->1760 (non-story only) to give the larger type below
+      // genuine room to breathe rather than forcing everything to compress back down
+      // to fit the old frame -- "bigger and bolder" needed more canvas, not just
+      // bigger font-size numbers squeezed into the same space. Checked directly by
+      // manually tracing the full layout math below against this height: the last
+      // footer line lands at y=1718 -- 1760 leaves real margin below it, not just
+      // barely enough.
+      canvas.width=1080; canvas.height=isStory?1920:1760;
       var ctx=canvas.getContext('2d');
       var W=canvas.width, H=canvas.height;
 
@@ -5667,36 +5674,37 @@
       grad.addColorStop(0,'#17191A'); grad.addColorStop(1,'#0B0D0B');
       ctx.fillStyle=grad; ctx.fillRect(0,0,W,H);
 
-      // header — same font family/weight relationship as the app's own nav title
+      // header — same font family/weight relationship as the app's own nav title,
+      // sized up and bolder throughout (700/800 minimum everywhere below, not 500/600)
       ctx.textAlign='left';
       ctx.fillStyle='#F3F5F0';
-      ctx.font='600 34px "Bricolage Grotesque"';
-      ctx.fillText('The Singapore', 60, 92);
+      ctx.font='700 40px "Bricolage Grotesque"';
+      ctx.fillText('The Singapore', 60, 100);
       ctx.fillStyle='#FF7A33';
-      ctx.font='800 48px "Bricolage Grotesque"';
-      ctx.fillText('Millionaire Roadmap', 58, 148);
+      ctx.font='800 58px "Bricolage Grotesque"';
+      ctx.fillText('Millionaire Roadmap', 58, 168);
 
       ctx.strokeStyle='rgba(243,245,240,0.14)'; ctx.lineWidth=2;
-      ctx.beginPath(); ctx.moveTo(60,182); ctx.lineTo(W-60,182); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(60,204); ctx.lineTo(W-60,204); ctx.stroke();
 
       ctx.fillStyle='#A5ADA6';
-      ctx.font='600 25px "Space Mono"';
-      ctx.fillText('MY PROJECTED RETIREMENT INCOME', 60, 238);
+      ctx.font='700 29px "Space Mono"';
+      ctx.fillText('MY PROJECTED RETIREMENT INCOME', 60, 264);
 
-      var heroSize=fitSize(ctx,inc,W-120,100,'800','Bricolage Grotesque');
+      var heroSize=fitSize(ctx,inc,W-120,138,'800','Bricolage Grotesque');
       ctx.fillStyle='#FF7A33';
       ctx.font='800 '+heroSize+'px "Bricolage Grotesque"';
-      ctx.fillText(inc, 58, 238+heroSize*0.9);
+      ctx.fillText(inc, 58, 264+heroSize*0.9);
 
       ctx.fillStyle='#A5ADA6';
-      ctx.font='500 23px "Space Mono"';
-      ctx.fillText("in today's dollars, for life", 60, 238+heroSize+32);
+      ctx.font='600 27px "Space Mono"';
+      ctx.fillText("in today's dollars, for life", 60, 264+heroSize+40);
 
-      var chartY=238+heroSize+88, chartH=340;
+      var chartY=264+heroSize+100, chartH=360;
       drawMiniChart(ctx, 60, chartY, W-120, chartH);
 
       var stats=[['NET WORTH AT 65',nw],['STI INVESTMENT POT',sti],['CPF BALANCE',cpf],['STARTING POINT',age+' · '+jobLabel]];
-      var boxY=chartY+chartH+58, boxH=170, gap=24, boxW=(W-120-gap)/2;
+      var boxY=chartY+chartH+66, boxH=196, gap=24, boxW=(W-120-gap)/2;
       stats.forEach(function(s,i){
         var col=i%2, row=Math.floor(i/2);
         var bx=60+col*(boxW+gap), by=boxY+row*(boxH+gap);
@@ -5704,13 +5712,13 @@
         ctx.strokeStyle='rgba(243,245,240,0.14)'; ctx.lineWidth=1.5;
         roundRect(ctx,bx,by,boxW,boxH,18); ctx.fill(); ctx.stroke();
         ctx.fillStyle='#A5ADA6';
-        ctx.font='600 21px "Space Mono"';
-        wrapText(ctx,s[0],bx+26,by+42,boxW-52,26);
-        drawValueWrapped(ctx,s[1],bx+26,by+72,boxW-52,44,'Bricolage Grotesque','800','#F3F5F0');
+        ctx.font='700 24px "Space Mono"';
+        wrapText(ctx,s[0],bx+26,by+46,boxW-52,29);
+        drawValueWrapped(ctx,s[1],bx+26,by+84,boxW-52,54,'Bricolage Grotesque','800','#F3F5F0');
       });
 
-      var footerTop=boxY+boxH*2+gap+60;
-      var logoSize=170;
+      var footerTop=boxY+boxH*2+gap+70;
+      var logoSize=180;
       var logoCy=footerTop+logoSize/2;
       var logoImg=document.querySelector('.fg-logo');
       if(logoImg && logoImg.complete && logoImg.naturalWidth>0){
@@ -5723,12 +5731,12 @@
       }
       ctx.textAlign='center';
       ctx.fillStyle='#F3F5F0';
-      ctx.font='800 32px "Bricolage Grotesque"';
-      ctx.fillText('Financial Gladiator', W/2, logoCy+logoSize/2+52);
+      ctx.font='800 38px "Bricolage Grotesque"';
+      ctx.fillText('Financial Gladiator', W/2, logoCy+logoSize/2+56);
       ctx.fillStyle='#A5ADA6';
-      ctx.font='500 20px "Space Mono"';
-      ctx.fillText('Illustration only — not financial advice', W/2, logoCy+logoSize/2+86);
-      ctx.fillText('Built with Claude · try your own numbers', W/2, logoCy+logoSize/2+116);
+      ctx.font='600 23px "Space Mono"';
+      ctx.fillText('Illustration only — not financial advice', W/2, logoCy+logoSize/2+92);
+      ctx.fillText('Built with Claude · try your own numbers', W/2, logoCy+logoSize/2+124);
     }
 
     // The Story layout itself -- one hero number, one personal line, one hook,
@@ -5745,36 +5753,36 @@
 
       ctx.textAlign='center';
       ctx.fillStyle='#A5ADA6';
-      ctx.font='600 28px "Space Mono"';
+      ctx.font='700 32px "Space Mono"';
       ctx.fillText('THE SINGAPORE MILLIONAIRE ROADMAP', W/2, 130);
 
       ctx.strokeStyle='rgba(243,245,240,0.14)'; ctx.lineWidth=2;
       ctx.beginPath(); ctx.moveTo(90,168); ctx.lineTo(W-90,168); ctx.stroke();
 
       ctx.fillStyle='#F3F5F0';
-      ctx.font='700 40px "Bricolage Grotesque"';
-      wrapTextCentered(ctx, "I'm going to retire a", W/2, 300, W-160, 50);
+      ctx.font='700 48px "Bricolage Grotesque"';
+      wrapTextCentered(ctx, "I'm going to retire a", W/2, 310, W-160, 58);
       ctx.fillStyle='#FF7A33';
-      ctx.font='800 56px "Bricolage Grotesque"';
-      ctx.fillText('millionaire.', W/2, 372);
+      ctx.font='800 68px "Bricolage Grotesque"';
+      ctx.fillText('millionaire.', W/2, 392);
 
-      var heroSize=fitSize(ctx,nw,W-140,190,'800','Bricolage Grotesque');
+      var heroSize=fitSize(ctx,nw,W-140,220,'800','Bricolage Grotesque');
       ctx.fillStyle='#FF7A33';
       ctx.font='800 '+heroSize+'px "Bricolage Grotesque"';
-      ctx.fillText(nw, W/2, 560+heroSize*0.32);
+      ctx.fillText(nw, W/2, 580+heroSize*0.32);
       ctx.fillStyle='#A5ADA6';
-      ctx.font='500 26px "Space Mono"';
-      ctx.fillText("net worth at 65, in today's dollars", W/2, 560+heroSize*0.32+56);
+      ctx.font='600 30px "Space Mono"';
+      ctx.fillText("net worth at 65, in today's dollars", W/2, 580+heroSize*0.32+62);
 
-      var chartY=560+heroSize*0.32+130, chartH=420;
+      var chartY=580+heroSize*0.32+140, chartH=420;
       drawMiniChart(ctx, 90, chartY, W-180, chartH);
 
-      var lineY=chartY+chartH+90;
+      var lineY=chartY+chartH+96;
       ctx.fillStyle='#F3F5F0';
-      ctx.font='600 34px "Bricolage Grotesque"';
-      wrapTextCentered(ctx, 'Starting at '+age+', earning S$'+sal+'/mo as a '+jobLabel+'.', W/2, lineY, W-160, 46);
+      ctx.font='700 40px "Bricolage Grotesque"';
+      wrapTextCentered(ctx, 'Starting at '+age+', earning S$'+sal+'/mo as a '+jobLabel+'.', W/2, lineY, W-160, 52);
 
-      var logoSize=190;
+      var logoSize=200;
       var logoCy=H-230;
       var logoImg=document.querySelector('.fg-logo');
       if(logoImg && logoImg.complete && logoImg.naturalWidth>0){
@@ -5786,11 +5794,11 @@
         ctx.strokeStyle='rgba(243,245,240,0.10)'; ctx.lineWidth=2; ctx.stroke();
       }
       ctx.fillStyle='#F3F5F0';
-      ctx.font='800 34px "Bricolage Grotesque"';
-      ctx.fillText('Try your own numbers →', W/2, logoCy+logoSize/2+56);
+      ctx.font='800 40px "Bricolage Grotesque"';
+      ctx.fillText('Try your own numbers →', W/2, logoCy+logoSize/2+60);
       ctx.fillStyle='#A5ADA6';
-      ctx.font='500 22px "Space Mono"';
-      ctx.fillText('Financial Gladiator · illustration only, not financial advice', W/2, logoCy+logoSize/2+90);
+      ctx.font='600 25px "Space Mono"';
+      ctx.fillText('Financial Gladiator · illustration only, not financial advice', W/2, logoCy+logoSize/2+96);
     }
 
     // Centre-anchored line wrap -- the existing wrapText() is left-anchored (built for
@@ -5810,7 +5818,12 @@
 
 function drawQuizResultCard(isStory){
       var canvas=document.getElementById('share-canvas');
-      canvas.width=1080; canvas.height=isStory?1920:1600;
+      // 1250, not 1700/1760 like the main scorecard -- this card has no chart and
+      // only a single row of two stat boxes, so its actual content ends around
+      // y=1178 (checked directly against the layout math below); matching the
+      // scorecard's taller canvas here would leave nearly 500px of empty space at
+      // the bottom, the opposite of leveraging the available room well.
+      canvas.width=1080; canvas.height=isStory?1920:1250;
       var ctx=canvas.getContext('2d');
       var W=canvas.width, H=canvas.height;
 
@@ -5829,30 +5842,30 @@ function drawQuizResultCard(isStory){
 
       ctx.textAlign='left';
       ctx.fillStyle='#F3F5F0';
-      ctx.font='600 34px "Bricolage Grotesque"';
-      ctx.fillText('The Singapore', 60, 92);
+      ctx.font='700 40px "Bricolage Grotesque"';
+      ctx.fillText('The Singapore', 60, 100);
       ctx.fillStyle='#FF7A33';
-      ctx.font='800 48px "Bricolage Grotesque"';
-      ctx.fillText('Millionaire Roadmap', 58, 148);
+      ctx.font='800 58px "Bricolage Grotesque"';
+      ctx.fillText('Millionaire Roadmap', 58, 168);
 
       ctx.strokeStyle='rgba(243,245,240,0.14)'; ctx.lineWidth=2;
-      ctx.beginPath(); ctx.moveTo(60,182); ctx.lineTo(W-60,182); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(60,204); ctx.lineTo(W-60,204); ctx.stroke();
 
       ctx.fillStyle='#A5ADA6';
-      ctx.font='600 25px "Space Mono"';
-      ctx.fillText('FINANCIAL KNOWLEDGE QUIZ', 60, 238);
+      ctx.font='700 29px "Space Mono"';
+      ctx.fillText('FINANCIAL KNOWLEDGE QUIZ', 60, 264);
 
       var scoreText=score+' / '+total;
-      var heroSize=fitSize(ctx,scoreText,W-120,120,'800','Bricolage Grotesque');
+      var heroSize=fitSize(ctx,scoreText,W-120,180,'800','Bricolage Grotesque');
       ctx.fillStyle='#FF7A33';
       ctx.font='800 '+heroSize+'px "Bricolage Grotesque"';
-      ctx.fillText(scoreText, 58, 238+heroSize*0.9);
+      ctx.fillText(scoreText, 58, 264+heroSize*0.9);
 
       ctx.fillStyle='#A5ADA6';
-      ctx.font='500 23px "Space Mono"';
-      ctx.fillText(pct+'% correct', 60, 238+heroSize+32);
+      ctx.font='600 27px "Space Mono"';
+      ctx.fillText(pct+'% correct', 60, 264+heroSize+40);
 
-      var boxY=238+heroSize+90, boxH=170, gap=24, boxW=(W-120-gap)/2;
+      var boxY=264+heroSize+110, boxH=250, gap=24, boxW=(W-120-gap)/2;
       var stats=[['RATING',rating],['VS SINGAPORE AVERAGE',vsLine]];
       stats.forEach(function(s,i){
         var bx=60+i*(boxW+gap), by=boxY;
@@ -5860,15 +5873,15 @@ function drawQuizResultCard(isStory){
         ctx.strokeStyle='rgba(243,245,240,0.14)'; ctx.lineWidth=1.5;
         roundRect(ctx,bx,by,boxW,boxH,18); ctx.fill(); ctx.stroke();
         ctx.fillStyle='#A5ADA6';
-        ctx.font='600 21px "Space Mono"';
-        wrapText(ctx,s[0],bx+26,by+42,boxW-52,26);
+        ctx.font='700 24px "Space Mono"';
+        wrapText(ctx,s[0],bx+26,by+46,boxW-52,29);
         ctx.fillStyle='#F3F5F0';
-        ctx.font='700 22px "Bricolage Grotesque"';
-        wrapText(ctx,s[1],bx+26,by+78,boxW-52,28);
+        ctx.font='700 28px "Bricolage Grotesque"';
+        wrapText(ctx,s[1],bx+26,by+90,boxW-52,36);
       });
 
-      var footerTop=boxY+boxH+60;
-      var logoSize=170;
+      var footerTop=boxY+boxH+70;
+      var logoSize=180;
       var logoCy=footerTop+logoSize/2;
       var logoImg=document.querySelector('.fg-logo');
       if(logoImg && logoImg.complete && logoImg.naturalWidth>0){
@@ -5881,12 +5894,12 @@ function drawQuizResultCard(isStory){
       }
       ctx.textAlign='center';
       ctx.fillStyle='#F3F5F0';
-      ctx.font='800 32px "Bricolage Grotesque"';
-      ctx.fillText('Financial Gladiator', W/2, logoCy+logoSize/2+52);
+      ctx.font='800 38px "Bricolage Grotesque"';
+      ctx.fillText('Financial Gladiator', W/2, logoCy+logoSize/2+56);
       ctx.fillStyle='#A5ADA6';
-      ctx.font='500 20px "Space Mono"';
-      ctx.fillText('Test your own knowledge at the link below', W/2, logoCy+logoSize/2+86);
-      ctx.fillText('Built with Claude \u00b7 try the full glossary', W/2, logoCy+logoSize/2+116);
+      ctx.font='600 23px "Space Mono"';
+      ctx.fillText('Test your own knowledge at the link below', W/2, logoCy+logoSize/2+92);
+      ctx.fillText('Built with Claude \u00b7 try the full glossary', W/2, logoCy+logoSize/2+124);
     }
 
     // Same reasoning as drawShareCardStory: score and rating are the whole point,
@@ -5899,30 +5912,33 @@ function drawQuizResultCard(isStory){
 
       ctx.textAlign='center';
       ctx.fillStyle='#A5ADA6';
-      ctx.font='600 28px "Space Mono"';
+      ctx.font='700 32px "Space Mono"';
       ctx.fillText('FINANCIAL KNOWLEDGE QUIZ', W/2, 130);
 
       ctx.strokeStyle='rgba(243,245,240,0.14)'; ctx.lineWidth=2;
       ctx.beginPath(); ctx.moveTo(90,168); ctx.lineTo(W-90,168); ctx.stroke();
 
       ctx.fillStyle='#F3F5F0';
-      ctx.font='700 42px "Bricolage Grotesque"';
-      ctx.fillText('I scored', W/2, 320);
+      ctx.font='700 50px "Bricolage Grotesque"';
+      ctx.fillText('I scored', W/2, 330);
 
+      // The sparsest of all four cards -- no chart, no stat boxes, just this number
+      // and two short lines -- so the hero figure has the most room of any card to
+      // genuinely dominate the frame; sized up the most aggressively here on purpose.
       var scoreText=score+' / '+total;
-      var heroSize=fitSize(ctx,scoreText,W-140,220,'800','Bricolage Grotesque');
+      var heroSize=fitSize(ctx,scoreText,W-140,280,'800','Bricolage Grotesque');
       ctx.fillStyle='#FF7A33';
       ctx.font='800 '+heroSize+'px "Bricolage Grotesque"';
-      ctx.fillText(scoreText, W/2, 460+heroSize*0.32);
+      ctx.fillText(scoreText, W/2, 480+heroSize*0.32);
       ctx.fillStyle='#A5ADA6';
-      ctx.font='500 28px "Space Mono"';
-      ctx.fillText(pct+'% correct \u00b7 '+rating, W/2, 460+heroSize*0.32+60);
+      ctx.font='600 32px "Space Mono"';
+      ctx.fillText(pct+'% correct \u00b7 '+rating, W/2, 480+heroSize*0.32+68);
 
       ctx.fillStyle='#F3F5F0';
-      ctx.font='600 36px "Bricolage Grotesque"';
-      wrapTextCentered(ctx, 'Think you can beat me?', W/2, 460+heroSize*0.32+220, W-160, 48);
+      ctx.font='700 44px "Bricolage Grotesque"';
+      wrapTextCentered(ctx, 'Think you can beat me?', W/2, 480+heroSize*0.32+250, W-160, 56);
 
-      var logoSize=190;
+      var logoSize=200;
       var logoCy=H-230;
       var logoImg=document.querySelector('.fg-logo');
       if(logoImg && logoImg.complete && logoImg.naturalWidth>0){
@@ -5934,11 +5950,11 @@ function drawQuizResultCard(isStory){
         ctx.strokeStyle='rgba(243,245,240,0.10)'; ctx.lineWidth=2; ctx.stroke();
       }
       ctx.fillStyle='#F3F5F0';
-      ctx.font='800 34px "Bricolage Grotesque"';
-      ctx.fillText('Take the quiz →', W/2, logoCy+logoSize/2+56);
+      ctx.font='800 40px "Bricolage Grotesque"';
+      ctx.fillText('Take the quiz →', W/2, logoCy+logoSize/2+60);
       ctx.fillStyle='#A5ADA6';
-      ctx.font='500 22px "Space Mono"';
-      ctx.fillText('Financial Gladiator · The Singapore Millionaire Roadmap', W/2, logoCy+logoSize/2+90);
+      ctx.font='600 25px "Space Mono"';
+      ctx.fillText('Financial Gladiator · The Singapore Millionaire Roadmap', W/2, logoCy+logoSize/2+96);
     }
 
 // Tracks which of the two draw functions is currently showing (the scorecard or
@@ -6040,7 +6056,16 @@ function drawQuizResultCard(isStory){
             note.textContent="Sharing isn't supported here — try the download button instead.";
             return;
           }
-          var url=buildShareURL();
+          // Deliberately NOT buildShareURL() -- that function exists for the "Copy my
+          // scenario link" button, where encoding every input (age, salary, whether
+          // there's a car, CPF nomination status, all of it) into the URL is the
+          // entire point, so the recipient can load the exact same scenario. Reused
+          // here, that same link would ride along inside the share text on every
+          // WhatsApp/Messenger/Instagram share -- plainly visible to the recipient as
+          // readable query parameters, not the private numbers they were only ever
+          // meant to see rendered as a picture. A bare link to the app itself is all
+          // a shared image needs.
+          var url=location.origin+location.pathname;
           navigator.share({
             files:[file],
             title:'The Singapore Millionaire Roadmap',
