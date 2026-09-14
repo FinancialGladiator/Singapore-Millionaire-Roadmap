@@ -361,7 +361,11 @@
      can't be transitioned, so this toggles a class instead (see JS) rather than the
      dead "transition:opacity" rule this replaced, which never actually applied to
      anything since only .style.display was ever being set. */
-  #hero-q4{max-height:80px;opacity:1;overflow:hidden;
+  /* inline-block, not the plain block a <p> implied -- needed so this now sits
+     inline within the merged sentence's continuous text flow, while still
+     respecting max-height/overflow for the same fade-collapse animation as before
+     (a plain inline element wouldn't respect either property). */
+  #hero-q4{display:inline-block;max-height:80px;opacity:1;overflow:hidden;
     transition:opacity .25s ease,max-height .25s ease,margin .25s ease}
   #hero-q4.hero-q-hidden{max-height:0;opacity:0;margin:0;pointer-events:none}
 
@@ -872,9 +876,6 @@
           <p class="hero-sentence">
             I'm <span class="inline-field"><input type="text" id="h-age" value="20" aria-label="Your age now" inputmode="numeric" pattern="[0-9]*" maxlength="2"><span class="inline-unit">years old</span></span>,
             earning <span class="inline-field"><span class="inline-pre">S$</span><input type="text" id="h-sal" value="2,400" aria-label="Your gross monthly salary before CPF and tax" inputmode="numeric" pattern="[0-9,]*" maxlength="8"><span class="inline-unit">gross a month</span></span>.
-          </p>
-          <p class="hero-warn" id="h-age-warn" style="display:none">This app models working years and retirement — it isn't built for ages past 65.</p>
-          <p class="hero-sentence">
             And I'm <span class="inline-field"><select id="h-house" aria-label="Your household situation">
               <option value="single">single</option>
               <option value="married">married, no kids</option>
@@ -882,10 +883,9 @@
               <option value="kid2">married, with 2 kids</option>
               <option value="singlemom">single, with 1 kid</option>
             </select></span>.
+            <span class="hero-q-hidden" id="hero-q4">My partner earns <span class="inline-field"><span class="inline-pre">S$</span><input type="text" id="h-spouse" value="2,400" aria-label="Your partner's gross monthly salary before CPF and tax" inputmode="numeric" pattern="[0-9,]*" maxlength="8"><span class="inline-unit">gross a month too</span></span>.</span>
           </p>
-          <p class="hero-sentence hero-q-hidden" id="hero-q4">
-            My partner earns <span class="inline-field"><span class="inline-pre">S$</span><input type="text" id="h-spouse" value="2,400" aria-label="Your partner's gross monthly salary before CPF and tax" inputmode="numeric" pattern="[0-9,]*" maxlength="8"><span class="inline-unit">gross a month too</span></span>.
-          </p>
+          <p class="hero-warn" id="h-age-warn" style="display:none">This app models working years and retirement — it isn't built for ages past 65.</p>
         </div>
 
         <div class="hero-result" id="hero-result" aria-live="polite">
@@ -2915,7 +2915,35 @@
       '<div class="quiz-compare">'+vsText+' Self-reported literacy and a '+total+'-question quiz aren\'t measuring quite the same thing \u2014 take it as context, not a ranking.</div>'+
       '<button type="button" class="preset" id="quiz-save-btn" style="margin-bottom:10px;border-style:solid">\u2b07 Save my results</button>'+
       '<button type="button" class="hero-cta quiz-next" id="quiz-retry-btn">Try again \u2192</button>';
-    document.getElementById('quiz-save-btn').addEventListener('click', function(){ closeQuiz(); openShareModal(drawQuizResultCard); });
+    document.getElementById('quiz-save-btn').addEventListener('click', function(){
+      // NOT alert() -- many in-app browsers (Instagram, TikTok, WhatsApp's built-in
+      // browser, the exact places a shared link from this app is most likely to be
+      // opened) suppress alert()/confirm()/prompt() outright, silently. A caught
+      // error would then log to the console and stop there, with nothing visible to
+      // the reader at all -- functionally identical to no error handling existing.
+      // An in-page element can't be suppressed the same way, so this is the reliable
+      // choice here, not just a style preference.
+      var btn=this;
+      // window.openShareModal/window.drawQuizResultCard explicitly, not the bare
+      // names -- both are defined inside a separate IIFE (see where they're exposed,
+      // near that IIFE's own closing brace) that this function sits entirely outside
+      // of. A bare reference technically still resolves via the browser's own
+      // global-object fallback, but explicit is clearer and doesn't quietly depend on
+      // that fallback existing.
+      try{ window.openShareModal(window.drawQuizResultCard); closeQuiz(); }
+      catch(e){
+        console.error('Could not open the results card:', e);
+        var msg=document.getElementById('quiz-save-error');
+        if(!msg){
+          msg=document.createElement('p');
+          msg.id='quiz-save-error';
+          msg.className='hero-warn';
+          msg.style.marginTop='10px';
+          btn.insertAdjacentElement('afterend', msg);
+        }
+        msg.textContent="Sorry, couldn't generate your results card. Please try again.";
+      }
+    });
     document.getElementById('quiz-retry-btn').addEventListener('click', openQuiz);
   }
   (function(){
@@ -5953,6 +5981,19 @@ function drawQuizResultCard(isStory){
         note.innerHTML='If it opened as an image instead of downloading, <b>press and hold it</b>, then choose "Save to Photos" (iPhone) or "Download image" (Android/desktop).';
       },'image/png');
     });
+    // THE ACTUAL BUG: this entire IIFE is its own private scope, so nothing defined
+    // inside it -- openShareModal, drawShareCard, drawQuizResultCard -- was ever
+    // visible outside it. The main scorecard button's own handler lives INSIDE this
+    // same IIFE (further up this file), which is exactly why that one always worked;
+    // the quiz's "Save my results" button attaches its handler from renderQuizResults(),
+    // a separate function living at the main script's top level, entirely outside this
+    // IIFE -- so calling openShareModal() from there was a plain ReferenceError, every
+    // time, in every browser, regardless of alert() or any other error-handling detail.
+    // Exposing the two entry points this file actually needs from outside fixes the
+    // real problem directly, rather than just handling the crash it was causing more
+    // gracefully.
+    window.openShareModal=openShareModal;
+    window.drawQuizResultCard=drawQuizResultCard;
   })();
 
   /* ===== COVER: live projection driven by the two inline inputs ===== */
@@ -6002,12 +6043,41 @@ function drawQuizResultCard(isStory){
     // rather than a hand-measured pixel width: a custom measurement can be caught out
     // by webfont load timing, sub-pixel rounding, or platform-specific rendering --
     // this instead asks the browser itself, which always knows its own real layout.
+    // One shared, hidden span reused for every measurement (rather than creating and
+    // discarding a new element on every call) -- copies the select's own live font
+    // styling onto it so the measurement matches exactly, even if the app's fonts or
+    // sizes ever change later.
+    var __selectMeasureEl=null;
+    function measureSelectWidth(el){
+      if(!__selectMeasureEl){
+        __selectMeasureEl=document.createElement('span');
+        __selectMeasureEl.style.cssText='position:absolute;visibility:hidden;white-space:pre;left:-9999px;top:-9999px;';
+        document.body.appendChild(__selectMeasureEl);
+      }
+      var cs=window.getComputedStyle(el);
+      __selectMeasureEl.style.font=cs.font;
+      __selectMeasureEl.style.fontFamily=cs.fontFamily;
+      __selectMeasureEl.style.fontSize=cs.fontSize;
+      __selectMeasureEl.style.fontWeight=cs.fontWeight;
+      __selectMeasureEl.textContent=el.options[el.selectedIndex].text;
+      return __selectMeasureEl.getBoundingClientRect().width;
+    }
     function autoSizeField(el){
       if(el.tagName==='SELECT'){
-        // A <select> with no explicit width already sizes itself natively to fit its
-        // currently-selected option -- so the fix here is simply to stop overriding
-        // that with a hand-computed width at all, not to compute a better one.
-        el.style.width = '';
+        // A <select> with no explicit width sizes natively to its WIDEST option
+        // across every browser tested (Chrome, Safari, Firefox all do this
+        // deliberately, so the control doesn't visually jump width when opened) --
+        // not to whichever option happens to be selected right now. Clearing the
+        // width (the previous version of this) relies on that same native sizing,
+        // so it never actually fixed anything: "single" was still rendered at
+        // "married, with 2 kids"-width, since that's the widest of the five choices
+        // regardless of which one is showing. Measuring the selected option's own
+        // text and setting an explicit width to match is the only way to get
+        // genuine per-selection sizing out of a native control.
+        var textWidth=measureSelectWidth(el);
+        // +35 = the select's own 9px left padding + 26px right padding (for the
+        // dropdown arrow), read directly from its CSS rule, not approximated.
+        el.style.width = Math.ceil(textWidth)+35+'px';
         return;
       }
       // Native text inputs don't auto-size to their value the way selects do, so the
