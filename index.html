@@ -466,6 +466,14 @@
   /* Modeled on .scenario-btn (the persona-preset pills) for a consistent, already-
      established toggle look elsewhere in the app, rather than inventing a new pattern. */
   .dollar-toggle{display:flex;gap:8px;margin-top:14px}
+  /* Same visual pattern as .dollar-toggle/.dt-btn -- one established toggle look
+     reused a second time, rather than a new one invented just for this modal. */
+  .share-format-toggle{display:flex;gap:8px;margin-bottom:14px}
+  .sf-btn{flex:1;padding:10px;border-radius:8px;border:1px solid var(--line);
+    background:var(--panel);color:var(--ink);font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:700;font-size:13px;cursor:pointer;transition:border-color .15s ease,background .15s ease,color .15s ease}
+  .sf-btn:active{border-color:var(--brand)}
+  .sf-btn.active{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
   .dt-btn{flex:1;padding:10px;border-radius:8px;border:1px solid var(--line);
     background:var(--panel);color:var(--ink);font-family:'Bricolage Grotesque',sans-serif;
     font-weight:700;font-size:13px;cursor:pointer;transition:border-color .15s ease,background .15s ease,color .15s ease}
@@ -812,6 +820,10 @@
   <div id="share-modal" class="share-modal">
     <div class="share-modal-inner">
       <button id="share-modal-close" class="share-modal-close" aria-label="Close">✕</button>
+      <div class="share-format-toggle" role="group" aria-label="Image format">
+        <button type="button" class="sf-btn active" id="sf-square" data-format="square">Scorecard</button>
+        <button type="button" class="sf-btn" id="sf-story" data-format="story">Story</button>
+      </div>
       <canvas id="share-canvas" width="1080" height="1600"></canvas>
       <button id="share-download" class="preset" style="margin-top:14px;border-style:solid">⬇ Download image</button>
       <div class="milestones flow" id="share-card-note" style="margin-top:8px;text-align:center;justify-content:center"></div>
@@ -5577,8 +5589,17 @@
         ctx.textAlign='left';
       });
     }
-    function drawShareCard(){
+    // isStory: a second, deliberately simpler layout for the same underlying figures
+    // -- a true 9:16 vertical (1080x1920, matching Instagram/TikTok Stories exactly,
+    // rather than the original 1080x1600 which is closer to a portrait feed post),
+    // built around one hero number and a short, personal, quotable line rather than
+    // the original's four-stat grid. Stories are glanced at for a second or two, not
+    // studied -- the original card's density is exactly wrong for that format, so
+    // this isn't a resize of the same design, it's a different one for a different
+    // moment.
+    function drawShareCard(isStory){
       var canvas=document.getElementById('share-canvas');
+      canvas.width=1080; canvas.height=isStory?1920:1600;
       var ctx=canvas.getContext('2d');
       var W=canvas.width, H=canvas.height;
 
@@ -5588,10 +5609,13 @@
       var cpf=val('p-cpf-bal','S$—');
       var ageEl=document.getElementById('i-age');
       var age=ageEl?ageEl.value:'—';
+      var salEl=document.getElementById('i-sal');
+      var sal=salEl?salEl.value:'—';
       var jobEl=document.getElementById('i-job');
       var jobLabel=(jobEl && jobEl.options[jobEl.selectedIndex])?jobEl.options[jobEl.selectedIndex].text.split('—')[0].trim():'—';
 
       ctx.clearRect(0,0,W,H);
+      if(isStory){ drawShareCardStory(ctx,W,H,nw,age,sal,jobLabel); return; }
       var grad=ctx.createLinearGradient(0,0,0,H);
       grad.addColorStop(0,'#17191A'); grad.addColorStop(1,'#0B0D0B');
       ctx.fillStyle=grad; ctx.fillRect(0,0,W,H);
@@ -5660,9 +5684,86 @@
       ctx.fillText('Built with Claude · try your own numbers', W/2, logoCy+logoSize/2+116);
     }
 
-    
-function drawQuizResultCard(){
+    // The Story layout itself -- one hero number, one personal line, one hook,
+    // nothing else competing for the two seconds someone actually looks at this.
+    // Age and salary are folded into a first-person line ("Starting at 20, earning
+    // S$2,400/mo") rather than shown as a labelled stat, since the whole point of
+    // this format is that it reads as the reader's own claim, not a report about
+    // them -- the small-caption version reads like a form field; the sentence
+    // version reads like something a person would actually say.
+    function drawShareCardStory(ctx,W,H,nw,age,sal,jobLabel){
+      var grad=ctx.createLinearGradient(0,0,0,H);
+      grad.addColorStop(0,'#17191A'); grad.addColorStop(1,'#0B0D0B');
+      ctx.fillStyle=grad; ctx.fillRect(0,0,W,H);
+
+      ctx.textAlign='center';
+      ctx.fillStyle='#A5ADA6';
+      ctx.font='600 28px "Space Mono"';
+      ctx.fillText('THE SINGAPORE MILLIONAIRE ROADMAP', W/2, 130);
+
+      ctx.strokeStyle='rgba(243,245,240,0.14)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(90,168); ctx.lineTo(W-90,168); ctx.stroke();
+
+      ctx.fillStyle='#F3F5F0';
+      ctx.font='700 40px "Bricolage Grotesque"';
+      wrapTextCentered(ctx, "I'm going to retire a", W/2, 300, W-160, 50);
+      ctx.fillStyle='#FF7A33';
+      ctx.font='800 56px "Bricolage Grotesque"';
+      ctx.fillText('millionaire.', W/2, 372);
+
+      var heroSize=fitSize(ctx,nw,W-140,190,'800','Bricolage Grotesque');
+      ctx.fillStyle='#FF7A33';
+      ctx.font='800 '+heroSize+'px "Bricolage Grotesque"';
+      ctx.fillText(nw, W/2, 560+heroSize*0.32);
+      ctx.fillStyle='#A5ADA6';
+      ctx.font='500 26px "Space Mono"';
+      ctx.fillText("net worth at 65, in today's dollars", W/2, 560+heroSize*0.32+56);
+
+      var chartY=560+heroSize*0.32+130, chartH=420;
+      drawMiniChart(ctx, 90, chartY, W-180, chartH);
+
+      var lineY=chartY+chartH+90;
+      ctx.fillStyle='#F3F5F0';
+      ctx.font='600 34px "Bricolage Grotesque"';
+      wrapTextCentered(ctx, 'Starting at '+age+', earning S$'+sal+'/mo as a '+jobLabel+'.', W/2, lineY, W-160, 46);
+
+      var logoSize=190;
+      var logoCy=H-230;
+      var logoImg=document.querySelector('.fg-logo');
+      if(logoImg && logoImg.complete && logoImg.naturalWidth>0){
+        ctx.save();
+        ctx.beginPath(); ctx.arc(W/2, logoCy, logoSize/2, 0, Math.PI*2); ctx.clip();
+        ctx.drawImage(logoImg, W/2-logoSize/2, logoCy-logoSize/2, logoSize, logoSize);
+        ctx.restore();
+        ctx.beginPath(); ctx.arc(W/2, logoCy, logoSize/2, 0, Math.PI*2);
+        ctx.strokeStyle='rgba(243,245,240,0.10)'; ctx.lineWidth=2; ctx.stroke();
+      }
+      ctx.fillStyle='#F3F5F0';
+      ctx.font='800 34px "Bricolage Grotesque"';
+      ctx.fillText('Try your own numbers →', W/2, logoCy+logoSize/2+56);
+      ctx.fillStyle='#A5ADA6';
+      ctx.font='500 22px "Space Mono"';
+      ctx.fillText('Financial Gladiator · illustration only, not financial advice', W/2, logoCy+logoSize/2+90);
+    }
+
+    // Centre-anchored line wrap -- the existing wrapText() is left-anchored (built for
+    // the original card's left-aligned stat boxes), which isn't what a centred Story
+    // headline needs; this is the same wrapping logic, just measuring and drawing
+    // each line from its own centre instead of a fixed left x.
+    function wrapTextCentered(ctx,text,cx,y,maxWidth,lineHeight){
+      var words=text.split(' '), line='', lines=[];
+      for(var i=0;i<words.length;i++){
+        var test=line+words[i]+' ';
+        if(ctx.measureText(test).width>maxWidth && line){ lines.push(line.trim()); line=words[i]+' '; }
+        else line=test;
+      }
+      lines.push(line.trim());
+      lines.forEach(function(l,i){ ctx.fillText(l, cx, y+i*lineHeight); });
+    }
+
+function drawQuizResultCard(isStory){
       var canvas=document.getElementById('share-canvas');
+      canvas.width=1080; canvas.height=isStory?1920:1600;
       var ctx=canvas.getContext('2d');
       var W=canvas.width, H=canvas.height;
 
@@ -5674,6 +5775,7 @@ function drawQuizResultCard(){
            : 'Singapore\'s self-reported average sits around 40-45%');
 
       ctx.clearRect(0,0,W,H);
+      if(isStory){ drawQuizResultCardStory(ctx,W,H,score,total,pct,rating); return; }
       var grad=ctx.createLinearGradient(0,0,0,H);
       grad.addColorStop(0,'#17191A'); grad.addColorStop(1,'#0B0D0B');
       ctx.fillStyle=grad; ctx.fillRect(0,0,W,H);
@@ -5740,9 +5842,72 @@ function drawQuizResultCard(){
       ctx.fillText('Built with Claude \u00b7 try the full glossary', W/2, logoCy+logoSize/2+116);
     }
 
-function openShareModal(drawFn){
-      var draw=drawFn||drawShareCard;
+    // Same reasoning as drawShareCardStory: score and rating are the whole point,
+    // everything else (the vs.-Singapore-average line) is secondary context that a
+    // dense stat box handled fine but a two-second glance doesn't need.
+    function drawQuizResultCardStory(ctx,W,H,score,total,pct,rating){
+      var grad=ctx.createLinearGradient(0,0,0,H);
+      grad.addColorStop(0,'#17191A'); grad.addColorStop(1,'#0B0D0B');
+      ctx.fillStyle=grad; ctx.fillRect(0,0,W,H);
+
+      ctx.textAlign='center';
+      ctx.fillStyle='#A5ADA6';
+      ctx.font='600 28px "Space Mono"';
+      ctx.fillText('FINANCIAL KNOWLEDGE QUIZ', W/2, 130);
+
+      ctx.strokeStyle='rgba(243,245,240,0.14)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(90,168); ctx.lineTo(W-90,168); ctx.stroke();
+
+      ctx.fillStyle='#F3F5F0';
+      ctx.font='700 42px "Bricolage Grotesque"';
+      ctx.fillText('I scored', W/2, 320);
+
+      var scoreText=score+' / '+total;
+      var heroSize=fitSize(ctx,scoreText,W-140,220,'800','Bricolage Grotesque');
+      ctx.fillStyle='#FF7A33';
+      ctx.font='800 '+heroSize+'px "Bricolage Grotesque"';
+      ctx.fillText(scoreText, W/2, 460+heroSize*0.32);
+      ctx.fillStyle='#A5ADA6';
+      ctx.font='500 28px "Space Mono"';
+      ctx.fillText(pct+'% correct \u00b7 '+rating, W/2, 460+heroSize*0.32+60);
+
+      ctx.fillStyle='#F3F5F0';
+      ctx.font='600 36px "Bricolage Grotesque"';
+      wrapTextCentered(ctx, 'Think you can beat me?', W/2, 460+heroSize*0.32+220, W-160, 48);
+
+      var logoSize=190;
+      var logoCy=H-230;
+      var logoImg=document.querySelector('.fg-logo');
+      if(logoImg && logoImg.complete && logoImg.naturalWidth>0){
+        ctx.save();
+        ctx.beginPath(); ctx.arc(W/2, logoCy, logoSize/2, 0, Math.PI*2); ctx.clip();
+        ctx.drawImage(logoImg, W/2-logoSize/2, logoCy-logoSize/2, logoSize, logoSize);
+        ctx.restore();
+        ctx.beginPath(); ctx.arc(W/2, logoCy, logoSize/2, 0, Math.PI*2);
+        ctx.strokeStyle='rgba(243,245,240,0.10)'; ctx.lineWidth=2; ctx.stroke();
+      }
+      ctx.fillStyle='#F3F5F0';
+      ctx.font='800 34px "Bricolage Grotesque"';
+      ctx.fillText('Take the quiz →', W/2, logoCy+logoSize/2+56);
+      ctx.fillStyle='#A5ADA6';
+      ctx.font='500 22px "Space Mono"';
+      ctx.fillText('Financial Gladiator · The Singapore Millionaire Roadmap', W/2, logoCy+logoSize/2+90);
+    }
+
+// Tracks which of the two draw functions is currently showing (the scorecard or
+    // the quiz result) and whether Story format is selected, so the format toggle
+    // buttons -- which don't know or care which card is open -- can just re-invoke
+    // whatever's already active with the new format, rather than the toggle needing
+    // its own separate copy of that same "which card is this" logic.
+    var currentDrawFn=null, currentIsStory=false;
+    function openShareModal(drawFn){
+      currentDrawFn=drawFn||drawShareCard;
+      currentIsStory=false;
       var modal=document.getElementById('share-modal');
+      var sfSquare=document.getElementById('sf-square'), sfStory=document.getElementById('sf-story');
+      if(sfSquare) sfSquare.classList.add('active');
+      if(sfStory) sfStory.classList.remove('active');
+      function draw(){ currentDrawFn(currentIsStory); }
       draw(); // draw immediately with whatever fonts are ready — never block on this
       modal.classList.add('open');
       var ready=(document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
@@ -5751,6 +5916,17 @@ function openShareModal(drawFn){
       setTimeout(function(){ if(!settled) draw(); },350); // safety net if fonts.ready never resolves
     }
     function closeShareModal(){ document.getElementById('share-modal').classList.remove('open'); }
+    (function(){
+      var sfSquare=document.getElementById('sf-square'), sfStory=document.getElementById('sf-story');
+      function setFormat(isStory){
+        currentIsStory=isStory;
+        if(sfSquare) sfSquare.classList.toggle('active', !isStory);
+        if(sfStory) sfStory.classList.toggle('active', isStory);
+        if(currentDrawFn) currentDrawFn(currentIsStory);
+      }
+      if(sfSquare) sfSquare.addEventListener('click', function(){ setFormat(false); });
+      if(sfStory) sfStory.addEventListener('click', function(){ setFormat(true); });
+    })();
 
     var trigger=document.getElementById('btn-share-card');
     // NOT addEventListener('click', openShareModal) directly -- the browser auto-passes
