@@ -246,7 +246,12 @@
   .dd-card .dd-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:16px;
     color:var(--ink);line-height:1.25}
   .dd-card .dd-desc{font-family:'Space Mono',monospace;font-size:11.5px;color:var(--muted);line-height:1.5}
-  .dd-card .dd-body{padding:2px 18px 16px;border-top:1px solid var(--line);margin-top:2px}
+  /* 14px top padding (was 2px) -- the original was tuned for Tab 3, where every
+     dd-body's first child is a <section> that adds its own 14px margin-top on top of
+     this, so the visible gap was already fine. Tab 4's traps start directly with a
+     <p>, with no such section wrapper to supply that margin -- without this increase,
+     that first line of text would sit right against the divider under the summary. */
+  .dd-card .dd-body{padding:14px 18px 16px;border-top:1px solid var(--line);margin-top:2px}
   .dd-card .dd-body > section:first-child{margin-top:14px}
   .dd-card .dd-body .sec-label{margin-top:0}
 
@@ -452,6 +457,18 @@
   /* chart */
   .chart-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 12px}
   .chart-range-note{font-size:12px;color:var(--muted);line-height:1.55;margin-top:10px}
+  .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15.5px;
+    color:var(--ink);margin:0 0 10px}
+  /* Modeled on .scenario-btn (the persona-preset pills) for a consistent, already-
+     established toggle look elsewhere in the app, rather than inventing a new pattern. */
+  .dollar-toggle{display:flex;gap:8px;margin-top:14px}
+  .dt-btn{flex:1;padding:10px;border-radius:8px;border:1px solid var(--line);
+    background:var(--panel);color:var(--ink);font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:700;font-size:13px;cursor:pointer;transition:border-color .15s ease,background .15s ease,color .15s ease}
+  .dt-btn:active{border-color:var(--brand)}
+  .dt-btn.active{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+  .dollar-toggle-text{font-family:'Space Mono',monospace;font-size:13px;color:var(--muted);
+    text-align:center;margin:10px 0 0}
   .compare-buttons{display:flex;gap:10px;margin-top:14px}
   .compare-buttons .preset{width:auto;flex:1}
   .compare-summary{display:flex;gap:14px}
@@ -561,7 +578,11 @@
   /* steps */
   .step{display:grid;grid-template-columns:36px 1fr;gap:14px;padding:20px 0;border-bottom:1px solid var(--line)}
   .step:last-child{border-bottom:none}
-  .step .num{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:24px;color:var(--brand);line-height:1}
+  /* Generalized from .step .num -- the same orange, large figure numbering is now
+     also used inside dd-card summaries (Tab 4's traps), which don't have a .step
+     ancestor at all. A plain .num selector still matches every existing .step .num
+     case too, so this widens what the rule covers without narrowing it. */
+  .num{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:24px;color:var(--brand);line-height:1;flex:0 0 auto}
   .step h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:17px;margin-bottom:8px;line-height:1.15}
   .step p{font-size:14.5px;color:var(--muted);margin-bottom:10px}
   .formula{font-family:'Space Mono',monospace;font-size:12px;background:#FFFFFF0D;border:1px solid #FF7A3345;
@@ -581,6 +602,17 @@
   footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);font-family:'Space Mono',monospace;font-size:11px;color:var(--dim);line-height:1.75}
   /* calculator */
   .calc-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px;margin-top:8px}
+  /* Same padding/spacing as .calc-card, but no border or background -- used where a
+     card is already nested inside another bordered box (here, the "What matters
+     most" primary-block sits right inside this), so the visible frame was purely
+     redundant: a border around a border, with no content of its own between them. */
+  /* Horizontal padding dropped (kept vertical) -- with the outer border gone, this
+     leftover left/right inset was the one thing still making everything inside (the
+     primary-block box, and the accordions below it) sit narrower than the persona
+     buttons and the floating summary bar right beside them. The page's own side
+     margin already provides the correct, consistent edge -- this shouldn't add a
+     second one on top of it. */
+  .calc-card-plain{padding:18px 0;margin-top:8px}
   .field{margin-bottom:18px}
   .toggle-field{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
   .toggle-label{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;color:var(--ink)}
@@ -591,7 +623,11 @@
   .field select{width:100%;font-family:'Inter',sans-serif;font-size:14px;padding:10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
   .field output{display:inline-block;font-family:'Space Mono',monospace;font-weight:700;font-size:16px;color:var(--couple)}
   .preset{width:100%;margin-top:2px;font-family:'Space Mono',monospace;font-size:12.5px;padding:12px;border:1px dashed var(--couple);background:#FF7A331A;color:var(--couple);border-radius:6px;cursor:pointer}
-  .hint{position:relative;display:inline-flex;vertical-align:middle}
+  /* Small left margin so the "?" button never sits flush against the word right
+     before it -- .hint is the single, shared wrapper every help bubble across the
+     whole app uses, so this one change gives every instance the same breathing room
+     at once, without needing to touch any of the many places it's used. */
+  .hint{position:relative;display:inline-flex;vertical-align:middle;margin-left:5px}
   .help{width:18px;height:18px;border-radius:50%;border:none;background:var(--brand);color:var(--brand-ink);font-family:'Space Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;line-height:18px;text-align:center;padding:0;flex:0 0 auto;position:relative}
   /* invisible 44x44 hit area so the 18px dot still meets touch-target guidance */
   .help:before{content:'';position:absolute;left:50%;top:50%;width:44px;height:44px;
@@ -940,7 +976,7 @@
       </div>
     </div>
 
-    <div class="calc-card">
+    <div class="calc-card-plain">
             <div class="primary-block">
         <div class="primary-label">What matters most</div>
 <div class="field">
@@ -1177,12 +1213,7 @@
         </div>
       </details>
 
-      <button class="preset" id="btn-share" style="margin-top:10px;border-style:solid">🔗 Copy my scenario link</button>
-      <div class="milestones flow" id="share-status" style="margin-top:8px"></div>
-      <div class="milestones flow" id="save-status" style="margin-top:4px;color:var(--muted)">💾 Your inputs save automatically on this device — come back anytime.</div>
-    </div>
-
-        <details class="ctl-group" id="grp-alloc">
+      <details class="ctl-group" id="grp-alloc">
       <summary><span class="cg-title">Allocation &amp; tax</span></summary>
       <div class="cg-body">
       <p class="sec-sub">Drag any slider — the other three <b>won't</b> move automatically. Each one's own range shrinks to whatever room is left, so the total can never exceed 100% — but if you free up room by lowering one, you'll need to raise another yourself to put it to use.</p>
@@ -1219,8 +1250,9 @@
             </div>
     </details>
 
-    <section>
-      <div class="sec-label" style="margin-top:28px">Your monthly budget now</div>
+      <details class="ctl-group" id="grp-budget">
+  <summary><span class="cg-title">Monthly budget now</span></summary>
+  <div class="cg-body">
       <div class="ded">
         <div class="ded-row"><span class="lab">Gross salary (household) <span class="hint"><button class="help">?</button><span class="bubble" id="bub-gross">Loading...</span></span></span><span class="amt" id="b-gross"></span></div>
         <div class="ded-row"><span class="lab">− CPF (employee) <span class="hint"><button class="help">?</button><span class="bubble">20% of each salary up to the wage ceiling (~S$8,000/mo). Your <b>employer adds ~17% more</b> into CPF on top — not deducted from pay, but it still builds your retirement.</span></span></span><span class="amt" id="b-cpf"></span></div>
@@ -1237,11 +1269,21 @@
         <div class="ded-row" id="row-want0" style="display:none"><span class="lab">&nbsp;&nbsp;↳ Wants <span class="hint"><button class="help">?</button><span class="bubble">Your Wants slider's share of Net Spendable above, on the same basis as Necessities.</span></span></span><span class="amt" id="b-want0"></span></div>
         <div class="ded-row" id="row-unalloc0" style="display:none"><span class="lab">&nbsp;&nbsp;↳ Unallocated <span class="hint"><button class="help">?</button><span class="bubble">Left over because Necessities, Wants and STI don't sum to 100% between them (SRS is separate, drawing from a different income pool, so it doesn't count against this). It defaults to ordinary spendable cash — raise any of the three sliders in Allocation &amp; tax to put it to deliberate use instead.</span></span></span><span class="amt" id="b-unalloc0"></span></div>
       </div>
-    </section>
+  </div>
+</details>
 
-    <section id="proj65-anchor" aria-live="polite">
-      <div class="sec-label">Projected at 65</div>
-      <div class="cards">
+      <details class="ctl-group" id="proj65-anchor">
+      <summary><span class="cg-title">Projected at 65</span></summary>
+      <div class="cg-body">
+      <h3 class="chart-title">Net worth over your career</h3>
+      <div class="chart-card"><svg id="calc-chart" viewBox="0 0 900 430" role="img" aria-label="Net worth over your career"></svg></div>
+      <div class="dollar-toggle" role="group" aria-label="Dollar basis">
+        <button type="button" class="dt-btn active" id="dt-future" data-mode="future">Future Dollars</button>
+        <button type="button" class="dt-btn" id="dt-today" data-mode="today">Today's Dollars</button>
+      </div>
+      <p class="dollar-toggle-text" id="dollar-toggle-text"></p>
+      <p class="chart-range-note">The dotted band shows a poor/good market corridor — your chosen return ±3 points/yr, not a guarantee. The STI itself has returned anywhere from ~2.9%/yr to ~6.9%/yr across different recent multi-year windows, and fell about 35% in the 2020 crash alone. The solid line in the middle is what this app assumes; markets rarely follow a straight line to get there.</p>
+      <div class="cards" style="margin-top:20px">
         <div class="scard s2">
           <div class="name" style="font-size:15px">Investment pot · STI + SRS</div>
           <div class="hl">today's $ · at 65</div>
@@ -1276,6 +1318,15 @@
         <div class="l">Total monthly retirement income · today's $ <span class="hint"><button class="help">?</button><span class="bubble">Your lifelong <b>CPF LIFE</b> annuity plus a <b>4%/yr drawdown</b> from your STI pot — expressed in today's buying power.</span></span></div>
         <div class="v" id="p-inc"></div>
       </div>
+      
+      
+
+      </div>
+    </details>
+
+    <details class="ctl-group" id="grp-whatif">
+      <summary><span class="cg-title">What if scenarios</span></summary>
+      <div class="cg-body">
       <div class="whatif-wrap">
         <div class="whatif-label">What if you changed one thing?</div>
         <div class="whatif-grid">
@@ -1287,14 +1338,20 @@
         </div>
         <div class="milestones flow" style="margin-top:8px;color:var(--muted)">Each figure is the change to your net worth at 65, in today’s dollars. Tap one to apply it.</div>
       </div>
+      </div>
+    </details>
 
-      <button class="hero-cta" id="btn-share-card" style="margin-top:14px">My Financial Scorecard</button>
+      <button class="hero-cta" id="btn-share-card" style="margin-top:10px">My Financial Scorecard</button>
       <div class="note" id="f-distress" style="display:none;border-left-color:var(--brick)">
         <p id="o-distress"></p>
       </div>
-    </section>
 
-    <div class="deep-dive">
+      <button class="preset" id="btn-share" style="margin-top:10px;border-style:solid">🔗 Copy my scenario link</button>
+      <div class="milestones flow" id="share-status" style="margin-top:8px"></div>
+      <div class="milestones flow" id="save-status" style="margin-top:4px;color:var(--muted)">💾 Your inputs save automatically on this device — come back anytime.</div>
+    </div>
+
+        <div class="deep-dive">
       <div class="sec-label">Go deeper</div>
       <p class="sec-sub">Everything below is optional detail. Open whichever you’re curious about.</p>
       <details class="dd-card" id="dd-0">
@@ -1372,17 +1429,6 @@
     </section>
         </div>
       </details>
-      <details class="dd-card" id="dd-3">
-        <summary><span class="dd-txt"><span class="dd-title">Your net worth curve</span><span class="dd-desc">The full path from today to 65, in future dollars.</span></span></summary>
-        <div class="dd-body">
-<section>
-      <div class="sec-label">Net worth over your career · future dollars</div>
-      <div class="chart-card"><svg id="calc-chart" viewBox="0 0 900 430" role="img" aria-label="Net worth over your career"></svg></div>
-      <p class="chart-range-note">The dotted band shows a poor/good market corridor — your chosen return ±3 points/yr, not a guarantee. The STI itself has returned anywhere from ~2.9%/yr to ~6.9%/yr across different recent multi-year windows, and fell about 35% in the 2020 crash alone. The solid line in the middle is what this app assumes; markets rarely follow a straight line to get there.</p>
-      <div class="milestones" id="m-strip"></div>
-    </section>
-        </div>
-      </details>
       <details class="dd-card" id="dd-compare">
         <summary><span class="dd-txt"><span class="dd-title">Compare two scenarios</span><span class="dd-desc">Save your current inputs as A or B, then see them side by side.</span></span></summary>
         <div class="dd-body">
@@ -1417,117 +1463,7 @@
     </section>
         </div>
       </details>
-      <details class="dd-card" id="dd-4">
-        <summary><span class="dd-txt"><span class="dd-title">How five households compare</span><span class="dd-desc">Single, couple, one child, two children, single mother — the same wage, five outcomes.</span></span></summary>
-        <div class="dd-body">
-
-
-    <div class="note"><p>Illustration only, not financial advice. CPF is simplified (wage ceiling, allocation, Medisave and CPF LIFE approximated); tax uses current resident brackets; the salary curve, return and raise split are assumptions. Your real figures will differ — verify against IRAS, CPF and HDB.</p></div>
-
-    <div class="part-divider"><span>How the five households compare</span></div>
-
-    <div class="eyebrow">45-year projection · all citizens · STI 6%</div>
-    <h2 class="part-title">One wage, two wages,<br>or two wages and <em>kids</em>.</h2>
-    <p class="standfirst">Five Singaporean households on S$2,400/mo crew wages, all frugal, putting 11% of take-home into the STI and 9% into SRS at 6% (dividends reinvested), banking at least half of every raise, for 45 years. The public-housing + CPF scaffolding does the rest.</p>
-    <div class="cards">
-      <div class="scard s1">
-        <div class="name">Single</div>
-        <div class="setup">1 × S$2,400/mo · 2-room Flexi, bought at 35</div>
-        <div class="hl">Retirement income · today's $</div>
-        <div class="big">S$6,764<small>/mo</small></div>
-        <div class="rows">
-          <div class="r"><span class="k">STI + SRS pot (today's $)</span><span class="v">S$1.09m</span></div>
-          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$1.66m</span></div>
-          <div class="r"><span class="k">CPF LIFE payouts</span><span class="v">1</span></div>
-        </div>
-      </div>
-      <div class="scard s2">
-        <div class="name">Couple, no kids</div>
-        <div class="setup">2 × S$2,400/mo · 3-room BTO, bought at 30</div>
-        <div class="hl">Retirement income · today's $</div>
-        <div class="big">S$13,318<small>/mo</small></div>
-        <div class="rows">
-          <div class="r"><span class="k">STI + SRS pot (today's $)</span><span class="v">S$2.11m</span></div>
-          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$3.26m</span></div>
-          <div class="r"><span class="k">CPF LIFE payouts</span><span class="v">2</span></div>
-        </div>
-      </div>
-      <div class="scard s3">
-        <div class="name">Family, one child</div>
-        <div class="setup">2 × S$2,400/mo · 4-room BTO at 30 · child 31–53</div>
-        <div class="hl">Retirement income · today's $</div>
-        <div class="big">S$11,806<small>/mo</small></div>
-        <div class="rows">
-          <div class="r"><span class="k">STI + SRS pot (today's $)</span><span class="v">S$1.90m</span></div>
-          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$2.90m</span></div>
-          <div class="r"><span class="k">CPF LIFE payouts</span><span class="v">2</span></div>
-        </div>
-      </div>
-      <div class="scard" style="border-top-color:var(--srs)">
-        <div class="name">Family, two children</div>
-        <div class="setup">2 × S$2,400/mo · 4-room BTO at 30 · kids 31–53 &amp; 33.5–55.5</div>
-        <div class="hl">Retirement income · today's $</div>
-        <div class="big" style="color:var(--srs)">S$11,290<small>/mo</small></div>
-        <div class="rows">
-          <div class="r"><span class="k">STI + SRS pot (today's $)</span><span class="v">S$1.75m</span></div>
-          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$2.74m</span></div>
-          <div class="r"><span class="k">CPF LIFE payouts</span><span class="v">2</span></div>
-        </div>
-      </div>
-      <div class="scard" style="border-top-color:var(--family)">
-        <div class="name">Single mother, one child</div>
-        <div class="setup">1 × S$2,400/mo · 2-room Flexi at 35 · child from birth</div>
-        <div class="hl">Retirement income · today's $</div>
-        <div class="big">S$5,833<small>/mo</small></div>
-        <div class="rows">
-          <div class="r"><span class="k">STI + SRS pot (today's $)</span><span class="v">S$809k</span></div>
-          <div class="r"><span class="k">Net worth (today's $)</span><span class="v">S$1.38m</span></div>
-          <div class="r"><span class="k">CPF LIFE payouts</span><span class="v">1</span></div>
-        </div>
-      </div>
-    </div>
-    <section>
-      <div class="sec-label">Investment pot growth (STI + SRS) · all four · age 20 → 65</div>
-      <p class="sec-sub">Future (nominal) dollars. Two incomes buy the flat five years earlier, unlock a bigger grant, and leave far more to compound — so the couple pulls away. Each family tracks the couple until its first child arrives, then the gap opens; a second child opens it further, but by a smaller amount.</p>
-      <div class="chart-card">
-        <svg id="chart" viewBox="0 0 900 470" role="img" aria-label="Investment pot growth for five households"></svg>
-        <div class="chart-legend">
-          <span><i class="dot" style="background:var(--brand)"></i>Couple — S$9.89m</span>
-          <span><i class="dot" style="background:var(--family)"></i>Family, 1 child — S$8.80m</span>
-          <span><i class="dot" style="background:var(--srs)"></i>Family, 2 children — S$8.33m</span>
-          <span><i class="dot" style="background:var(--single)"></i>Single — S$5.04m</span>
-          <span><i class="dot" style="background:var(--brick)"></i>Single mother — S$4.19m</span>
-        </div>
-      </div>
-      <div class="insight">
-        <h3>The price of a child — about S$1,510/month of retirement, for life. A second, about S$516 more.</h3>
-        <p>Family and couple are identical until the first child arrives at 31 — from then, some of what would have gone toward SRS and STI is redirected to cover the extra S$750/mo of child costs, for 22 years until the child turns independent at 53, partly offset by Qualifying Child Relief and Working Mother's Child Relief on the tax side. That compounded gap is the whole story: couple ~S$13,318/mo, family (1 child) ~S$11,806/mo — roughly S$1,510/mo of lifelong income and ~S$358k of net worth, from spending that couldn't compound for two decades, net of the tax relief the child also unlocks. A second child, arriving 2.5 years later at a slightly lower ~S$600/mo, opens the gap further to ~S$11,290/mo — a smaller additional hit than the first child, since it costs less <em>and</em> has less time left to compound before 65. A single mother raising one child alone on the same wage, with no second income to fall back on, reaches only ~S$5,833/mo — a reminder that the household-formation gains above rest heavily on two incomes, not just on having (or not having) a child.</p>
-      </div>
-    </section>
-    <section>
-      <div class="sec-label">Their story, in four acts</div>
-      <p class="sec-sub">Same numbers as above — just followed as four actual people, not four rows in a table.</p>
-      <div class="narrative-thread">
-        <div class="narrative-beat">
-          <div class="narrative-age">25</div>
-          <div class="narrative-text"><b>Wei Jie</b>, <b>Farah &amp; Amir</b>, <b>Priya &amp; Dev</b>, and <b>Mei &amp; Jun</b> are all on the identical S$2,400/mo crew wage, all renting a room or living with family, all banking the same disciplined split into CPF, SRS and the STI. Nothing separates them yet. Every gap that opens from here is a choice, not a wage difference.</div>
-        </div>
-        <div class="narrative-beat">
-          <div class="narrative-age">35</div>
-          <div class="narrative-text">By 30, <b>Farah and Amir</b> already have the keys to their 3-room BTO — married couples can apply from 21, so they beat the age-35 rule by years. <b>Priya and Dev</b> do the same, sizing up to a 4-room ahead of their child arriving at 31. <b>Mei and Jun</b> follow the identical path, with a second child due at 33.5. <b>Wei Jie</b>, single, has had to wait until precisely this age — 35 — before HDB would even let him apply. Five years of compounding, gone before his mortgage started.</div>
-        </div>
-        <div class="narrative-beat">
-          <div class="narrative-age">45</div>
-          <div class="narrative-text"><b>Priya and Dev's</b> household has been quietly absorbing their child's ~S$750/mo for 14 years now — money that would otherwise have kept compounding in SRS and the STI. <b>Mei and Jun</b> are carrying two. <b>Farah and Amir</b>, still child-free, have felt none of it. <b>Wei Jie</b>, a decade into his own mortgage, is finally closing ground — but he started five years behind, and ten years is never quite enough to erase that.</div>
-        </div>
-        <div class="narrative-beat">
-          <div class="narrative-age">65</div>
-          <div class="narrative-text"><b>Farah and Amir</b> retire on ~S$10,570/mo, two incomes and no child ever competing for the compounding. <b>Priya and Dev</b> land at ~S$9,023/mo — about S$1,550/mo lower, the lifetime cost of one child's early years. <b>Mei and Jun</b>, with two, land at ~S$8,598/mo. <b>Wei Jie</b>, alone the whole way and starting five years late, retires on ~S$5,390/mo — still a millionaire, still comfortable, and the clearest reminder in this whole app that <em>when</em> you start compounds nearly as hard as <em>how much</em>.</div>
-        </div>
-      </div>
-    </section>
-        </div>
-      </details>
+      
     </div>
   </div>
 
@@ -1539,7 +1475,7 @@
     <p class="standfirst">The purchase timing, flat size, grants, deposits and monthly saving each household needs — plus which living costs are assumed, and how tax, GST and CPF fit in. Prices in today's dollars.</p>
 
     <details class="dd-card" id="dd-buy-step-1">
-  <summary><span class="dd-txt"><span class="dd-title">Step 1 · The purchase</span><span class="dd-desc">Who can buy what, and when — age and household rules.</span></span></summary>
+  <summary><div class="num">1</div><span class="dd-txt"><span class="dd-title">The purchase</span><span class="dd-desc">Who can buy what, and when — age and household rules.</span></span></summary>
   <div class="dd-body">
 <section>
       <div class="sec-label">Step 1 · the purchase</div>
@@ -1558,7 +1494,7 @@
 
 
     <details class="dd-card" id="dd-buy-step-2">
-  <summary><span class="dd-txt"><span class="dd-title">Step 2 · The grants</span><span class="dd-desc">Up to S$100k off the flat price, tiered by income.</span></span></summary>
+  <summary><div class="num">2</div><span class="dd-txt"><span class="dd-title">The grants</span><span class="dd-desc">Up to S$100k off the flat price, tiered by income.</span></span></summary>
   <div class="dd-body">
 <section>
       <div class="sec-label">Step 2 · the grants (first-timer citizens)</div>
@@ -1598,7 +1534,7 @@
 
 
     <details class="dd-card" id="dd-buy-step-3">
-  <summary><span class="dd-txt"><span class="dd-title">Step 3 · Deposit & mortgage</span><span class="dd-desc">20% down, 80% HDB loan — both paid from CPF, not cash.</span></span></summary>
+  <summary><div class="num">3</div><span class="dd-txt"><span class="dd-title">Deposit & mortgage</span><span class="dd-desc">20% down, 80% HDB loan — both paid from CPF, not cash.</span></span></summary>
   <div class="dd-body">
 <section>
       <div class="sec-label">Step 3 · deposit &amp; mortgage — from CPF, not cash</div>
@@ -1618,7 +1554,7 @@
 
 
     <details class="dd-card" id="dd-buy-step-4">
-  <summary><span class="dd-txt"><span class="dd-title">Step 4 · Monthly saving into the STI</span><span class="dd-desc">What's left over each month, and how it grows for 45 years.</span></span></summary>
+  <summary><div class="num">4</div><span class="dd-txt"><span class="dd-title">Monthly saving into the STI</span><span class="dd-desc">What's left over each month, and how it grows for 45 years.</span></span></summary>
   <div class="dd-body">
 <section>
       <div class="sec-label">Step 4 · monthly saving into the <span class="hint"><b>STI</b><button class="help">?</button><span class="bubble">The <b>Straits Times Index</b> — Singapore’s 30 largest listed companies. This app assumes every dollar of surplus goes into a low-cost STI index fund, dividends reinvested.</span></span></div>
@@ -1642,7 +1578,7 @@
 
 
     <details class="dd-card" id="dd-buy-step-5">
-  <summary><span class="dd-txt"><span class="dd-title">Step 5 · Living costs</span><span class="dd-desc">A deliberately frugal monthly budget, itemised.</span></span></summary>
+  <summary><div class="num">5</div><span class="dd-txt"><span class="dd-title">Living costs</span><span class="dd-desc">A deliberately frugal monthly budget, itemised.</span></span></summary>
   <div class="dd-body">
 <section>
       <div class="sec-label">Step 5 · living costs assumed (owner, today's S$/mo)</div>
@@ -1666,7 +1602,7 @@
 
 
     <details class="dd-card" id="dd-buy-step-6">
-  <summary><span class="dd-txt"><span class="dd-title">Step 6 · Taxes, GST & CPF</span><span class="dd-desc">Why the tax bill stays near zero for decades.</span></span></summary>
+  <summary><div class="num">6</div><span class="dd-txt"><span class="dd-title">Taxes, GST & CPF</span><span class="dd-desc">Why the tax bill stays near zero for decades.</span></span></summary>
   <div class="dd-body">
 <section>
       <div class="sec-label">Step 6 · taxes, GST &amp; CPF</div>
@@ -1691,7 +1627,7 @@
   </div>
 </details>
 <details class="dd-card" id="dd-buy-methodology">
-  <summary><span class="dd-txt"><span class="dd-title">The maths behind it</span><span class="dd-desc">Every formula, every assumption, and the findings that fell out — for anyone who wants to check the working.</span></span></summary>
+  <summary><div class="num">7</div><span class="dd-txt"><span class="dd-title">The maths behind it</span><span class="dd-desc">Every formula, every assumption, and the findings that fell out — for anyone who wants to check the working.</span></span></summary>
   <div class="dd-body">
 
 
@@ -1786,8 +1722,10 @@
     <h1>Everyone can.<br>Almost <em>nobody</em> does.</h1>
     <p class="standfirst">The first tabs proved the arithmetic works: subsidised flat, grants, CPF, near-zero tax and an index fund give every Singaporean a clean runway. Yet most never get there. The gap isn't the maths — it's the behaviour. Here are the ten things that quietly break the plan.</p>
     <section>
-      <div class="step"><div class="num">1</div><div>
-        <h2 class="trap-h">Lifestyle inflation eats every raise</h2>
+      <details class="dd-card">
+  <summary><div class="num">1</div><span class="dd-txt"><span class="dd-title">Lifestyle inflation eats every raise</span><span class="dd-desc">Spending rises to meet income -- quietly halving the final pot.</span></span></summary>
+  <div class="dd-body">
+
         <p>The projection depends on the surplus flowing into the STI for 45 years. But spending rises to meet income — hedonic adaptation makes each upgrade the new baseline, so the reward wears off and you reach for the next one. "Frugal for life" is the first assumption real life dissolves.</p>
         <div class="formula">Absorb half of each raise into lifestyle → the single's ~S$676k pot roughly halves.</div>
       
@@ -1795,9 +1733,12 @@
         <div class="fix-block"><div class="fix-tag">The fix</div><h3 class="fix-h">Freeze your lifestyle — bank every raise</h3>
         <p>When pay rises, route the increase straight to investing instead of upgrading your life. Let income climb while spending stays flat, and pour the widening gap into the index. Not deprivation — just refusing to let each raise become the new baseline.</p>
         <div class="formula">Beats trap #1 (lifestyle inflation). Holding the line vs spending half your raises ≈ S$676k vs ~S$340k.</div></div>
-      </div></div>
-      <div class="step"><div class="num">2</div><div>
-        <h2 class="trap-h">The car — a quarter-million-dollar decision, on repeat</h2>
+        </div>
+</details>
+      <details class="dd-card">
+  <summary><div class="num">2</div><span class="dd-txt"><span class="dd-title">The car — a quarter-million-dollar decision, on repeat</span><span class="dd-desc">A quarter-million-dollar decision, on repeat, instead of invested.</span></span></summary>
+  <div class="dd-body">
+
         <p>Singapore deliberately makes cars a luxury, and financing one is the single largest wealth-destroying choice most households make — not just the price, but the price <em>instead of</em> investing that money, decade after decade.</p>
         <div class="formula">Cat A <span class="hint">COE<button class="help">?</button><span class="bubble">Certificate of Entitlement -- a bidding-based permit that must be won before a car can even be registered in Singapore, on top of the car's own price. Category A covers smaller/less powerful cars.</span></span> alone ≈ S$126k in 2026 (~ a year's median household income). 10-year ownership ≈ S$200k–300k; depreciation alone ≈ S$15k–25k/yr. One car across adult life ≈ the entire STI pot.</div>
       
@@ -1805,9 +1746,12 @@
         <div class="fix-block"><div class="fix-tag">The fix</div><h3 class="fix-h">Delay the car — ideally forever</h3>
         <p>Singapore's public transport is world-class; a car is a deliberate luxury. Use trains, buses and occasional ride-hail; if you truly need one, buy used late in the COE cycle. Every car-free year is S$15k–25k redirected into the index.</p>
         <div class="formula">Beats trap #2 (the car). A lifetime of car ownership ≈ the entire STI pot you're trying to build.</div></div>
-      </div></div>
-      <div class="step"><div class="num">3</div><div>
-        <h2 class="trap-h">The upgrade treadmill turns cash into walls</h2>
+        </div>
+</details>
+      <details class="dd-card">
+  <summary><div class="num">3</div><span class="dd-txt"><span class="dd-title">The upgrade treadmill turns cash into walls</span><span class="dd-desc">Trading up resets the mortgage and stops the compounding.</span></span></summary>
+  <div class="dd-body">
+
         <p>The magic depends on <em>staying</em> in the cheap subsidised flat and letting the freed cash compound. Most people trade up to a bigger HDB, then chase a condo. Each move resets the mortgage, drains the CPF-OA that was compounding, and adds decades of fresh interest. Asset-rich, cash-poor.</p>
         <div class="formula">Trading up to a ~S$1.5m condo converts liquid, dividend-paying, compoundable wealth into an illiquid, lease-decaying asset — and can add S$300k+ of interest over 30 yrs.</div>
       
@@ -1815,9 +1759,12 @@
         <div class="fix-block"><div class="fix-tag">The fix</div><h3 class="fix-h">Buy the cheapest flat that works — never upgrade</h3>
         <p>Take the 2-room Flexi (single) or 3-room BTO (couple), claim the grant, move in, and stay. Resist the condo aspiration and the bigger-HDB itch. Every year you don't upgrade is a year the freed cash and CPF-OA keep compounding instead of paying fresh interest.</p>
         <div class="formula">Beats trap #3 (upgrade treadmill). Staying keeps S$300k+ of interest &amp; lost compounding in your pocket.</div></div>
-      </div></div>
-      <div class="step"><div class="num">4</div><div>
-        <h2 class="trap-h">The money never gets invested — or badly</h2>
+        </div>
+</details>
+      <details class="dd-card">
+  <summary><div class="num">4</div><span class="dd-txt"><span class="dd-title">The money never gets invested — or badly</span><span class="dd-desc">Cash below inflation, or panic-selling at the worst moment.</span></span></summary>
+  <div class="dd-body">
+
         <p>The 6% engine only runs if the surplus goes into equities and <em>stays</em>. In reality most sits in bank savings below inflation, or is never saved. And even those who invest sabotage returns — panic-selling in downturns, chasing what just went up, trying to time the market.</p>
         <div class="formula">20 yrs to 2024: average equity investor 9.24%/yr vs market 10.35% — behaviour cost ~1.1%/yr, ~22% less wealth. Investors call direction right only ~25% of the time. Cash at ~1% vs STI 6% over 45 yrs ≈ S$300k vs ~S$2m.</div>
       
@@ -1825,9 +1772,12 @@
         <div class="fix-block"><div class="fix-tag">The fix</div><h3 class="fix-h">Buy the index, then do nothing</h3>
         <p>One broad, low-cost STI (or global) ETF. Dollar-cost average every month, reinvest dividends, and — the hard part — never sell in a crash and never chase what just went up. Downturns are where the plan is made or broken. Time <em>in</em> the market beats timing it.</p>
         <div class="formula">Beats trap #4 (behaviour gap). Panic &amp; timing cost the average investor ~1.1%/yr → ~22% less wealth over 20 yrs.</div></div>
-      </div></div>
-      <div class="step"><div class="num">5</div><div>
-        <h2 class="trap-h">Starting late — the input you can't buy back</h2>
+        </div>
+</details>
+      <details class="dd-card">
+  <summary><div class="num">5</div><span class="dd-txt"><span class="dd-title">Starting late — the input you can't buy back</span><span class="dd-desc">The first decade does most of the lifting -- and can't be bought back.</span></span></summary>
+  <div class="dd-body">
+
         <p>Compounding is front-loaded: at 6%, a dollar invested at 20 becomes ~S$14 by 65; the same at 40 becomes only ~S$3.20. The first decade does most of the lifting. But present bias makes the future self a stranger, so people spend their twenties and start "next year."</p>
         <div class="formula">Delay 20 → 30 (same contributions, same 6%) ≈ 40–50% smaller final pot. The frugal twenties aren't the hardest years to give up — they're the most expensive.</div>
       
@@ -1835,9 +1785,12 @@
         <div class="fix-block"><div class="fix-tag">The fix</div><h3 class="fix-h">Automate it on day one — pay yourself first</h3>
         <p>The day your first paycheck lands, set up a standing monthly transfer into a low-cost STI ETF — <em>before</em> you budget anything else. Automation removes the monthly decision and defeats present bias: you can't spend money you never see.</p>
         <div class="formula">Beats trap #5 (starting late). Start at 20 not 30, same money → ~2× the final pot.</div></div>
-      </div></div>
-      <div class="step"><div class="num">6</div><div>
-        <h2 class="trap-h">No CPF nomination -- so the Public Trustee decides, not you</h2>
+        </div>
+</details>
+      <details class="dd-card">
+  <summary><div class="num">6</div><span class="dd-txt"><span class="dd-title">No CPF nomination -- so the Public Trustee decides, not you</span><span class="dd-desc">Without one, the Public Trustee decides -- not you.</span></span></summary>
+  <div class="dd-body">
+
         <p>CPF savings are legally carved out of your estate entirely (Section 25 of the CPF Act) -- a will has <b>zero</b> effect on them, no matter how carefully it's written. Without a nomination, CPF goes to the Public Trustee's Office instead, split by fixed intestacy rules you don't get to override: spouse and children split 50/50 between them; no spouse or children, and it moves to parents, then siblings. This risk doesn't scale with how much you've saved -- it applies from your very first dollar in CPF.</p>
         <div class="formula">A fee is deducted first (minimum S$15, scaling with balance), and it typically takes 6&ndash;12 months to sort out -- versus free and minutes online, through the CPF website, with a nomination in place.</div>
         <div id="cpf-nom-projection"></div>
@@ -1848,9 +1801,12 @@
           </label>
         </div>
         <div class="milestones flow" id="cpf-nom-note" style="margin-top:8px"></div>
-      </div></div>
-      <div class="step"><div class="num">7</div><div>
-        <h2 class="trap-h">No protection against the one risk that isn't a choice</h2>
+        </div>
+</details>
+      <details class="dd-card">
+  <summary><div class="num">7</div><span class="dd-txt"><span class="dd-title">No protection against the one risk that isn't a choice</span><span class="dd-desc">Death or disability forces the pot open, years too early.</span></span></summary>
+  <div class="dd-body">
+
         <p>Every trap above is about discipline — a decision, made or missed, over years of compounding. This one is different: a death, total permanent disability, or critical illness doesn't ask permission, and it forces the STI/SRS pot this whole plan spends 45 years building to be liquidated mid-compound, years before it was ever meant to be touched. Nothing above protects against it; only actual cover does.</p>
         <div class="formula">National guideline (MAS/MoneySense Basic Financial Planning Guide): 9&times; annual income for death/TPD, 4&times; for critical illness &mdash; developed with the CPF Board, the Life Insurance Association, and the Association of Banks.</div>
         <div id="pg-person-boxes" style="margin-top:14px"></div>
@@ -1858,14 +1814,20 @@
         <div class="fix-block"><div class="fix-tag">The fix</div><h3 class="fix-h">Close the gap with cheap term insurance, not whole life</h3>
         <p>Keep 3&ndash;6 months of expenses in cash for the small emergencies. For the large ones, term insurance is the cost-efficient way to close the gap above -- pure protection with no savings component, priced for exactly the years the plan is most exposed. Compare quotes via CompareFIRST, the MAS-endorsed portal.</p>
         <div class="formula">A standard national guideline, not personalised advice -- and not wired into this app's own net worth or retirement income projections elsewhere, which assume nothing ever goes wrong. Actual need varies with dependants, debts, and existing employer or personal cover.</div></div>
-      </div></div>
-      <div class="step"><div class="num">8</div><div>
-        <h2 class="trap-h">Use the system fully</h2>
+        </div>
+</details>
+      <details class="dd-card">
+  <summary><div class="num">8</div><span class="dd-txt"><span class="dd-title">Use the system fully</span><span class="dd-desc">Leaving the grants and CPF structure on the table.</span></span></summary>
+  <div class="dd-body">
+
         <p>Claim the EHG, let CPF-OA fund the flat, and -- at this income -- skip SRS and CPF cash top-ups (no tax relief when you're barely taxed); invest that money instead. The protection side of "guard it all" now has its own dedicated trap above -- this one is about the accumulation side: not leaving the grants and CPF structure on the table.</p>
         <div class="formula">Leverages the grants + CPF · the system is generous if you actually use every part of it.</div>
-      </div></div>
-      <div class="step"><div class="num">9</div><div>
-        <h2 class="trap-h">Marrying someone unaligned on money</h2>
+        </div>
+</details>
+      <details class="dd-card">
+  <summary><div class="num">9</div><span class="dd-txt"><span class="dd-title">Marrying someone unaligned on money</span><span class="dd-desc">Divorce interrupts decades of joint compounding.</span></span></summary>
+  <div class="dd-body">
+
         <p>Warren Buffett has said the single most important decision in building a life — financial life included — is who you marry: find a partner whose values on saving and spending genuinely match your own, and check that <em>before</em> the wedding, not after. Divorce is one of the most destructive events this plan can suffer, and it rarely gets modelled. Decades of joint compounding get interrupted at the worst possible moment, matrimonial assets are typically split, and rebuilding alone starts the clock over on a chunk of what took half a working life to build.</p>
         <div class="formula">Married and investing together from 25, divorcing at 45 &mdash; splitting ~S$1.35m in joint STI+CPF roughly 50/50, minus ~S$10,000 in legal costs (Singapore's 2026 published range: ~S$1,500&ndash;3,500 uncontested, ~S$10,000&ndash;35,000+ contested), then rebuilding alone on a single income for the last 20 years &mdash; lands near <b>S$1.92m</b> at 65, against <b>~S$3.86m</b> had the marriage continued. Roughly half.</div>
         <div class="sec-label" style="margin-top:16px">Three ways this could go — on your own numbers <span class="hint"><button class="help">?</button><span class="bubble">Modelled as two phases: married and building wealth together from your current age, then divorcing roughly 10 years later (sooner if you're within 10 years of 65, so there's still time left to rebuild) and continuing alone to 65. A simplification of real timing, but it isolates what a divorce specifically costs on top of everything else in this app.</span></span></div>
@@ -1873,9 +1835,12 @@
         <div class="fix-block"><div class="fix-tag">The fix</div><h3 class="fix-h">Align on money before the wedding, not after it</h3>
         <p>Talk about saving, spending, debt, and risk honestly and early — ideally before getting married, not years into it. A shared savings rate and a shared instinct for what "enough" looks like is worth more to this plan than almost any investment decision, precisely because it's the one risk that can undo decades of the others at once.</p>
         <div class="formula">Assumptions above are illustrative, not a legal outcome — Singapore courts divide matrimonial assets "justly and equitably" under the Women's Charter, not automatically 50/50, and outcomes vary with the length of the marriage, contributions, and children. Child support has no fixed formula either — the estimate here follows the income-ratio approach used in the leading case ANJ v ANK, but courts weigh caregiving, needs and both parents' means too. Spousal maintenance is even less certain: courts are often reluctant to award it to a self-sufficient earner, so it's modelled here only as a possible cost to the higher earner, never as income to rely on.</div></div>
-      </div></div>
-      <div class="step"><div class="num">10</div><div>
-        <h2 class="trap-h">The price tag isn't the price</h2>
+        </div>
+</details>
+      <details class="dd-card">
+  <summary><div class="num">10</div><span class="dd-txt"><span class="dd-title">The price tag isn't the price</span><span class="dd-desc">What a luxury buy actually becomes, if invested instead.</span></span></summary>
+  <div class="dd-body">
+
         <p>A S$18,000 bag doesn't cost S$18,000 — it costs whatever that money would have become. Bought at 35 and invested in the STI instead, ordinary purchases quietly compound into the kind of numbers usually reserved for houses, because thirty years at 6%/yr turns almost anything into six figures. None of this says never buy anything nice; it says know the real price before you decide it's worth it.</p>
         <div class="formula">A Herm&egrave;s Birkin at S$18,000, bought at 35 instead of invested, is <b>~S$103,000</b> of lost retirement wealth by 65 &mdash; about <b>11&ndash;12 classrooms</b> built for children in the developing world (~S$9,000 each, based on published NGO project costs) or <b>108 school libraries stocked</b> (~S$950 each). A daily S$7 artisan coffee on workdays, kept up for just 10 years and then left alone to compound, quietly becomes <b>~S$77,000</b> by 65 &mdash; nobody decides to spend that; it just accumulates one coffee at a time.</div>
         <div class="sec-label" style="margin-top:16px">Ten purchases, priced in what they actually cost</div>
@@ -1895,7 +1860,8 @@
         <div class="fix-block"><div class="fix-tag">The fix</div><h3 class="fix-h">Price it in classrooms, not dollars, before you buy</h3>
         <p>Not every purchase needs this treatment — the point isn't guilt over a coffee. It's that anything genuinely large or genuinely recurring deserves thirty seconds of "what would this become by 65" before the card comes out. If the answer still feels worth it, buy it without a second thought; if it doesn't, that thirty seconds just paid for itself many times over.</p>
         <div class="formula">STI opportunity cost assumes 6%/yr from age 35 to 65 (30 years), matching this app's default assumption throughout &mdash; a real market will not follow a straight line to get there. Charity figures use published costs from Building Schools for Africa and the Borgen Project (~US$6,686/classroom, ~US$710/library, converted at ~1.34 SGD/USD) as illustrative benchmarks, not a claim about any specific charity's current pricing.</div></div>
-      </div></div>
+        </div>
+</details>
     </section>
     <section>
       <div class="sec-label">The whole plan, in one breath</div>
@@ -1939,12 +1905,13 @@
 
     <section>
       <div class="sec-label">Why this shape — six principles</div>
-      <div class="step"><div class="num">1</div><div>
-        <h2 class="step-h">Diversify across asset classes, not just stocks</h2>
+      <details class="dd-card">
+  <summary><div class="num">1</div><span class="dd-txt"><span class="dd-title">Diversify across asset classes, not just stocks</span><span class="dd-desc">Uncorrelated assets, so something is always working -- and rebalancing pays you.</span></span></summary>
+  <div class="dd-body">
+
         <p>Owning 30 Singapore companies is one bet on one asset class in one country. Equities, property, gold, bills and income each respond <em>differently</em> to growth, recession, inflation and deflation — so in any given season, something in the portfolio is working. Uncorrelated assets don't just smooth the ride; they let you rebalance from winners into losers, which is where extra return quietly comes from.</p>
         <div class="formula">Your income streams end up uncorrelated too: salary + SG dividends + REIT distributions + CPF interest + coupon income — five taps that rarely run dry at once.</div>
-      </div></div>
-            <details class="ctl-group" id="grp-diversify-sim">
+      <details class="ctl-group" id="grp-diversify-sim">
         <summary><span class="cg-title">Try it: diversify your own pot</span></summary>
         <div class="cg-body">
       <p class="sec-sub">A S$2,000 STI position doesn't need diversifying against concentration risk -- a S$500,000 one does. This activates once your own <b>STI + SRS pot</b> (CPF deliberately excluded -- it sits in government-mandated accounts under its own rules regardless of this choice, so it was never actually yours to redirect in the first place) first crosses <b>S$100,000</b> in your own plan, and applies from that point in your own trajectory onward, not before. The sliders below start at <b>0%</b> -- nothing here changes your calculator numbers on Tab 2 unless you deliberately move them. The orange target marks match the example portfolio above exactly -- <b>45% global equities / 20% SG dividend stocks &amp; REITs / 15% gold / 10% short bonds, T-bills &amp; SSBs</b>, the same four figures shown there. That leaves 10% in STI here rather than a fifth slider for the portfolio's own "volatility &amp; insurance sleeve" -- that 10% is an emergency-cash-plus-term-cover allocation, not an investable asset class, so it's covered by the Protection Gap Check earlier on this tab instead of duplicated here.</p>
@@ -1998,31 +1965,48 @@
         <div id="div-sim-end-anchor"></div>
         </div>
       </details>
-      <div class="step"><div class="num">2</div><div>
-        <h2 class="step-h">Growth and value, across currencies</h2>
+  </div>
+</details>
+      <details class="dd-card">
+  <summary><div class="num">2</div><span class="dd-txt"><span class="dd-title">Growth and value, across currencies</span><span class="dd-desc">Growth and value, spread across currencies -- not one bet on one style.</span></span></summary>
+  <div class="dd-body">
+
         <p>Growth stocks compound earnings; value and dividend stocks pay you to wait — over long stretches each takes turns leading, so hold both and stop guessing. Spreading the portfolio across SGD income, USD/EUR/JPY-earning global companies and gold means no single central bank's decisions control your future — multi-currency dividends are a natural hedge nobody charges you for.</p>
         <div class="formula">One world index ETF already spans ~50 currencies and both styles. Simplicity is the feature.</div>
-      </div></div>
-      <div class="step"><div class="num">3</div><div>
-        <h2 class="step-h">Hard assets against debasement and the debt cycle</h2>
+        </div>
+</details>
+      <details class="dd-card">
+  <summary><div class="num">3</div><span class="dd-txt"><span class="dd-title">Hard assets against debasement and the debt cycle</span><span class="dd-desc">Hard assets that survive when governments quietly debase the currency.</span></span></summary>
+  <div class="dd-body">
+
         <p>Over the short business cycle (~5–8 years) economies expand and contract; over the long-term debt cycle (decades) debt piles up until governments quietly inflate it away — which is currency debasement. Cash and long bonds are the casualties; property, gold and productive companies are the survivors. Your flat, your gold sleeve and your equities are the debasement protection; that's also why long bonds stay minimal.</p>
         <div class="formula">Gold's job isn't return — it's to be the asset that can't be printed.</div>
-      </div></div>
-      <div class="step"><div class="num">4</div><div>
-        <h2 class="step-h">Kill the fees before they kill the compounding</h2>
+        </div>
+</details>
+      <details class="dd-card">
+  <summary><div class="num">4</div><span class="dd-txt"><span class="dd-title">Kill the fees before they kill the compounding</span><span class="dd-desc">A 1.5% fee can quietly eat a third of the final pot over 40 years.</span></span></summary>
+  <div class="dd-body">
+
         <p>Fees compound exactly like returns — against you. A "small" 1.5% annual management fee on a fund or ILP consumes roughly <b>a third of your final pot</b> over 40 years; 2%+ takes closer to 40%. The fix costs nothing: self-directed, low-cost index ETFs at 0.07–0.22%/yr, bought through a cheap brokerage, with no adviser trail fees, no wrap fees, no insurance-linked investment products.</p>
         <div class="formula">S$1,000/mo × 40 yrs: 6% → ~S$1.86m · 6% minus 1.5% fees → ~S$1.28m. The fee "only" cost you S$580k.</div>
-      </div></div>
-      <div class="step"><div class="num">5</div><div>
-        <h2 class="step-h">Squeeze every Singapore tax advantage</h2>
+        </div>
+</details>
+      <details class="dd-card">
+  <summary><div class="num">5</div><span class="dd-txt"><span class="dd-title">Squeeze every Singapore tax advantage</span><span class="dd-desc">No capital gains tax, tax-free dividends, and the right wrapper.</span></span></summary>
+  <div class="dd-body">
+
         <p>Singapore is one of the best places on Earth to be an investor: <b>no capital gains tax</b>, and <b>SG dividends are tax-free</b> in your hands. For global stocks, use <b>Irish-domiciled UCITS ETFs</b> — they cut US dividend withholding from 30% to 15% and sidestep US estate-tax exposure that US-listed funds carry above US$60k. Add <b>SRS</b> once you're meaningfully taxed (see the calculator), and CPF top-ups only when the relief actually bites.</p>
         <div class="formula">Same world portfolio, wrong wrapper ≈ 0.3–0.5%/yr lost to withholding — another silent fee.</div>
-      </div></div>
-      <div class="step"><div class="num">6</div><div>
-        <h2 class="step-h">Rebalance every six months — mechanically</h2>
+        </div>
+</details>
+      <details class="dd-card">
+  <summary><div class="num">6</div><span class="dd-txt"><span class="dd-title">Rebalance every six months — mechanically</span><span class="dd-desc">Twice a year, on fixed dates -- the calendar does the discipline.</span></span></summary>
+  <div class="dd-body">
+
         <p>Twice a year, on fixed dates, sell whatever has grown past its target weight and top up whatever has fallen below. That's it. The calendar — not your feelings — makes you trim euphoria and buy fear, harvesting the swings of the business cycle automatically. In Singapore there's no capital gains tax to punish the trades, so rebalancing here is unusually cheap.</p>
         <div class="formula">Six-monthly is frequent enough to capture cycles, rare enough to let winners run and keep costs near zero.</div>
-      </div></div>
+        </div>
+</details>
     </section>
 
     <section>
@@ -2044,9 +2028,10 @@
 
     <div class="part-divider"><span>How Singapore compares globally</span></div>
 
-    <div class="eyebrow">Global check · the deposit race</div>
-    <h2 class="part-title">One deposit,<br>seven <em>realities</em>.</h2>
-    <p class="standfirst">The same frugal fast-food worker in seven countries, racing to save the downpayment on an entry home. Pick the Singapore property and the household — Singapore's price, grant and eligibility update instantly, and every country's household income and costs adjust with it. Years to the deposit, fewest wins.</p>
+    <details class="dd-card">
+  <summary><span class="dd-txt"><span class="dd-title">One deposit, seven realities</span><span class="dd-desc">The same frugal wage, racing to a home deposit in seven countries at once.</span></span></summary>
+  <div class="dd-body">
+<p class="standfirst">The same frugal fast-food worker in seven countries, racing to save the downpayment on an entry home. Pick the Singapore property and the household — Singapore's price, grant and eligibility update instantly, and every country's household income and costs adjust with it. Years to the deposit, fewest wins.</p>
 
     <div class="calc-card" style="margin-top:26px">
       <div class="field">
@@ -2084,8 +2069,8 @@
         <li>Indicative comparison, not advice — currencies float, prices move, and the ordering is the signal, not the decimals.</li>
       </ul>
     </div>
-
-    <div class="part-divider"><span>One more thing</span></div>
+  </div>
+</details><div class="part-divider"><span>One more thing</span></div>
 
     <div class="eyebrow">Test yourself</div>
     <h2 class="part-title">How much of this<br><em>actually stuck?</em></h2>
@@ -2177,21 +2162,24 @@
     <h1>Legal, credits<br>&amp; <em>contact</em>.</h1>
     <p class="standfirst">Everything you need to know about what this project is, what it isn't, and how to reach the person who built it.</p>
 
-    <section>
-      <div class="sec-label">About this project</div>
+    <details class="dd-card">
+  <summary><div class="num">1</div><span class="dd-txt"><span class="dd-title">Why I built this</span><span class="dd-desc">What this project is, why it exists, and who the wage examples represent.</span></span></summary>
+  <div class="dd-body">
       <div class="callout">
-        <h2 class="legal-h">Why I built this</h2>
+
         <p style="font-size:13.5px;color:#E8D4D0;line-height:1.65;margin:0">I built this app to show how well thought out Singapore's housing, tax, CPF, SRS, grants, and transport policies are — well enough integrated that even a fast-food worker can become a homeowner and a millionaire here. Having lived in ten countries, I've never come across a system that pulls together this well.</p>
         <p style="font-size:13.5px;color:#E8D4D0;line-height:1.65;margin:12px 0 0">But making full use of everything Singapore offers is genuinely complex, and most young people don't have the exposure to see how the pieces fit together — so they start late. This app exists to kickstart that: to make the levers visible, so more Singaporeans can minimise tax, maximise returns through consistent, rather boring, safe investing, and reach homeownership and millionaire status well before retirement age.</p>
         <p style="font-size:13.5px;color:#E8D4D0;line-height:1.65;margin:12px 0 0">Built over the course of a couple of weeks, iterating conversationally with Claude — every formula checked against official CPF, IRAS, and HDB sources along the way, refined step by step rather than written once and left alone.</p>
         <p style="font-size:13.5px;color:#E8D4D0;line-height:1.65;margin:12px 0 0">The wage examples used throughout — "Fast Food Restaurant worker," "Taxi Driver," and others — are generic, illustrative occupational categories, not references to any specific real company or brand. They're chosen to represent realistic entry-level and everyday Singapore wages, so the numbers feel grounded rather than abstract.</p>
       </div>
-    </section>
+  </div>
+</details>
 
-    <section>
-      <div class="sec-label">Not financial advice</div>
+    <details class="dd-card">
+  <summary><div class="num">2</div><span class="dd-txt"><span class="dd-title">Please read before acting on anything here</span><span class="dd-desc">An illustration, not advice -- and why that distinction matters.</span></span></summary>
+  <div class="dd-body">
       <div class="callout">
-        <h2 class="legal-h">Please read before acting on anything here</h2>
+
         <ul>
           <li>This entire app is an <b>illustration</b> — a "millionaire roadmap" showing what disciplined saving and investing inside Singapore's system could look like over a career. It is <b>not financial, tax, legal, or investment advice</b>, and nothing here should be treated as a personal recommendation.</li>
           <li><b>Every investor is responsible for their own investment decisions.</b> Please evaluate any investment, product, or strategy independently — ideally with a licensed financial adviser — before acting on it. Past or projected returns (including the STI's assumed 6%/yr) are not guaranteed and real outcomes will differ.</li>
@@ -2199,24 +2187,29 @@
           <li>Figures reference Singapore rules and rates believed accurate as of construction (2025–26) — CPF rates, tax brackets, grant amounts, COE prices and similar figures change over time and should be reverified.</li>
         </ul>
       </div>
-    </section>
+  </div>
+</details>
 
-    <section>
-      <div class="sec-label">Feedback &amp; contributions welcome</div>
+    <details class="dd-card">
+  <summary><div class="num">3</div><span class="dd-txt"><span class="dd-title">Help make this better for young Singaporeans</span><span class="dd-desc">Spotted an error or have an idea? Your feedback genuinely shapes this.</span></span></summary>
+  <div class="dd-body">
       <div class="insight">
-        <h2 class="legal-h">Help make this better for young Singaporeans</h2>
+
         <p>This app exists to help young Singaporeans see, concretely, that a comfortable and even wealthy retirement is achievable from a modest starting wage — if you understand the system and start early. If you spot an error, have an idea for a missing feature, or just want to suggest a better way to explain something, <b>your feedback and contributions are genuinely welcome</b>. This is a living project, built to be improved.</p>
       </div>
-    </section>
+  </div>
+</details>
 
-    <section>
-      <div class="sec-label">Work with me</div>
+    <details class="dd-card">
+  <summary><div class="num">4</div><span class="dd-txt"><span class="dd-title">I'm not a financial adviser — but I'll happily talk shop</span><span class="dd-desc">Free, informal conversations about investing -- especially for younger Singaporeans.</span></span></summary>
+  <div class="dd-body">
       <div class="insight">
-        <h2 class="legal-h">I'm not a financial adviser — but I'll happily talk shop</h2>
+
         <p>I bought my own freedom through many of the lessons built into this app — and I love volunteering my time to talk finance with people working toward the same thing. I'm <b>not a licensed financial adviser</b>, so nothing here is a substitute for professional advice, and what I offer is genuinely <b>limited and on a voluntary, free-of-charge basis</b> — not a paid consulting service.</p>
         <p>If you'd like to chat — a light portfolio review, an investment evaluation, or just talking through Singaporean and global investing — I'm happy to make time, especially for <b>younger Singaporeans</b>, since that's exactly where time and compounding matter most. I'm also always keen to hear <b>suggestions for improving this app</b>. Get in touch using the details below.</p>
       </div>
-    </section>
+  </div>
+</details>
 
     <section>
       <div class="sec-label">Credits &amp; contact</div>
@@ -2449,38 +2442,6 @@
   document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeNavDropdown(); });
   document.querySelectorAll('[data-goto]').forEach(c=>c.addEventListener('click',()=>switchTab(c.dataset.goto)));
 
-  // chart
-  var ages=[20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65];
-  var SINGLE=[0,16933,35430,55593,77533,101366,127214,155209,185489,218201,253500,291550,332526,376607,423987,474872,499418,551845,608296,669023,734298,804391,879592,960219,1046611,1139125,1238163,1344127,1457446,1578572,1707985,1846242,1993885,2151491,2319668,2499062,2688504,2890526,3105897,3335394,3579847,3832785,4107497,4399740,4710581,5041149];
-  var COUPLE=[0,33253,69580,109185,152284,199104,249889,304895,364394,428675,498043,519504,589119,664516,746062,834152,929231,1031747,1142172,1261003,1388773,1526013,1673294,1831242,2000523,2181838,2375979,2583739,2805959,3043530,3297396,3568654,3858372,4167682,4497781,4849941,5221800,5627935,6060563,6521213,7011529,7518540,8058043,8632017,9242555,9891881];
-  var FAMILY=[0, 33243, 69569, 109180, 152293, 199137, 249955, 305004, 364559, 428908, 498357, 475177, 529528, 588925, 653698, 724191, 800802, 883932, 974001, 1071454, 1176767, 1290427, 1412954, 1544900, 1686860, 1839465, 2003428, 2179462, 2368317, 2570763, 2787644, 3019951, 3268641, 3534728, 3830060, 4145915, 4479855, 4854372, 5253797, 5679613, 6133401, 6602205, 7101552, 7633312, 8199467, 8802115];
-  var FAMILY2=[0, 33243, 69569, 109180, 152293, 199137, 249955, 305004, 364559, 428908, 498357, 475177, 529528, 588925, 653698, 718809, 789594, 866422, 949684, 1039790, 1137181, 1242307, 1355648, 1477725, 1609089, 1750314, 1902054, 2064970, 2239757, 2427155, 2627944, 2843037, 3073318, 3319727, 3594030, 3887407, 4197300, 4555383, 4937388, 5344739, 5778955, 6227045, 6704515, 7213168, 7754914, 8331743];
-  var SINGLEMOM=[0, 14218, 29487, 45834, 63317, 82002, 101955, 123246, 145990, 170580, 197134, 225775, 256635, 289853, 325577, 363952, 375077, 413115, 454147, 498360, 545954, 597140, 652142, 719399, 791647, 869198, 952406, 1041624, 1137221, 1239561, 1349061, 1466211, 1591480, 1725370, 1868408, 2021154, 2182349, 2354430, 2538064, 2733959, 2942866, 3158299, 3393256, 3643359, 3909531, 4192750];
-  var W=900,H=470,padL=96,padR=28,padT=24,padB=54,x0=padL,x1=W-padR,y0=H-padB,y1=padT,maxY=10800000;
-  function X(i){return x0+(x1-x0)*(i/(ages.length-1));}
-  function Y(v){return y0+(y1-y0)*(v/maxY);}
-  function path(a){return a.map(function(v,i){return (i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1);}).join(' ');}
-  var s='';
-  [0,2000000,4000000,6000000,8000000,10000000].forEach(function(v){var y=Y(v);
-    s+='<line x1="'+x0+'" y1="'+y+'" x2="'+x1+'" y2="'+y+'" stroke="var(--grid)"/>';
-    s+='<text class="clabel" x="'+(x0-12)+'" y="'+(y+6)+'" text-anchor="end" fill="var(--muted)">'+(v?('S$'+(v/1000000)+'m'):'0')+'</text>';});
-  ages.forEach(function(a,i){if(a%10===0)s+='<text class="clabel" x="'+X(i)+'" y="'+(y0+30)+'" text-anchor="middle" fill="var(--muted)">'+a+'</text>';});
-  s+='<text class="clabel" x="'+((x0+x1)/2)+'" y="'+(H-6)+'" text-anchor="middle" fill="var(--muted)">age</text>';
-  s+='<line x1="'+X(10)+'" y1="'+y1+'" x2="'+X(10)+'" y2="'+y0+'" stroke="#FF7A3344" stroke-dasharray="5 5"/>';
-  s+='<text class="clabel" x="'+(X(10)+6)+'" y="'+(y1+16)+'" fill="var(--couple)">buy (30)</text>';
-  s+='<path d="'+path(SINGLE)+'" fill="none" stroke="var(--single)" stroke-width="3.4"/>';
-  s+='<path d="'+path(SINGLEMOM)+'" fill="none" stroke="var(--brick)" stroke-width="3.4"/>';
-  s+='<path d="'+path(FAMILY)+'" fill="none" stroke="var(--family)" stroke-width="3.6"/>';
-  s+='<path d="'+path(FAMILY2)+'" fill="none" stroke="var(--srs)" stroke-width="3.6"/>';
-  s+='<path d="'+path(COUPLE)+'" fill="none" stroke="var(--brand)" stroke-width="4.4"/>';
-  function dot(a,c){var i=a.length-1;s+='<circle cx="'+X(i)+'" cy="'+Y(a[i])+'" r="5" fill="'+c+'"/>';}
-  dot(COUPLE,"var(--brand)");dot(FAMILY,"var(--family)");dot(FAMILY2,"var(--srs)");dot(SINGLE,"var(--single)");dot(SINGLEMOM,"var(--brick)");
-  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(9891881)+2)+'" text-anchor="end" font-weight="700" fill="var(--couple)">S$9.89m</text>';
-  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(8802115)+22)+'" text-anchor="end" font-weight="700" fill="var(--family)">S$8.80m</text>';
-  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(8331743)+20)+'" text-anchor="end" font-weight="700" fill="var(--srs)">S$8.33m</text>';
-  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(5041149)-10)+'" text-anchor="end" fill="var(--single)">S$5.04m</text>';
-  s+='<text class="clabel" x="'+(X(45)-8)+'" y="'+(Y(4192750)+16)+'" text-anchor="end" fill="var(--brick)">S$4.19m</text>';
-  document.getElementById('chart').innerHTML=s;
 
   /* ===== SHARED CALCULATOR STATE: local save + shareable scenario links ===== */
   var CALC_INPUT_IDS=[
@@ -2648,7 +2609,7 @@
     conservative:{a:'20',s:'2400',sp:'0',nw:'0',oc:'1',em:'0',ey:'0',mo:'0',ms:'cpf',m:'average',r:'2.5',si:'6',j:'custom',
       h:'single',hd:'own',f:'0',b:'35', pb:'family',pba:'35',mr:'999',w:'0',
       cd:'no',cs:'1',ca:'45',bt:'sell', cr:'no',cra:'35',om:'25000',pa:'0',paa:'25',
-      an:'50',aw:'30',as:'9',ai:'11',hr:'1'},
+      an:'50',aw:'30',as:'9',ai:'11',hr:'0'},
     fire:{a:'20',s:'2400',sp:'0',nw:'0',oc:'1',em:'0',ey:'0',mo:'0',ms:'cpf',m:'average',r:'2.5',si:'6',j:'custom',
       h:'single',hd:'own',f:'0',b:'35', pb:'family',pba:'35',mr:'999',w:'0',
       cd:'no',cs:'1',ca:'50',bt:'sell', cr:'no',cra:'40',om:'25000',pa:'0',paa:'25',
@@ -4386,7 +4347,19 @@
       if(rstuMonthly0Constrained !== rstuMonthly0){
         var tr0c=computeTaxReliefs(ch0a, srs0a, o, rstuMonthly0Constrained);
         var rstuRelief0c=tr0c.rstuRelief, rRel0c=tr0c.rRel;
-        th0=th0-(rstuMonthly0-rstuMonthly0Constrained)-(rRel0-rRel0c);
+        // BUG FIX: th0's original formula already subtracted the FULL, unclamped
+        // rstuMonthly0 as a deduction. When the slider gets clamped down here (because
+        // the other four sliders left no room for it), the true deduction is the
+        // smaller, clamped amount -- so the over-subtracted difference needs to be
+        // ADDED back, not subtracted again. The line below previously subtracted it a
+        // second time, silently doubling the penalty on Take-home by roughly 2x
+        // whatever amount the CPF top-up slider had been set to before losing its
+        // room -- e.g. a S$300/mo top-up that got clamped to S$0 was still costing
+        // S$600/mo off Take-home, even though nothing was actually being deducted for
+        // it anymore (confirmed directly: S$1,748 baseline became S$1,148 after this
+        // exact sequence, a S$600 deficit for a S$300 slider that had already been
+        // clamped back to zero).
+        th0=th0+(rstuMonthly0-rstuMonthly0Constrained)-(rRel0-rRel0c);
         tax0=tax0a+tax0b; // unchanged, but re-stated for clarity alongside the corrected figures below
         rRel0=rRel0c;
         rstuMonthly0=rstuMonthly0Constrained;
@@ -4598,9 +4571,6 @@
       var homeTxt = o.alreadyOwn ? (o.condo ? (CONDOS[o.condoIdx].n+' condo (upgraded)') : 'home already owned') : (o.own ? (o.condo ? (CONDOS[o.condoIdx].n+' condo'+(o.btoSell?'':' + BTO rented out')) : FLATS[o.flatIdx].n+' owned') : 'renting for life');
       $('p-home').textContent=homeTxt;
       $('p-inc').textContent=fmt(r.income/disc)+' /mo'+(o.own?'':' − rent')+(r.retRent>0?' (incl. BTO rent)':'');
-      var pts=[0,Math.floor(r.yrs*0.25),Math.floor(r.yrs*0.5),Math.floor(r.yrs*0.75),r.yrs-1],ms='',seen={};
-      pts.forEach(function(k2){ if(r.spath[k2]!==undefined && !seen[k2]){seen[k2]=1; ms+='<span>age '+(o.age+k2)+': <b>'+fmt(r.spath[k2])+'</b>/mo pp</span>'; }});
-      $('m-strip').innerHTML=ms;
       // Range band: a single 6%/yr line reads as a promise. The STI's own recent history
       // says otherwise -- 2.9%/yr over some 3-year windows, 6.9%/yr over others, and a
       // ~35% single-year drawdown in 2020 -- so show a poor/good band around the chosen
@@ -4608,8 +4578,8 @@
       var oLow=readOpts(); oLow.stiR=Math.max(0,o.stiR-0.03);
       var oHigh=readOpts(); oHigh.stiR=o.stiR+0.03;
       var rLow=project(oLow), rHigh=project(oHigh);
-      drawChart(r.ageAxis,r.nwPath,rLow.nwPath,rHigh.nwPath);
-      window.LATEST_CALC={ageAxis:r.ageAxis,nwPath:r.nwPath,age:o.age};
+      window.LATEST_CALC={ageAxis:r.ageAxis,nwPath:r.nwPath,nwLow:rLow.nwPath,nwHigh:rHigh.nwPath,age:o.age};
+      renderChartForMode();
       // contributions vs. growth
       $('as-sti').textContent=(o.stiR*100).toFixed(1)+'%';
       $('cc-sti-in').textContent=fmtK(r.stiContrib);
@@ -4689,6 +4659,42 @@
       }
       $('calc-chart').innerHTML=g;
     }
+
+    // Reader-chosen basis for the net-worth chart -- persists across recomputes
+    // (module-level, not reset each call) so switching to Today's Dollars once
+    // stays selected as sliders keep changing, rather than snapping back to Future
+    // every time. Re-derives Today's-dollar figures from the cached nominal paths
+    // using the app's existing 2.5%/yr discount rate (the same conversion already
+    // used for the share-card and for older saved-scenario compatibility below),
+    // rather than a second copy of that formula living only here.
+    var chartDollarMode='future';
+    function toTodayDollars(path){ return path.map(function(v,i){ return v/Math.pow(1.025,i+1); }); }
+    function renderChartForMode(){
+      var lc=window.LATEST_CALC;
+      if(!lc) return;
+      var todayMode = chartDollarMode==='today';
+      var nw = todayMode ? toTodayDollars(lc.nwPath) : lc.nwPath;
+      var low = lc.nwLow ? (todayMode ? toTodayDollars(lc.nwLow) : lc.nwLow) : null;
+      var high = lc.nwHigh ? (todayMode ? toTodayDollars(lc.nwHigh) : lc.nwHigh) : null;
+      drawChart(lc.ageAxis, nw, low, high);
+      var txt=$('dollar-toggle-text');
+      if(txt){
+        var finalAge = lc.ageAxis[lc.ageAxis.length-1];
+        var finalVal = nw[nw.length-1];
+        txt.textContent = 'At age '+finalAge+': '+fmtK(finalVal)+' in '+(todayMode?"today's":'future')+' dollars.';
+      }
+    }
+    (function(){
+      var btnFuture=$('dt-future'), btnToday=$('dt-today');
+      function setMode(mode){
+        chartDollarMode=mode;
+        if(btnFuture) btnFuture.classList.toggle('active', mode==='future');
+        if(btnToday) btnToday.classList.toggle('active', mode==='today');
+        renderChartForMode();
+      }
+      if(btnFuture) btnFuture.addEventListener('click', function(){ setMode('future'); });
+      if(btnToday) btnToday.addEventListener('click', function(){ setMode('today'); });
+    })();
 
     function drawStackChart(ax,sti,srs,cpf){
       var W=900,H=430,pL=92,pR=30,pT=24,pB=50,x0=pL,x1=W-pR,y0=H-pB,y1=pT,n=ax.length;
@@ -5878,9 +5884,10 @@ function openShareModal(drawFn){
         // is ever tuned, this claim can never silently drift out of sync with it again.
         aN:(+SCENARIO_PRESETS.conservative.an)/100, aW:(+SCENARIO_PRESETS.conservative.aw)/100,
         aS:(+SCENARIO_PRESETS.conservative.as)/100, aI:(+SCENARIO_PRESETS.conservative.ai)/100,
-        // Matches the calculator's own default (Tab 2, Career & assumptions):
-        // at least half of every raise banked from year one, not just once SRS caps.
-        saveHalfRaise:true,
+        // Matches the calculator's own default (Tab 2, Career & assumptions) and
+        // Classic Saver's own preset -- off, so savings-rate discipline (the allocation
+        // split above) is what distinguishes the personas, not this floor on top of it.
+        saveHalfRaise:false,
         // Matches Tab 2's own universal default: SRS never contributes past the point
         // it still saves tax, without needing this object to also carry Tab 2's own
         // "let the reader override it and see the cost" slider behavior -- there's no
