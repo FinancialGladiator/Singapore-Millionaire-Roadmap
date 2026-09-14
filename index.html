@@ -768,7 +768,11 @@
     color:var(--ink);margin-bottom:12px}
   .privacy-body{font-size:14px;line-height:1.6;color:var(--ink);text-align:left;margin-bottom:12px}
   .privacy-body-sub{color:var(--muted);font-style:italic}
-  #share-canvas{width:100%;height:auto;border-radius:10px;display:block;margin-bottom:14px;
+  /* The canvas itself is now display:none inline (it only ever draws off-screen),
+     so this rule is inert for it -- kept only because #share-image reuses it
+     exactly, same visible presentation as before, just on the element that
+     actually supports iOS's native long-press save. */
+  #share-canvas,#share-image{width:100%;height:auto;border-radius:10px;display:block;margin-bottom:14px;
     border:1px solid var(--line)}
   .share-modal-actions{display:flex;gap:10px}
   .share-modal-actions .preset{flex:1}
@@ -830,12 +834,21 @@
   <div id="share-modal" class="share-modal">
     <div class="share-modal-inner">
       <button id="share-modal-close" class="share-modal-close" aria-label="Close">✕</button>
+      <!-- The visible surface is now this <img>, not the <canvas> directly. iOS
+           Safari's native long-press "Save to Photos" menu only ever applies to a
+           genuine <img> with a real loaded source -- it does not apply to <canvas>
+           at all, which is exactly why press-and-hold never worked before, no
+           matter what the note underneath it claimed. The canvas itself still does
+           all the actual drawing, off-screen -- see syncShareImage() -- and this
+           <img> is just kept in sync with whatever the canvas currently holds. -->
+      <canvas id="share-canvas" width="1080" height="1600" style="display:none"></canvas>
+      <img id="share-image" alt="Your results card" draggable="true">
       <div class="share-format-toggle" role="group" aria-label="Image format">
         <button type="button" class="sf-btn active" id="sf-square" data-format="square">Scorecard</button>
         <button type="button" class="sf-btn" id="sf-story" data-format="story">Story</button>
       </div>
-      <canvas id="share-canvas" width="1080" height="1600"></canvas>
-      <button id="share-download" class="preset" style="margin-top:14px;border-style:solid">⬇ Download image</button>
+      <button id="share-native" class="hero-cta" style="margin-top:14px;display:none">Share →</button>
+      <button id="share-download" class="preset" style="margin-top:10px;border-style:solid">⬇ Download image</button>
       <div class="milestones flow" id="share-card-note" style="margin-top:8px;text-align:center;justify-content:center"></div>
     </div>
   </div>
@@ -5933,7 +5946,21 @@ function drawQuizResultCard(isStory){
     // buttons -- which don't know or care which card is open -- can just re-invoke
     // whatever's already active with the new format, rather than the toggle needing
     // its own separate copy of that same "which card is this" logic.
-    var currentDrawFn=null, currentIsStory=false;
+    var currentDrawFn=null, currentIsStory=false, __shareImgUrl=null;
+    // Keeps #share-image in sync with whatever the (hidden) canvas currently holds.
+    // Revokes the previous object URL before creating the next one -- without that,
+    // switching between Scorecard/Story repeatedly would leak a growing number of
+    // blob URLs for the lifetime of the page, since nothing else ever cleans them up.
+    function syncShareImage(){
+      var canvas=document.getElementById('share-canvas'), img=document.getElementById('share-image');
+      if(!canvas || !img) return;
+      canvas.toBlob(function(blob){
+        if(!blob) return;
+        if(__shareImgUrl) URL.revokeObjectURL(__shareImgUrl);
+        __shareImgUrl=URL.createObjectURL(blob);
+        img.src=__shareImgUrl;
+      },'image/png');
+    }
     function openShareModal(drawFn){
       currentDrawFn=drawFn||drawShareCard;
       currentIsStory=false;
@@ -5941,7 +5968,7 @@ function drawQuizResultCard(isStory){
       var sfSquare=document.getElementById('sf-square'), sfStory=document.getElementById('sf-story');
       if(sfSquare) sfSquare.classList.add('active');
       if(sfStory) sfStory.classList.remove('active');
-      function draw(){ currentDrawFn(currentIsStory); }
+      function draw(){ currentDrawFn(currentIsStory); syncShareImage(); }
       draw(); // draw immediately with whatever fonts are ready — never block on this
       modal.classList.add('open');
       var ready=(document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
@@ -5956,7 +5983,7 @@ function drawQuizResultCard(isStory){
         currentIsStory=isStory;
         if(sfSquare) sfSquare.classList.toggle('active', !isStory);
         if(sfStory) sfStory.classList.toggle('active', isStory);
-        if(currentDrawFn) currentDrawFn(currentIsStory);
+        if(currentDrawFn){ currentDrawFn(currentIsStory); syncShareImage(); }
       }
       if(sfSquare) sfSquare.addEventListener('click', function(){ setFormat(false); });
       if(sfStory) sfStory.addEventListener('click', function(){ setFormat(true); });
@@ -5984,9 +6011,48 @@ function drawQuizResultCard(isStory){
         a.click();
         document.body.removeChild(a);
         setTimeout(function(){ URL.revokeObjectURL(url); },10000);
-        note.innerHTML='If it opened as an image instead of downloading, <b>press and hold it</b>, then choose "Save to Photos" (iPhone) or "Download image" (Android/desktop).';
+        note.innerHTML='<b>Press and hold the image above</b> to save it directly, or use the button below.';
       },'image/png');
     });
+    // navigator.share with an actual file attached (Web Share API "Level 2") is what
+    // gets WhatsApp, Messenger, Instagram, Mail and every other share-target app
+    // listed in the OS's own native share sheet, each with the image already
+    // attached -- there's no other way to reach that same sheet, since none of those
+    // destinations expose a public web API this page could call directly, and each
+    // has its own separate share-intent format that would need building and
+    // maintaining individually. Feature-detected and hidden entirely when
+    // unsupported (older browsers, most desktop browsers as of this writing) rather
+    // than shown as a dead button, since the fallback -- the download button right
+    // below it -- already covers those cases perfectly well on its own.
+    (function(){
+      var shareBtn=document.getElementById('share-native');
+      if(!shareBtn) return;
+      var canShareFiles = !!(navigator.share && navigator.canShare);
+      if(!canShareFiles) return; // stays display:none, the download button covers it
+      shareBtn.style.display='';
+      shareBtn.addEventListener('click', function(){
+        var canvas=document.getElementById('share-canvas');
+        var note=document.getElementById('share-card-note');
+        canvas.toBlob(function(blob){
+          if(!blob){ note.textContent='Could not generate the image — please try again.'; return; }
+          var file=new File([blob],'my-singapore-millionaire-roadmap.png',{type:'image/png'});
+          if(!navigator.canShare({files:[file]})){
+            note.textContent="Sharing isn't supported here — try the download button instead.";
+            return;
+          }
+          var url=buildShareURL();
+          navigator.share({
+            files:[file],
+            title:'The Singapore Millionaire Roadmap',
+            text:"Here's my own numbers -- plug in yours:",
+            url: url || undefined
+          }).catch(function(e){
+            if(e && e.name==='AbortError') return; // reader just closed the share sheet, not an error
+            note.textContent='Could not open the share sheet — try the download button instead.';
+          });
+        },'image/png');
+      });
+    })();
     // THE ACTUAL BUG: this entire IIFE is its own private scope, so nothing defined
     // inside it -- openShareModal, drawShareCard, drawQuizResultCard -- was ever
     // visible outside it. The main scorecard button's own handler lives INSIDE this
