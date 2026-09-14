@@ -361,15 +361,21 @@
      can't be transitioned, so this toggles a class instead (see JS) rather than the
      dead "transition:opacity" rule this replaced, which never actually applied to
      anything since only .style.display was ever being set. */
-  /* inline-block, not the plain block a <p> implied -- needed so this now sits
-     inline within the merged sentence's continuous text flow, while still
-     respecting max-height/overflow for the same fade-collapse animation as before
-     (a plain inline element wouldn't respect either property). */
-  #hero-q4{display:inline-block;max-height:80px;opacity:1;overflow:hidden;
-    transition:opacity .25s ease,max-height .25s ease,margin .25s ease}
-  #hero-q4.hero-q-hidden{max-height:0;opacity:0;margin:0;pointer-events:none}
+  /* Was display:inline-block with a max-height/opacity fade -- but inline-block
+     content is laid out as its own, separate box: the whole span either fits on the
+     current line or jumps to the next one as a single, atomic unit, it does not
+     wrap word-by-word with the surrounding sentence the way plain text does. That
+     meant "My partner earns S$2,400 gross a month too." would break away from
+     "And I'm married, no kids." as one indivisible chunk even when there was still
+     room left on the line for part of it -- exactly the kind of line break this was
+     supposed to eliminate. Plain display:inline/none wraps genuinely word-by-word
+     with the rest of the sentence, at the cost of the fade transition (max-height
+     and opacity transitions don't meaningfully apply to a plain inline element) --
+     an instant show/hide instead of a fade, in exchange for correct wrapping, which
+     is what was actually asked for. */
+  #hero-q4.hero-q-hidden{display:none}
 
-  .hero-result{margin-top:32px}
+  .hero-result{margin-top:13px}
   .hero-result .hr-label{font-family:'Space Mono',monospace;font-size:10.5px;
     letter-spacing:.12em;text-transform:uppercase;color:#7d8a80}
   .hero-result .hr-value{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
