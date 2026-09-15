@@ -544,7 +544,7 @@
     letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
   .luxury-head span:first-child{color:var(--muted)}
   .luxury-head span:nth-child(3){color:var(--muted)}
-  .preset-scenarios{margin:20px 0}
+  .preset-scenarios{margin:20px 0 6px}
   .preset-scenarios-label{font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.1em;
     text-transform:uppercase;color:var(--muted);margin-bottom:10px}
   .preset-scenarios-row{display:flex;gap:8px;flex-wrap:wrap}
@@ -638,7 +638,15 @@
      buttons and the floating summary bar right beside them. The page's own side
      margin already provides the correct, consistent edge -- this shouldn't add a
      second one on top of it. */
-  .calc-card-plain{padding:18px 0;margin-top:8px}
+  // Top padding/margin cut to ~30% of their original values (18px->5px,
+  // 8px->2px) to close up the gap to the persona pills above -- the bottom
+  // padding is untouched, that's spacing for what comes after the calculator
+  // fields, a separate concern. This can't ever collide with the persona row
+  // even when "My Career" appears and wraps that row onto a second line --
+  // .preset-scenarios-row is normal flex flow with no fixed height, so it just
+  // pushes this element down by whatever extra height it needs, same as any
+  // other wrapping content would.
+  .calc-card-plain{padding:5px 0 18px;margin-top:2px}
   .field{margin-bottom:18px}
   .toggle-field{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
   .toggle-label{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;color:var(--ink)}
@@ -1338,7 +1346,7 @@
       <div class="milestones flow" id="save-status" style="margin-top:4px;color:var(--muted)">💾 Your inputs save automatically on this device — come back anytime.</div>
     </div>
 
-        <div class="deep-dive">
+        <div class="deep-dive" id="deep-dive-anchor">
       <div class="sec-label">Go deeper</div>
       <p class="sec-sub">Everything below is optional detail. Open whichever you’re curious about.</p>
       <details class="dd-card" id="dd-0">
@@ -1723,16 +1731,16 @@
         </div>
 </details>
       <details class="dd-card">
-  <summary><div class="num">2</div><span class="dd-txt"><span class="dd-title">The car — a quarter-million-dollar decision, on repeat</span><span class="dd-desc">A quarter-million-dollar decision, on repeat, instead of invested.</span></span></summary>
+  <summary><div class="num">2</div><span class="dd-txt"><span class="dd-title">The car — the single biggest wealth-destroying choice, on repeat</span><span class="dd-desc">The single biggest line-item most households finance — instead of invest, decade after decade.</span></span></summary>
   <div class="dd-body">
 
         <p>Singapore deliberately makes cars a luxury, and financing one is the single largest wealth-destroying choice most households make — not just the price, but the price <em>instead of</em> investing that money, decade after decade.</p>
-        <div class="formula">Cat A <span class="hint">COE <button class="help">?</button><span class="bubble">Certificate of Entitlement -- a bidding-based permit that must be won before a car can even be registered in Singapore, on top of the car's own price. Category A covers smaller/less powerful cars.</span></span> alone ≈ S$126k in 2026 (~ a year's median household income). 10-year ownership ≈ S$200k–300k; depreciation alone ≈ S$15k–25k/yr. One car across adult life ≈ the entire STI pot.</div>
+        <div class="formula">Cat A <span class="hint">COE <button class="help">?</button><span class="bubble">Certificate of Entitlement -- a bidding-based permit that must be won before a car can even be registered in Singapore, on top of the car's own price. Category A covers smaller/less powerful cars.</span></span> alone ≈ S$126k in 2026 (~ a year's median household income). 10-year ownership ≈ S$200k–300k; depreciation alone ≈ S$15k–25k/yr. Invested instead of financed, that recurring cost compounds past your entire STI pot by 65 — often several times over, the earlier you start.</div>
       
         <div class="trap-cost"><span class="tc-label">Owning a car (replaced every ~10 yrs, to 65) costs you</span><span class="tc-value" id="trap-cost-1">—</span></div>
         <div class="fix-block"><div class="fix-tag">The fix</div><h3 class="fix-h">Delay the car — ideally forever</h3>
         <p>Singapore's public transport is world-class; a car is a deliberate luxury. Use trains, buses and occasional ride-hail; if you truly need one, buy used late in the COE cycle. Every car-free year is S$15k–25k redirected into the index.</p>
-        <div class="formula">Beats trap #2 (the car). A lifetime of car ownership ≈ the entire STI pot you're trying to build.</div></div>
+        <div class="formula">Beats trap #2 (the car). Skip it and you can end up with dramatically more than the entire STI pot you're trying to build — the younger you are when you skip it, the bigger that gap gets.</div></div>
         </div>
 </details>
       <details class="dd-card">
@@ -1740,12 +1748,12 @@
   <div class="dd-body">
 
         <p>The magic depends on <em>staying</em> in the cheap subsidised flat and letting the freed cash compound. Most people trade up to a bigger HDB, then chase a condo. Each move resets the mortgage, drains the CPF-OA that was compounding, and adds decades of fresh interest. Asset-rich, cash-poor.</p>
-        <div class="formula">Trading up to a ~S$1.5m condo converts liquid, dividend-paying, compoundable wealth into an illiquid, lease-decaying asset — and can add S$300k+ of interest over 30 yrs.</div>
+        <div class="formula">Trading up to a ~S$1.5m condo converts liquid, dividend-paying, compoundable wealth into an illiquid, lease-decaying asset. The mortgage interest alone can add S$300k+ over 30 yrs — and priced against what that cash and CPF-OA would have grown to instead, the total opportunity cost typically runs well into seven figures.</div>
       
         <div class="trap-cost"><span class="tc-label">Upgrading to a condo costs you</span><span class="tc-value" id="trap-cost-2">—</span></div>
         <div class="fix-block"><div class="fix-tag">The fix</div><h3 class="fix-h">Buy the cheapest flat that works — never upgrade</h3>
         <p>Take the 2-room Flexi (single) or 3-room BTO (couple), claim the grant, move in, and stay. Resist the condo aspiration and the bigger-HDB itch. Every year you don't upgrade is a year the freed cash and CPF-OA keep compounding instead of paying fresh interest.</p>
-        <div class="formula">Beats trap #3 (upgrade treadmill). Staying keeps S$300k+ of interest &amp; lost compounding in your pocket.</div></div>
+        <div class="formula">Beats trap #3 (upgrade treadmill). Staying can keep well over a million dollars of interest and lost compounding in your pocket by 65 — the earlier you resist the upgrade, the bigger that stays.</div></div>
         </div>
 </details>
       <details class="dd-card">
@@ -2389,11 +2397,16 @@
     // Was 'proj65-anchor' -- but that anchor sits at the very START of the accordion
     // group (right after Allocation & tax), so the fade began as soon as the reader
     // was still near the top of Tab 2, long before reaching anything the floating
-    // bar duplicates. Anchoring on the "My Financial Scorecard" button instead means
-    // the bar now stays visible through Projected at 65 and What if scenarios both,
-    // only beginning to fade once the reader has actually reached the scorecard --
-    // any element works here, getBoundingClientRect doesn't care what kind it is.
-    var anchorId = isCalc ? 'btn-share-card' : 'div-sim-end-anchor';
+    // bar duplicates. Then briefly 'btn-share-card' (the "My Financial Scorecard"
+    // button) -- better, but that still sits above "Copy my scenario link" and the
+    // save/share status lines, so the bar started fading before the reader had even
+    // reached the end of the calculator's own primary content. Anchoring on the
+    // "Go deeper" section itself instead means the bar now stays fully visible
+    // through Projected at 65, What if scenarios, the scorecard button and the
+    // scenario-link button alike, only beginning to fade once the reader actually
+    // starts scrolling into the optional deep-dive cards -- any element works here,
+    // getBoundingClientRect doesn't care what kind it is.
+    var anchorId = isCalc ? 'deep-dive-anchor' : 'div-sim-end-anchor';
     var anchor=document.getElementById(anchorId);
     if(!anchor){ box.style.opacity=1; return; }
     var rect=anchor.getBoundingClientRect();
@@ -3274,10 +3287,16 @@
         document.getElementById('gt-mark-bto').style.left='100%';
       }
 
+      // Once the reader touches the toggle or slider themselves, this tool becomes
+      // their own "what if" exploration and should stop snapping back to whatever
+      // the Calculator says on every recompute -- same tension the persona presets
+      // solve with their own deviation flag elsewhere in this file.
+      var gtManuallySet = false;
       var GT_DEFAULT_INCOME = { single:2400, family:4800 };
       var toggle=document.getElementById('gt-toggle');
       if(toggle) toggle.addEventListener('click', function(e){
         var btn=e.target.closest('.gt-btn'); if(!btn) return;
+        gtManuallySet=true;
         toggle.querySelectorAll('.gt-btn').forEach(function(b){ b.classList.remove('active'); });
         btn.classList.add('active');
         gtHH=btn.getAttribute('data-hh');
@@ -3286,8 +3305,34 @@
         renderGrantTool();
       });
       var slider=document.getElementById('gt-slider');
-      if(slider) slider.addEventListener('input', renderGrantTool);
+      if(slider) slider.addEventListener('input', function(){ gtManuallySet=true; renderGrantTool(); });
       if(slider) renderGrantTool();
+
+      // Starts this tool from the reader's own household type and income already
+      // set on the Calculator tab -- the same figures "Based on what you've
+      // entered in the Calculator" above already computes -- rather than always
+      // resetting to a generic Single/S$2,400 default they'd have to re-select
+      // here by hand. Runs on load and again on every Calculator recompute (see
+      // the refreshGrantLive call below), but backs off entirely once
+      // gtManuallySet is true.
+      function syncGrantToolFromCalculator(){
+        if(gtManuallySet) return;
+        var houseEl=document.getElementById('i-house'), salEl=document.getElementById('i-sal'),
+            spEl=document.getElementById('i-spouse'), slider=document.getElementById('gt-slider');
+        if(!houseEl || !salEl || !slider) return;
+        var single = houseEl.value==='single';
+        var inc = +salEl.value + (!single && spEl ? +spEl.value : 0);
+        var hh = single ? 'single' : 'family';
+        gtHH = hh;
+        if(toggle) toggle.querySelectorAll('.gt-btn').forEach(function(b){
+          b.classList.toggle('active', b.getAttribute('data-hh')===hh);
+        });
+        // Two incomes can add up past the slider's own S$18,000 ceiling -- clamp
+        // to what the slider can actually represent rather than setting an
+        // out-of-range value it would silently reject.
+        slider.value = Math.max(+slider.min, Math.min(+slider.max, inc));
+        renderGrantTool();
+      }
 
       // "Based on what you've entered in the Calculator" — refreshed by recompute()
       window.refreshGrantLive = function(){
@@ -3312,6 +3357,7 @@
             +gtMoney(grant)+'</b>, paid into CPF-OA off the flat price.';
         }
         body.innerHTML=text;
+        syncGrantToolFromCalculator();
       };
       window.refreshGrantLive();
     })();
@@ -3708,12 +3754,32 @@
         var extraCosts=0.5*childCost+0.5*paCost+cashShort/12+condoOut+carCost+exMortCash;
         var effInvest=invest-extraCosts;
         if(effInvest<0){
-          var shortfall=-effInvest; effInvest=0;
-          var wantsShare=(o.aN+o.aW)>0?(o.aW/(o.aN+o.aW)):0;
-          var wantsPool=lifestyle*wantsShare;
-          var cutW=Math.min(shortfall,wantsPool);
-          lifestyle-=cutW; shortfall-=cutW;
-          if(shortfall>1) distressYears++;
+          if(o.uncappedInvest){
+            // Opt-in escape hatch, used only by the "what does this decision cost
+            // you" comparisons (trap costs on Tab 4, the holistic-impact cards on
+            // Tab 2) -- never by an ordinary projection, where this branch is
+            // skipped entirely and behaviour is exactly as before. Those
+            // comparisons flip a single committed cost (car/condo/etc.) on or off
+            // and diff the outcome; with the normal floor-then-cut-Wants logic
+            // below, any part of that cost bigger than the reader's own investing
+            // budget got quietly absorbed by cutting lifestyle spending instead --
+            // money that was never going to be invested anyway, so redirecting it
+            // to a bill cost no compounding at all. That understated the true
+            // cost more the smaller the reader's investing budget was, which is
+            // exactly backwards: a committed cost you can't comfortably invest
+            // around should show as MORE costly, not less. Leaving effInvest
+            // negative here instead means the full committed cost always
+            // displaces investment, so these comparisons show what the decision
+            // actually costs, independent of whether that month's investing
+            // budget happened to be big enough to cover it.
+          } else {
+            var shortfall=-effInvest; effInvest=0;
+            var wantsShare=(o.aN+o.aW)>0?(o.aW/(o.aN+o.aW)):0;
+            var wantsPool=lifestyle*wantsShare;
+            var cutW=Math.min(shortfall,wantsPool);
+            lifestyle-=cutW; shortfall-=cutW;
+            if(shortfall>1) distressYears++;
+          }
         }
         // Windfalls (rent saved living with family, net BTO rental income) split the SAME
         // way as raises — proportional to your chosen invest share, never overriding a
@@ -4634,11 +4700,22 @@
       // Holistic impacts: only show a card when that choice is actually in play AND
       // actually moves the number. An empty card teaches nothing and lengthens the page.
       var shown=0;
+      // Same uncappedInvest fix as the Tab 4 trap costs (see project()'s own
+      // comment on that flag) -- comparing against the reader's ordinary,
+      // capped-at-affordability projection (r) would carry the identical
+      // income skew those had: a committed cost bigger than the investing
+      // budget got partly absorbed for free by cutting lifestyle spending
+      // instead, understating what removing it actually saves. A dedicated
+      // uncapped run of the reader's own current scenario, computed once and
+      // reused as the baseline for every impact() card below, keeps these
+      // numbers on the same footing as the Tab 4 figures.
+      var oUncapped=clone(o); oUncapped.uncappedInvest=true;
+      var rUncapped=project(oUncapped);
       function impact(key, active, mutate){
         var card=$('card-'+key);
         if(!active){ if(card) card.style.display='none'; return; }
-        var alt=clone(o); mutate(alt);
-        var d=(r.nw-project(alt).nw)/disc;
+        var alt=clone(o); alt.uncappedInvest=true; mutate(alt);
+        var d=(rUncapped.nw-project(alt).nw)/disc;
         if(Math.abs(d)<1000){ if(card) card.style.display='none'; return; }
         $(key).textContent=fmtK(d);
         if(card) card.style.display='';
@@ -5058,7 +5135,7 @@
 
     // Expose the engine so the cover page's live projection uses THIS engine — never a
     // second copy of the maths that could silently drift out of step with the calculator.
-    window.SGMR_ENGINE={ project:project, recompute:recompute, readOpts:readOpts, fmtK:fmtK };
+    window.SGMR_ENGINE={ project:project, recompute:recompute, readOpts:readOpts, fmtK:fmtK, carCalc:carCalc };
     // refreshCompare() bailed out safely earlier (SGMR_ENGINE wasn't set yet) -- now
     // that it is, retry once so anyone with a previously-saved A/B comparison actually
     // sees it rendered, rather than the empty placeholder forever.
@@ -5155,11 +5232,25 @@
        the delta. Nothing is applied until the user taps. */
     function whatIfDelta(mutate){
       try{
-        var base=readOpts(); var b=project(base);
-        var alt=readOpts(); mutate(alt);
+        var base=readOpts(); base.uncappedInvest=true; var b=project(base);
+        var alt=readOpts(); alt.uncappedInvest=true; mutate(alt);
         var a=project(alt);
         return (a.nw/a.disc)-(b.nw/b.disc);
       }catch(e){ return null; }
+    }
+    // Whether a mutation (buying a car, upgrading the flat, ...) would leave the
+    // reader's OWN take-home genuinely unable to cover it -- committed costs
+    // exceeding what's left even after cutting Wants to zero, the same real,
+    // capped-affordability model the main projection itself uses (deliberately
+    // NOT uncappedInvest here; that flag is for pricing what a decision costs,
+    // this checks whether it's actually payable for in the first place). Used to
+    // hide a "what if" suggestion entirely rather than dangle a one-tap action
+    // that would push the reader into financial distress.
+    function wouldCauseDistress(mutate){
+      try{
+        var o=readOpts(); mutate(o);
+        return project(o).distressYears>0;
+      }catch(e){ return false; }
     }
     function paintWhatIf(id,delta,label){
       var el=$(id+'-d');
@@ -5186,12 +5277,29 @@
         var nR = lif>0 ? o.aN/lif : 0.625;
         o.aN=rest*nR; o.aW=rest-o.aN;
       }));
-      paintWhatIf('wi-car', whatIfDelta(function(o){ o.car=!carOn; }),
-        carOn?'Skip the car':'Buy a car at '+$('i-carage').value);
+      // "Buy a car" only gets suggested when it's genuinely affordable --
+      // dangling a one-tap action that would push the reader into financial
+      // distress (committed costs exceeding take-home even after cutting Wants
+      // to zero) is worse than not suggesting it at all. "Skip the car" -- the
+      // other direction, shown once a car is already in the scenario -- never
+      // causes distress by definition, so that direction is always offered.
+      var carUnaffordable = !carOn && wouldCauseDistress(function(o){ o.car=true; });
+      $('wi-car').style.display = carUnaffordable ? 'none' : '';
+      if(!carUnaffordable){
+        paintWhatIf('wi-car', whatIfDelta(function(o){ o.car=!carOn; }),
+          carOn?'Skip the car':'Buy a car at '+$('i-carage').value);
+      }
       var canBigger=flatIdx<3;
-      $('wi-flat').disabled=!canBigger;
-      paintWhatIf('wi-flat', canBigger?whatIfDelta(function(o){ o.flatIdx=flatIdx+1; }):null,
-        canBigger?('Buy a '+FLATS[flatIdx+1].n+' instead'):'Already the largest flat');
+      // Same affordability gate as the car, for the same reason -- upgrading to
+      // a flat size the reader's take-home can't actually sustain shouldn't be
+      // offered as a tap-to-apply suggestion.
+      var flatUnaffordable = canBigger && wouldCauseDistress(function(o){ o.flatIdx=flatIdx+1; });
+      $('wi-flat').style.display = flatUnaffordable ? 'none' : '';
+      if(!flatUnaffordable){
+        $('wi-flat').disabled=!canBigger;
+        paintWhatIf('wi-flat', canBigger?whatIfDelta(function(o){ o.flatIdx=flatIdx+1; }):null,
+          canBigger?('Buy a '+FLATS[flatIdx+1].n+' instead'):'Already the largest flat');
+      }
       // Same delta pattern as every other chip: current settings vs one change --
       // NOT two fixed hypothetical extremes. Since the checkbox now defaults ON, this
       // correctly shows what escalating from wherever you currently are (0%, 50%, or
@@ -6625,11 +6733,22 @@ function drawQuizResultCard(isStory){
 
   /* ===== TRAP COSTS: price each behaviour in the reader's own numbers ===== */
   (function(){
+    // uncappedInvest=true on both sides of the comparison -- see project()'s own
+    // comment on that flag. Without it, a committed cost bigger than the
+    // reader's investing budget was partly absorbed for free by cutting
+    // lifestyle spending instead, understating the true cost more the smaller
+    // that budget was (worst for car and condo, the two traps that toggle a
+    // real fixed monthly cost on or off). With it, both the car and condo
+    // figures now show what the decision actually costs, independent of the
+    // reader's income -- same fix, same mechanism, applied uniformly rather
+    // than car getting its own separate standalone formula and condo being
+    // left with the old skew.
     function delta(mutate){
       var E=window.SGMR_ENGINE; if(!E) return null;
       try{
-        var b=E.readOpts(), rb=E.project(b);
-        var a=E.readOpts(); mutate(a);
+        var b=E.readOpts(); b.uncappedInvest=true;
+        var rb=E.project(b);
+        var a=E.readOpts(); a.uncappedInvest=true; mutate(a);
         var ra=E.project(a);
         return (ra.nw/ra.disc)-(rb.nw/rb.disc);
       }catch(e){ return null; }
@@ -6661,7 +6780,7 @@ function drawQuizResultCard(isStory){
       var E=window.SGMR_ENGINE; if(!E) return;
       MUTATORS.forEach(function(fn,i){
         var el=document.getElementById('trap-cost-'+i); if(!el) return;
-        var d=delta(fn);
+        var d = delta(fn);
         if(d===null||!isFinite(d)){ el.textContent='\u2014'; el.className='tc-value'; return; }
         // every one of these is a cost, so show the magnitude and mark it negative
         el.textContent='\u2212'+E.fmtK(Math.abs(d));
