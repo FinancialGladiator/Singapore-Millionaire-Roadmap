@@ -1099,6 +1099,7 @@
           <option value="no">No — stay in the HDB</option>
           <option value="yes">Yes — upgrade to a condo</option>
         </select>
+        <div class="milestones flow" id="condo-afford-warn" style="display:none;margin-top:10px;background:#E2604F1A;border:1px solid #E2604F45;border-radius:6px;padding:10px 12px;color:var(--brick)"></div>
       </div>
 <div class="field" id="f-csize">
         <label><span id="l-csize">Condo size</span> — <output id="o-csize">2-bedroom</output></label>
@@ -1116,7 +1117,6 @@
           <option value="rent">Keep it &amp; rent it out (+20% ABSD)</option>
         </select>
         <div class="milestones flow" id="o-condoline" style="margin-top:8px"></div>
-        <div class="milestones flow" id="condo-afford-warn" style="display:none;margin-top:10px;background:#E2604F1A;border:1px solid #E2604F45;border-radius:6px;padding:10px 12px;color:var(--brick)"></div>
       </div>
 <div class="field" id="f-car">
         <label>Buy a car? <span class="hint"><button class="help">?</button><span class="bubble">Modelled as owning a car from your chosen age onward, replacing it every 10-year COE cycle. The road price includes a tiered <b>ARF</b> (Additional Registration Fee, rising with the car's value) on top of the car's open market value; the monthly cost = depreciation (full price minus the <b>PARF</b> rebate — the partial ARF refund you get back at deregistration — over 120 months) + petrol, insurance, road tax, parking, maintenance and an average <b>ERP</b> (road toll) estimate.</span></span></label>
@@ -3822,7 +3822,22 @@
             var wantsPool=lifestyle*wantsShare;
             var cutW=Math.min(shortfall,wantsPool);
             lifestyle-=cutW; shortfall-=cutW;
-            if(shortfall>1) distressYears++;
+            if(shortfall>1){
+              distressYears++;
+              // Previously just vanished here once Wants was fully cut to zero and
+              // a shortfall still remained -- as if the household simply stopped
+              // needing that money, rather than having to find it from somewhere.
+              // A real household in that position draws down savings or takes on
+              // debt; modelled the same way uncappedInvest treats an unaffordable
+              // committed cost elsewhere -- as a negative addition to invested
+              // wealth that keeps compounding against them, not a cost that
+              // disappears. This is exactly what was making two different
+              // decisions (e.g. buying a car at different ages) produce IDENTICAL
+              // net worth once a household was already this deep in distress: the
+              // excess beyond Wants=0 was invisible to the model either way, so
+              // nothing downstream of it could tell the two scenarios apart.
+              effInvest=-shortfall;
+            }
           }
         }
         // Windfalls (rent saved living with family, net BTO rental income) split the SAME
@@ -4352,6 +4367,53 @@
       } else { $('o-grantline').innerHTML=''; }
       if(o.condo){
         var cd=CONDOS[o.condoIdx];
+        // Afford-ability gate: mirrors the car gate later in this function (see its
+        // own comment) -- if the purchase itself can't be funded (r.condoMsr.unfunded,
+        // set once CPF-OA and STI together still can't cover the downpayment/ABSD
+        // shortfall after the loan is TDSR-capped) or leaves the household worse off
+        // by 65 (net worth negative, or retirement income under S$3,000/mo today),
+        // deny the selection and hide the size/age sliders (via the existing
+        // condoOn-based f-csize/f-cage toggle in syncUI, which the recursive calc()
+        // call below re-triggers naturally) rather than leave controls visible for a
+        // purchase already shown not to work. Same "revert, recompute, THEN set the
+        // warning" ordering the car gate uses, for the same reason: the recursive
+        // calc() call re-reaches this whole block with condo now off, correctly
+        // clears o-condoline and would clear this warning too if set beforehand --
+        // setting it after, and returning immediately so nothing stale overwrites it,
+        // is what makes it survive.
+        var todayNW=r.nw/r.disc, todayInc=r.income/r.disc;
+        var condoBeyondBudget=(r.condoMsr && r.condoMsr.unfunded>0) || todayNW<0 || todayInc<3000;
+        if(!window.__condoAffordReentry && condoBeyondBudget){
+          window.__condoAffordReentry=true;
+          var unfundedAtDenial=(r.condoMsr?r.condoMsr.unfunded:0), nwAtDenial=todayNW, incAtDenial=todayInc;
+          $('i-condo').value='no';
+          calc();
+          window.__condoAffordReentry=false;
+          // calc() alone (not the full recompute()) doesn't re-run syncUI(), which is
+          // what normally toggles f-csize/f-cage off via condoOn -- without this, they'd
+          // stay visible for one more interaction after denial instead of hiding right
+          // away. Harmless if syncUI() already got to them first.
+          var fcs=$('f-csize'), fca=$('f-cage'); if(fcs) fcs.style.display='none'; if(fca) fca.style.display='none';
+          var condoWarnEl=$('condo-afford-warn');
+          if(condoWarnEl){
+            if(unfundedAtDenial>0){
+              condoWarnEl.innerHTML='⚠ <b>A condo upgrade is beyond your budget.</b> Even after draining CPF-OA and the STI pot completely, <b>'+fmtK(unfundedAtDenial)+'</b> of the downpayment still can\'t be covered — a bank wouldn\'t fund this either.';
+            } else {
+              var bits=[];
+              if(nwAtDenial<0) bits.push('net worth at 65 negative ('+fmtK(nwAtDenial)+')');
+              if(incAtDenial<3000){
+                // fmt() puts the minus sign after "S$" (S$-1,718) since it was written
+                // for figures that are never negative elsewhere in this file -- wrong
+                // here, where retirement income going negative is exactly the point.
+                var incStr=(incAtDenial<0?'-S$':'S$')+Math.round(Math.abs(incAtDenial)).toLocaleString('en-US')+'/mo';
+                bits.push('retirement income at just '+incStr);
+              }
+              condoWarnEl.innerHTML='⚠ <b>A condo upgrade is beyond your budget.</b> It leaves your '+bits.join(' and ')+'.';
+            }
+            condoWarnEl.style.display='block';
+          }
+          return;
+        }
         var mcst=Math.round(cd.mcst*0.7), sink=cd.mcst-mcst;
         var line='monthly outgoings today: MCST <b>'+fmt(mcst)+'</b> + sinking fund <b>'+fmt(sink)+'</b> + property tax <b>'+fmt(cd.tax)+'</b> + insurance <b>S$40</b> = <b>'+fmt(cd.mcst+cd.tax+40)+'/mo</b> · price ~<b>'+fmtK(cd.p)+'</b>, bank loan 3.2%';
         if(!o.btoSell){
@@ -4366,37 +4428,7 @@
           }
         }
         $('o-condoline').innerHTML=line;
-        // Same red-box treatment as car-afford-warn, same short-and-sharp tone --
-        // this is a verdict, not an explainer, so it stays out of the longer
-        // o-condoline breakdown above and gets its own box instead. Two different
-        // ways a condo can be "beyond budget": the purchase itself can't actually
-        // be funded (checked first, since that's the more fundamental problem --
-        // r.condoMsr.unfunded, set when CPF-OA and STI together still can't cover
-        // the downpayment/ABSD shortfall after the loan is TDSR-capped), or it can
-        // be fundable but still leave the household worse off by 65 (net worth
-        // negative, or retirement income under S$3,000/mo in today's dollars).
-        var condoWarnEl=$('condo-afford-warn');
-        if(condoWarnEl){
-          var todayNW=r.nw/r.disc, todayInc=r.income/r.disc;
-          if(r.condoMsr && r.condoMsr.unfunded>0){
-            condoWarnEl.innerHTML='⚠ <b>A condo upgrade is beyond your budget.</b> Even after draining CPF-OA and the STI pot completely, <b>'+fmtK(r.condoMsr.unfunded)+'</b> of the downpayment still can\'t be covered — a bank wouldn\'t fund this either.';
-            condoWarnEl.style.display='block';
-          } else if(todayNW<0 || todayInc<3000){
-            var bits=[];
-            if(todayNW<0) bits.push('net worth at 65 negative ('+fmtK(todayNW)+')');
-            if(todayInc<3000){
-              // fmt() puts the minus sign after "S$" (S$-1,718) since it was written
-              // for figures that are never negative elsewhere in this file -- wrong
-              // here, where retirement income going negative is exactly the point.
-              var incStr=(todayInc<0?'-S$':'S$')+Math.round(Math.abs(todayInc)).toLocaleString('en-US')+'/mo';
-              bits.push('retirement income at just '+incStr);
-            }
-            condoWarnEl.innerHTML='⚠ <b>A condo upgrade is beyond your budget.</b> It leaves your '+bits.join(' and ')+'.';
-            condoWarnEl.style.display='block';
-          } else {
-            condoWarnEl.style.display='none';
-          }
-        }
+        var condoWarnEl2=$('condo-afford-warn'); if(condoWarnEl2) condoWarnEl2.style.display='none';
       } else { $('o-condoline').innerHTML=''; var cw=$('condo-afford-warn'); if(cw) cw.style.display='none'; }
       if(o.car){
         var c=carCalc(o.omv);
@@ -4641,6 +4673,11 @@
         $('i-car').value='no';
         calc();
         window.__carAffordReentry=false;
+        // Same reason as the equivalent line in the condo gate: calc() alone doesn't
+        // re-run syncUI(), which is what normally toggles f-carage/f-omv off via
+        // carOn -- without this they'd stay visible for one more interaction after
+        // denial instead of hiding right away.
+        var fca2=$('f-carage'), fom=$('f-omv'); if(fca2) fca2.style.display='none'; if(fom) fom.style.display='none';
         var warnEl=$('car-afford-warn');
         if(warnEl){
           warnEl.innerHTML='\u26a0 <b>This car doesn\'t fit your budget.</b> At '+fmt(carCashAtDenial)+'/mo, it would push Net Spendable to '+fmt(net0rawAtDenial)+' \u2014 below zero, after Necessities, Wants, SRS, STI and housing are already accounted for. The car selection has been turned back off. Raise your income, cut Necessities/Wants, or delay the purchase to a point where you can genuinely afford it.';
