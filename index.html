@@ -1106,7 +1106,7 @@
       </div>
 <div class="field" id="f-cage">
         <label><span id="l-cage">Upgrade at age</span> — <output id="o-cage">40</output> <span class="hint"><button class="help">?</button><span class="bubble">Earliest is 5 years after buying the BTO (the MOP).</span></span></label>
-        <input type="range" id="i-cage" min="30" max="60" step="1" value="40">
+        <input type="range" id="i-cage" min="30" max="64" step="1" value="40">
       </div>
 <div class="field" id="f-bto">
         <label>Your HDB at upgrade <span class="hint"><button class="help">?</button><span class="bubble"><b>Sell</b>: the resale proceeds (market value minus the outstanding HDB loan) fund the condo downpayment — no ABSD. <b>Keep &amp; rent out</b>: rental income flows in, but you pay <b>20% ABSD</b> on the entire condo price as a second-property buyer, plus non-owner property tax, S&amp;CC, upkeep and vacancy on the flat.</span></span></label>
@@ -1126,7 +1126,7 @@
       </div>
 <div class="field" id="f-carage">
         <label>Buy the car at age — <output id="o-carage">30</output></label>
-        <input type="range" id="i-carage" min="20" max="60" step="1" value="30">
+        <input type="range" id="i-carage" min="20" max="65" step="1" value="30">
       </div>
 <div class="field" id="f-omv">
         <label>Car factory value (OMV) — <output id="o-omv">S$25,000</output> <span class="hint"><button class="help">?</button><span class="bubble">The <b>Open Market Value</b> — what the car costs before Singapore's taxes. Slide it and watch the stack: registration fee, 20% excise duty, GST, tiered ARF (100% → 320% of OMV), the COE, and dealer margin. An OMV of ~S$25k (a Corolla-class car) becomes a ~S$180k road price.</span></span></label>
@@ -1179,7 +1179,7 @@
           <input type="checkbox" id="i-halfraise" checked>
           <span>Save at least half of every raise <span class="hint"><button class="help">?</button><span class="bubble">A common discipline against lifestyle inflation: bank at least half of every pay rise before it has a chance to become a bigger lifestyle. This is a floor, not a bonus -- if your own sliders already send more than 50% of every raise into investing, this makes no difference, since there's nothing left to top up. On by default, since it's the assumption the rest of this app's own copy already describes. Turn it off to let your sliders' own fixed percentages govern every raise instead, with no floor underneath them at all.</span></span></span>
         </label>
-        <div id="halfraise-noeffect" style="display:none;margin-top:8px;font-size:12.5px;color:var(--muted);line-height:1.5">⚠ This toggle currently makes <b>zero difference</b> to your numbers -- most likely because your own STI slider is already set above 50%, so it already exceeds the floor this toggle would enforce. A floor can only ever raise what your sliders would otherwise give you, never add on top of it.</div>
+        <div id="halfraise-noeffect" style="display:none;margin-top:8px;font-size:12.5px;color:var(--muted);line-height:1.5">⚠ This toggle currently makes <b>zero difference</b> to your numbers. That can happen for more than one reason: your own SRS + STI allocation may already be at or above the floor this toggle would enforce, so there's nothing left for it to add — or a large one-time cost later in the plan (a condo upgrade is the usual culprit, especially with a TDSR-capped loan or ABSD from renting out the BTO instead of selling it) can fully absorb whatever gets saved either way, so the extra this toggle would bank never survives long enough to matter. A floor can only ever raise what your sliders would otherwise give you at the time — it can't guarantee that stays invested afterward.</div>
       </div>
 <div class="field toggle-field" id="f-advanced-cpf">
         <label class="toggle-label">
@@ -1644,8 +1644,8 @@
       </div></div>
       <div class="step"><div class="num">3</div><div>
         <h3>Housing runs on CPF, not cash</h3>
-        <p>At the buy age, the 20% deposit is drawn from accumulated CPF-OA; the 80% loan is amortised over 25 years at 2.6% and paid monthly from CPF-OA. Because OA inflow exceeds the instalment, cash is untouched — so buying <em>raises</em> the investable surplus (rent stops), and payoff doesn't change it.</p>
-        <div class="formula">instalment = loan × r ÷ (1 − (1+r)^−300), r = 2.6%/12</div>
+        <p>At the buy age, the 20% deposit is drawn from accumulated CPF-OA; the 80% loan is amortised over 25 years — or fewer if buying after 40, since HDB caps the loan tenure at 65 minus your age at purchase — at 2.6% and paid monthly from CPF-OA. Because OA inflow exceeds the instalment, cash is untouched — so buying <em>raises</em> the investable surplus (rent stops), and payoff doesn't change it.</p>
+        <div class="formula">instalment = loan × r ÷ (1 − (1+r)⁻ⁿ), n = tenure in months (25 yrs, or 65 − buy age if shorter), r = 2.6%/12</div>
       </div></div>
       <div class="step"><div class="num">4</div><div>
         <h3>Surplus → STI at 6%, dividends reinvested</h3>
@@ -3491,14 +3491,25 @@
         if(o.isResale) grant=grant*0.5;
         netToday=Math.max(flatPrice-grant, flatPrice*0.2);
         netNom=netToday*inflB; deposit=0.2*netNom; loan0=0.8*netNom;
-        var rr=0.026/12; mortM=loan0*rr/(1-Math.pow(1+rr,-300));
+        var rr=0.026/12;
+        // HDB concessionary loans are capped at the shorter of 25 years or (65 minus
+        // age at purchase) -- confirmed against HDB's own published terms. A flat
+        // 25-year assumption regardless of buy age understated the real burden of
+        // buying later in life: the same loan amount compressed into fewer years
+        // means a materially higher instalment, which should make MSR bind sooner
+        // for an older buyer on the same income -- not stay flat at 25 years the
+        // way this did before. tenureMo<=0 (buying at 65+) means no HDB loan
+        // tenure is left at all; mortM is set to Infinity rather than dividing by
+        // zero, which correctly forces the MSR cap below to zero out the loan.
+        var tenureYrs=Math.min(25, Math.max(0,65-o.buyAge)), tenureMo=tenureYrs*12;
+        mortM = tenureMo>0 ? loan0*rr/(1-Math.pow(1+rr,-tenureMo)) : Infinity;
         // HDB Mortgage Servicing Ratio (MSR): instalment can't exceed 30% of gross household income
         var grossAtBuy=spath[bi]*eB, desiredLoanHDB=loan0;
         var maxInstHDB=0.30*grossAtBuy;
-        var maxLoanHDB=maxInstHDB>0?maxInstHDB*(1-Math.pow(1+rr,-300))/rr:0;
+        var maxLoanHDB=(tenureMo>0 && maxInstHDB>0)?maxInstHDB*(1-Math.pow(1+rr,-tenureMo))/rr:0;
         var hdbBinding=loan0>maxLoanHDB;
-        if(hdbBinding){ loan0=maxLoanHDB; deposit=netNom-loan0; mortM=loan0>0?loan0*rr/(1-Math.pow(1+rr,-300)):0; }
-        hdbMsr={binding:hdbBinding,ratio:grossAtBuy>0?mortM/grossAtBuy:0,extraDown:Math.max(desiredLoanHDB-loan0,0)};
+        if(hdbBinding){ loan0=maxLoanHDB; deposit=netNom-loan0; mortM=loan0>0?loan0*rr/(1-Math.pow(1+rr,-tenureMo)):0; }
+        hdbMsr={binding:hdbBinding,ratio:grossAtBuy>0?mortM/grossAtBuy:0,extraDown:Math.max(desiredLoanHDB-loan0,0),tenureYrs:tenureYrs};
       }
       // condo economics (computed at upgrade)
       var cd=CONDOS[o.condoIdx], car=o.car?carCalc(o.omv):null;
@@ -3533,6 +3544,17 @@
       // 'upgraded' flag tracks whether they've since MOVED to a different condo, so an
       // existing condo owner can still upgrade rather than being locked out.
       var condoLoan=0,condoBought=!!o.ownsCondo,condoUpgraded=false,condoMortM=0,absdPaid=0,condoMsr=null,distressYears=0;
+      // Tracks the first lump-sum purchase (HDB deposit, condo down payment+ABSD)
+      // that leaves combined STI+OA at effectively nothing afterward -- separate
+      // from distressYears, which is about ongoing monthly cash flow, not a
+      // one-off purchase draining whatever was banked beforehand. Used to give
+      // the "this toggle makes no difference" message on Tab 2 an actual reason
+      // instead of a guess: a large purchase like this can absorb the entire
+      // benefit of saving more aggressively beforehand, regardless of how much
+      // more was saved, which is a genuinely different cause from "your
+      // allocation was already at the floor" and reads very differently to a
+      // reader trying to understand their own numbers.
+      var wipedBy=null, wipedAge=null;
       // snapshot of committed costs AS OF RIGHT NOW (captured at the first loop year),
       // for the "Your monthly budget now" table — separate from the long-run totals
       // above, which are end-of-simulation or cumulative figures.
@@ -3648,6 +3670,7 @@
           var nd=deposit, fOA=Math.min(OA,nd); OA-=fOA; nd-=fOA;
           if(nd>0){ var fS=Math.min(STI,nd); STI-=fS; nd-=fS; }
           hdbLoan=loan0; hdbBought=true; hdbMortM=mortM;
+          if(wipedBy===null && (STI+OA)<1000){ wipedBy='hdb'; wipedAge=a; }
           var freed=rentBase*infl;
           invest+=freed*investShare; lifestyle+=freed*(1-investShare);
         }
@@ -3691,6 +3714,7 @@
             if(extraDownCondo>0){ var eS=Math.min(STI,extraDownCondo); STI-=eS; extraDownCondo-=eS; }
           }
           condoMortM=condoLoan>0?condoLoan*rc2/(1-Math.pow(1+rc2,-360)):0;
+          if(wipedBy===null && (STI+OA)<1000){ wipedBy='condo'; wipedAge=a; }
           condoBought=true; condoUpgraded=true;
           condoMsr={binding:condoBinding,ratio:grossAtCondo>0?(condoMortM+existingDebtM)/grossAtCondo:0,extraDown:Math.max(condoLoanDesired-condoLoan,0)};
         }
@@ -3860,7 +3884,8 @@
         absd:absdPaid,retRent:retRent,earn0:nEarn(o.age),hdbMsr:hdbMsr,condoMsr:condoMsr,distressYears:distressYears,
         stiPath:stiPath,srsPath:srsPath,cpfPath:cpfPath,stiContrib:stiContrib,srsContrib:srsContrib,
         empCPFcum:empCPFcum,employerCPFcum:employerCPFcum,
-        curMortCPF:curMortCPF,curMortCash:curMortCash,curRentOffset:curRentOffset,curCarCost:curCarCost,curPaCost:curPaCost};
+        curMortCPF:curMortCPF,curMortCash:curMortCash,curRentOffset:curRentOffset,curCarCost:curCarCost,curPaCost:curPaCost,
+        wipedBy:wipedBy,wipedAge:wipedAge};
     }
 
     // Three fields hidden by default (CPF LIFE deferral, CPF LIFE plan choice, CPF
@@ -4114,14 +4139,30 @@
       // existing owner produced a nonsense age (and overwrote the correct note below).
       var cage=$('i-cage');
       var minC = ownsAlready ? (age + (ownsHdbNow ? mopL : 0)) : (+buy.value+5);
-      cage.min=minC; if(+cage.value<minC) cage.value=minC;
+      // Same gap i-buy already had fixed (see its own comment above): applyCalcState()
+      // widens this slider's max to 200 before restoring a saved value, and nothing
+      // here was ever narrowing it back down afterward, so a restored scenario (a
+      // shared link, or the auto-saved session) could leave the thumb able to drag
+      // out to age 200. 64 is a deliberate ceiling one year short of retirement --
+      // an "upgrade" with no time left to do anything before the projection ends at
+      // 65 isn't meaningfully an upgrade.
+      cage.min=minC; cage.max=64;
+      if(+cage.value<minC) cage.value=minC;
+      if(+cage.value>64) cage.value=64;
       var cageLabel;
       if(ownsHdbNow) cageLabel = mopL>0 ? (' (earliest '+minC+' \u2014 MOP ends then)') : ' (MOP already served)';
       else if(ownsCondoNow) cageLabel = '';
       else cageLabel = ' (MOP ends at '+minC+')';
       $('o-cage').textContent=cage.value+cageLabel;
       var carage=$('i-carage');
-      carage.min=age; if(+carage.value<age) carage.value=age;
+      // Same gap i-buy and i-cage had: applyCalcState() widens this slider's max to
+      // 200 before restoring a saved value, and nothing here ever narrowed it back
+      // down. 65 (not 64, unlike the condo upgrade age) is the right ceiling --
+      // buying a car the year before retirement is still a real, meaningful choice,
+      // unlike a condo "upgrade" with no time left to do anything before 65.
+      carage.min=age; carage.max=65;
+      if(+carage.value<age) carage.value=age;
+      if(+carage.value>65) carage.value=65;
       $('ao-need').textContent=$('a-need').value+'%';
       $('ao-want').textContent=$('a-want').value+'%';
       $('ao-srs').textContent=$('a-srs').value+'%';
@@ -4212,7 +4253,34 @@
             var oAlt=clone(o); oAlt.saveHalfRaise=!o.saveHalfRaise;
             var rAlt=project(oAlt);
             var noEffect=Math.abs(r.nw-rAlt.nw)<1;
-            noEffectEl.style.display = noEffect ? '' : 'none';
+            if(!noEffect){
+              noEffectEl.style.display='none';
+            } else {
+              // Three genuinely different reasons this toggle can be a no-op, checked
+              // in order of how directly they're verifiable rather than guessed at:
+              // (1) there's no SRS/STI allocation at all for a floor to raise: (2)
+              // project() flagged a lump-sum purchase (HDB deposit, condo down
+              // payment+ABSD) that drains CPF-OA and STI to nothing regardless of
+              // how much was banked beforehand -- wipedBy/wipedAge come straight from
+              // the simulation, not a guess; (3) otherwise, the reader's own
+              // allocation is already at or above the floor this toggle would set,
+              // which is the one case worth naming the reader's own number for.
+              noEffectEl.style.display='';
+              var hasAnyInvesting=(o.aI>0 || o.aS>0);
+              var wipedBy = rAlt.wipedBy || r.wipedBy;
+              var wipedAge = rAlt.wipedBy ? rAlt.wipedAge : r.wipedAge;
+              var msg;
+              if(!hasAnyInvesting){
+                msg='\u26a0 This toggle currently makes <b>zero difference</b> to your numbers \u2014 your SRS and STI sliders are both at 0%, so there\u2019s no investing allocation for a raise floor to apply to. Turning this on has nothing to raise until at least one of those sliders is above zero.';
+              } else if(wipedBy){
+                var what = wipedBy==='condo' ? 'condo purchase' : 'HDB flat purchase';
+                msg='\u26a0 This toggle currently makes <b>zero difference</b> to your numbers \u2014 not because of your allocation, but because your '+what+' at age <b>'+wipedAge+'</b> draws your entire CPF-OA and STI pot down to nothing regardless (down payment, TDSR shortfall and ABSD included, where they apply). Whatever extra this toggle would bank beforehand gets spent on that purchase either way, so it never survives long enough to compound. A floor can only raise what you\u2019d have going into that purchase \u2014 it can\u2019t guarantee any of it is still there afterward.';
+              } else {
+                var pct=Math.round((o.aS+o.aI)*100);
+                msg='\u26a0 This toggle currently makes <b>zero difference</b> to your numbers \u2014 your own SRS + STI allocation is already <b>'+pct+'%</b> of take-home, at or above the 50% floor this toggle would enforce, so it has nothing left to add. A floor can only ever raise what your sliders would otherwise give you, never add on top of it.';
+              }
+              noEffectEl.innerHTML=msg;
+            }
           }
         }
       }catch(e){}
@@ -4221,10 +4289,24 @@
         var hLine='est. grant <b>'+fmtK(r.grant)+'</b> · net price today <b>'+fmtK(r.netToday)+'</b> · instalment ~<b>'+fmt(r.mortM/Math.pow(1.025,Math.max(o.buyAge-o.age,0)))+'</b>/mo'+(o.se?' <b>in cash</b>':' from CPF');
         if(r.hdbMsr){
           var pct=Math.round(r.hdbMsr.ratio*100);
+          // Dynamic, case-specific rather than a single fixed warning: HDB caps loan
+          // tenure at the shorter of 25 years or (65 minus age at purchase), so
+          // buying later in life shortens the tenure directly, which raises the
+          // instalment for the same loan and makes the 30% MSR bind sooner on the
+          // same income -- exactly the "increasingly hard to service" effect worth
+          // surfacing, not just a binary pass/fail. tenureYrs<=0 (buying at 65+)
+          // gets its own distinct wording since there's no loan at all to speak of,
+          // not just a smaller one.
+          var tenureNote='';
+          if(r.hdbMsr.tenureYrs<=0){
+            tenureNote=' At age <b>'+o.buyAge+'</b>, there\'s no HDB loan tenure left at all — HDB caps it at 65 minus your age at purchase, so no loan is available then; the full price would need to be funded from CPF/savings instead.';
+          } else if(r.hdbMsr.tenureYrs<25){
+            tenureNote=' Buying at <b>'+o.buyAge+'</b> also shortens the maximum HDB loan tenure to just <b>'+r.hdbMsr.tenureYrs+' year'+(r.hdbMsr.tenureYrs===1?'':'s')+'</b> (HDB caps it at 65 minus your age at purchase, instead of the full 25) — a shorter tenure means a bigger instalment for the same loan amount.';
+          }
           if(r.hdbMsr.binding){
-            hLine+='<br>⚠ <b>capped by HDB\'s 30% Mortgage Servicing Ratio</b> (<span class="hint">MSR <button class="help">?</button><span class="bubble">Caps HDB and EC loan repayments at 30% of gross monthly household income — the tighter of the two loan limits for public housing; TDSR usually isn\'t the binding one.</span></span>) — the loan is limited so the instalment stays at 30% of gross income; an extra <b>'+fmtK(r.hdbMsr.extraDown)+'</b> had to be funded as downpayment instead.';
+            hLine+='<br>⚠ <b>capped by HDB\'s 30% Mortgage Servicing Ratio</b> (<span class="hint">MSR <button class="help">?</button><span class="bubble">Caps HDB and EC loan repayments at 30% of gross monthly household income — the tighter of the two loan limits for public housing; TDSR usually isn\'t the binding one.</span></span>) — the loan is limited so the instalment stays at 30% of gross income; an extra <b>'+fmtK(r.hdbMsr.extraDown)+'</b> had to be funded as downpayment instead.'+tenureNote;
           } else {
-            hLine+='<br>instalment is <b>'+pct+'% of gross income</b> (within HDB\'s 30% <span class="hint">MSR <button class="help">?</button><span class="bubble">Mortgage Servicing Ratio -- caps HDB and EC loan repayments at 30% of gross monthly household income, the tighter of the two loan limits for public housing.</span></span> limit).';
+            hLine+='<br>instalment is <b>'+pct+'% of gross income</b> (within HDB\'s 30% <span class="hint">MSR <button class="help">?</button><span class="bubble">Mortgage Servicing Ratio -- caps HDB and EC loan repayments at 30% of gross monthly household income, the tighter of the two loan limits for public housing.</span></span> limit).'+tenureNote;
           }
         }
         $('o-grantline').innerHTML=hLine;
