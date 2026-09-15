@@ -5736,13 +5736,16 @@
         ctx.strokeStyle='rgba(243,245,240,0.10)'; ctx.lineWidth=2; ctx.stroke();
       }
       ctx.textAlign='center';
+      // Shortened to match the Story card's footer exactly (same two lines, same
+      // sizes) -- previously a 3rd line here, and no line on this card mentioned
+      // trying your own numbers at all, unlike Story's. Same short copy on both
+      // now, no "Built with Claude" credit on either.
       ctx.fillStyle='#F3F5F0';
-      ctx.font='800 38px "Bricolage Grotesque"';
-      ctx.fillText('Financial Gladiator', W/2, logoCy+logoSize/2+56);
+      ctx.font='800 40px "Bricolage Grotesque"';
+      ctx.fillText('Try your own numbers →', W/2, logoCy+logoSize/2+60);
       ctx.fillStyle='#A5ADA6';
-      ctx.font='600 23px "Space Mono"';
-      ctx.fillText('Illustration only — not financial advice', W/2, logoCy+logoSize/2+92);
-      ctx.fillText('Built with Claude · try your own numbers', W/2, logoCy+logoSize/2+124);
+      ctx.font='600 25px "Space Mono"';
+      ctx.fillText('Financial Gladiator · illustration only, not financial advice', W/2, logoCy+logoSize/2+96);
     }
 
     // The Story layout itself -- one hero number, one personal line, one hook,
@@ -5757,30 +5760,65 @@
       grad.addColorStop(0,'#17191A'); grad.addColorStop(1,'#0B0D0B');
       ctx.fillStyle=grad; ctx.fillRect(0,0,W,H);
 
+      // Header now matches the app's own nav title (and the Scorecard card's
+      // header) exactly -- "The Singapore" / "Millionaire Roadmap" in
+      // Bricolage Grotesque, white then brand orange -- rather than the
+      // all-caps grey Space Mono line this used before, which didn't match
+      // anything else in the app or the other card format.
       ctx.textAlign='center';
-      ctx.fillStyle='#A5ADA6';
-      ctx.font='700 32px "Space Mono"';
-      ctx.fillText('THE SINGAPORE MILLIONAIRE ROADMAP', W/2, 130);
+      ctx.fillStyle='#F3F5F0';
+      ctx.font='700 40px "Bricolage Grotesque"';
+      ctx.fillText('The Singapore', W/2, 100);
+      ctx.fillStyle='#FF7A33';
+      ctx.font='800 58px "Bricolage Grotesque"';
+      ctx.fillText('Millionaire Roadmap', W/2, 168);
 
       ctx.strokeStyle='rgba(243,245,240,0.14)'; ctx.lineWidth=2;
-      ctx.beginPath(); ctx.moveTo(90,168); ctx.lineTo(W-90,168); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(90,204); ctx.lineTo(W-90,204); ctx.stroke();
 
-      ctx.fillStyle='#F3F5F0';
-      ctx.font='700 48px "Bricolage Grotesque"';
-      wrapTextCentered(ctx, "I'm going to retire a", W/2, 310, W-160, 58);
-      ctx.fillStyle='#FF7A33';
-      ctx.font='800 68px "Bricolage Grotesque"';
-      ctx.fillText('millionaire.', W/2, 392);
+      // Net worth at 65, in today's dollars -- the same number the hero figure
+      // below displays, just as a raw number rather than the already-formatted
+      // "S$914k" string, so it can actually be compared against the 1M/2M
+      // thresholds below. Computed once here and reused by both the headline
+      // logic and the "5 years earlier" delta further down, rather than
+      // calling into the engine twice for the same base scenario.
+      var E=window.SGMR_ENGINE, nwToday=null, baseR=null;
+      if(E){
+        try{ var baseOpts=E.readOpts(); baseR=E.project(baseOpts); nwToday=baseR.nw/baseR.disc; }catch(e){}
+      }
+
+      // "I'm going to retire a millionaire" is a claim -- it should only say
+      // that when the number underneath actually backs it up. Below S$1m it's
+      // dropped entirely rather than shown anyway (the hero figure moves up to
+      // fill the freed space); at S$2m+ it upgrades to "multi-millionaire"
+      // instead of quietly staying on the same line as someone at S$1.01m.
+      // Unknown net worth (engine unavailable) falls back to the original
+      // always-shown "millionaire." rather than guessing.
+      var showHeadline = (nwToday===null) || (nwToday>=1000000);
+      var heroBase = 616; // vertical anchor the hero number/chart/etc below are
+                           // all measured from -- see the "no headline" branch
+      if(showHeadline){
+        ctx.fillStyle='#F3F5F0';
+        ctx.font='700 48px "Bricolage Grotesque"';
+        wrapTextCentered(ctx, "I'm going to retire a", W/2, 346, W-160, 58);
+        var word = (nwToday!==null && nwToday>=2000000) ? 'multi-millionaire.' : 'millionaire.';
+        var wordSize=fitSize(ctx,word,W-160,68,'800','Bricolage Grotesque');
+        ctx.fillStyle='#FF7A33';
+        ctx.font='800 '+wordSize+'px "Bricolage Grotesque"';
+        ctx.fillText(word, W/2, 428);
+      } else {
+        heroBase = 460; // reclaims the ~156px the two headline lines would've used
+      }
 
       var heroSize=fitSize(ctx,nw,W-140,220,'800','Bricolage Grotesque');
       ctx.fillStyle='#FF7A33';
       ctx.font='800 '+heroSize+'px "Bricolage Grotesque"';
-      ctx.fillText(nw, W/2, 580+heroSize*0.32);
+      ctx.fillText(nw, W/2, heroBase+heroSize*0.32);
       ctx.fillStyle='#A5ADA6';
       ctx.font='600 30px "Space Mono"';
-      ctx.fillText("net worth at 65, in today's dollars", W/2, 580+heroSize*0.32+62);
+      ctx.fillText("net worth at 65, in today's dollars", W/2, heroBase+heroSize*0.32+62);
 
-      var chartY=580+heroSize*0.32+140, chartH=420;
+      var chartY=heroBase+heroSize*0.32+140, chartH=420;
       drawMiniChart(ctx, 90, chartY, W-180, chartH);
       // drawMiniChart ends its own internal loop with ctx.textAlign left at 'left'
       // (set for its last milestone-dot label) and never resets it -- every centred
@@ -5803,10 +5841,9 @@
       // there's actually room to pull the start date earlier (age>18, matching
       // that chip's own enabled/disabled rule) and the engine is available --
       // both silently skipped otherwise, same as the chip disabling itself.
-      var ageNum=parseFloat(age), E=window.SGMR_ENGINE;
-      if(E && isFinite(ageNum) && ageNum>18){
+      var ageNum=parseFloat(age);
+      if(E && baseR && isFinite(ageNum) && ageNum>18){
         try{
-          var baseOpts=E.readOpts(), baseR=E.project(baseOpts);
           var altOpts=E.readOpts();
           var yrs=Math.min(5, altOpts.age-18);
           altOpts.age-=yrs; altOpts.buyAge=Math.max(altOpts.buyAge, altOpts.age);
@@ -5935,13 +5972,17 @@ function drawQuizResultCard(isStory){
         ctx.strokeStyle='rgba(243,245,240,0.10)'; ctx.lineWidth=2; ctx.stroke();
       }
       ctx.textAlign='center';
+      // Unified with every other card's footer now: a quiz-appropriate CTA
+      // line instead of a static "Financial Gladiator" label, one muted line
+      // below it, no "Built with Claude" credit. This is the exact same copy,
+      // size and position drawQuizResultCardStory already used below, so the
+      // quiz's two formats now match each other too, not just the main card's.
       ctx.fillStyle='#F3F5F0';
-      ctx.font='800 38px "Bricolage Grotesque"';
-      ctx.fillText('Financial Gladiator', W/2, logoCy+logoSize/2+56);
+      ctx.font='800 40px "Bricolage Grotesque"';
+      ctx.fillText('Take the quiz →', W/2, logoCy+logoSize/2+60);
       ctx.fillStyle='#A5ADA6';
-      ctx.font='600 23px "Space Mono"';
-      ctx.fillText('Test your own knowledge at the link below', W/2, logoCy+logoSize/2+92);
-      ctx.fillText('Built with Claude \u00b7 try the full glossary', W/2, logoCy+logoSize/2+124);
+      ctx.font='600 25px "Space Mono"';
+      ctx.fillText('Financial Gladiator · The Singapore Millionaire Roadmap', W/2, logoCy+logoSize/2+96);
     }
 
     // Same reasoning as drawShareCardStory: score and rating are the whole point,
