@@ -4641,20 +4641,39 @@
       var unallocRow0=$('row-unalloc0');
       if(unallocRow0) unallocRow0.style.display = unalloc0>1 ? '' : 'none';
       $('b-unalloc0').textContent = fmt(unalloc0);
-      // Afford-ability check: fires when the budget goes negative WITH the car, and
-      // would NOT go negative without it -- the car itself is what breaks the budget.
-      // Used to auto-revert the selection to "No" and hide the age/OMV sliders, but
-      // that created a trap: re-selecting "Yes" to try a cheaper car instantly
-      // re-denied itself before the reader could ever reach the OMV slider again (it
-      // was still holding the too-expensive value from before denial). Now the choice
-      // and the sliders always stay exactly as the reader left them, the real numbers
-      // (however bad) flow through to the headline figures, and only this warning
-      // turns on or off as they adjust the car, its age, or their income -- including
-      // raising income to see what it'd take to actually afford it.
+      // Afford-ability check. Broadened to match the condo check's logic exactly --
+      // it used to require the car be the SOLE, isolated cause of a negative budget
+      // right now (net0raw<0 AND net0raw+carCash0>=0), which meant it went silent
+      // the moment anything else (a condo, in particular) was ALSO part of the
+      // problem -- adding a car on top of an already-broken budget never triggered
+      // it, since removing the car alone wouldn't have fixed things either. It also
+      // only ever looked at year-0 cash flow, so a car bought at some FUTURE age
+      // never triggered it at all even though it clearly still wrecks the final net
+      // worth (confirmed: sweeping car purchase age produces real, different
+      // outcomes at every age, but the warning was blind to all of it until the car
+      // happened to already be active today). Now checks the same final-outcome
+      // signals condo does (negative net worth at 65, or retirement income under
+      // S$3,000/mo) in addition to today's cash flow, and fires whenever the car is
+      // selected and EITHER is true, regardless of what else is also contributing.
       var carWarn=$('car-afford-warn');
       if(carWarn){
-        if(carCash0>0 && net0raw<0 && (net0raw+carCash0)>=0){
-          carWarn.innerHTML='⚠ <b>This car doesn\'t fit your budget.</b> At '+fmt(carCash0)+'/mo, it pushes Net Spendable to '+fmt(net0raw)+' — below zero, after Necessities, Wants, SRS, STI and housing are already accounted for. Raise your income, cut Necessities/Wants, delay the purchase, or choose a cheaper car.';
+        var todayNWc=r.nw/r.disc, todayIncc=r.income/r.disc;
+        var carBeyondBudget = (carCash0>0 && net0raw<0) || todayNWc<0 || todayIncc<3000;
+        if(carBeyondBudget){
+          if(carCash0>0 && net0raw<0){
+            carWarn.innerHTML='⚠ <b>This car doesn\'t fit your budget.</b> At '+fmt(carCash0)+'/mo, it pushes Net Spendable to '+fmt(net0raw)+' — below zero, after Necessities, Wants, SRS, STI and housing are already accounted for. Raise your income, cut Necessities/Wants, delay the purchase, or choose a cheaper car.';
+          } else {
+            var carBits=[];
+            if(todayNWc<0) carBits.push('net worth at 65 negative ('+fmtK(todayNWc)+')');
+            if(todayIncc<3000){
+              // Same manual sign-handling as the condo warning -- fmt() puts the minus
+              // sign after "S$" (S$-1,718), which reads oddly when the figure itself
+              // going negative is exactly the point being flagged.
+              var incStrC=(todayIncc<0?'-S$':'S$')+Math.round(Math.abs(todayIncc)).toLocaleString('en-US')+'/mo';
+              carBits.push('retirement income at just '+incStrC);
+            }
+            carWarn.innerHTML='⚠ <b>This car doesn\'t fit your budget.</b> It leaves your '+carBits.join(' and ')+'.';
+          }
           carWarn.style.display='block';
         } else {
           carWarn.style.display='none';
