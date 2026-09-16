@@ -4367,53 +4367,6 @@
       } else { $('o-grantline').innerHTML=''; }
       if(o.condo){
         var cd=CONDOS[o.condoIdx];
-        // Afford-ability gate: mirrors the car gate later in this function (see its
-        // own comment) -- if the purchase itself can't be funded (r.condoMsr.unfunded,
-        // set once CPF-OA and STI together still can't cover the downpayment/ABSD
-        // shortfall after the loan is TDSR-capped) or leaves the household worse off
-        // by 65 (net worth negative, or retirement income under S$3,000/mo today),
-        // deny the selection and hide the size/age sliders (via the existing
-        // condoOn-based f-csize/f-cage toggle in syncUI, which the recursive calc()
-        // call below re-triggers naturally) rather than leave controls visible for a
-        // purchase already shown not to work. Same "revert, recompute, THEN set the
-        // warning" ordering the car gate uses, for the same reason: the recursive
-        // calc() call re-reaches this whole block with condo now off, correctly
-        // clears o-condoline and would clear this warning too if set beforehand --
-        // setting it after, and returning immediately so nothing stale overwrites it,
-        // is what makes it survive.
-        var todayNW=r.nw/r.disc, todayInc=r.income/r.disc;
-        var condoBeyondBudget=(r.condoMsr && r.condoMsr.unfunded>0) || todayNW<0 || todayInc<3000;
-        if(!window.__condoAffordReentry && condoBeyondBudget){
-          window.__condoAffordReentry=true;
-          var unfundedAtDenial=(r.condoMsr?r.condoMsr.unfunded:0), nwAtDenial=todayNW, incAtDenial=todayInc;
-          $('i-condo').value='no';
-          calc();
-          window.__condoAffordReentry=false;
-          // calc() alone (not the full recompute()) doesn't re-run syncUI(), which is
-          // what normally toggles f-csize/f-cage off via condoOn -- without this, they'd
-          // stay visible for one more interaction after denial instead of hiding right
-          // away. Harmless if syncUI() already got to them first.
-          var fcs=$('f-csize'), fca=$('f-cage'); if(fcs) fcs.style.display='none'; if(fca) fca.style.display='none';
-          var condoWarnEl=$('condo-afford-warn');
-          if(condoWarnEl){
-            if(unfundedAtDenial>0){
-              condoWarnEl.innerHTML='⚠ <b>A condo upgrade is beyond your budget.</b> Even after draining CPF-OA and the STI pot completely, <b>'+fmtK(unfundedAtDenial)+'</b> of the downpayment still can\'t be covered — a bank wouldn\'t fund this either.';
-            } else {
-              var bits=[];
-              if(nwAtDenial<0) bits.push('net worth at 65 negative ('+fmtK(nwAtDenial)+')');
-              if(incAtDenial<3000){
-                // fmt() puts the minus sign after "S$" (S$-1,718) since it was written
-                // for figures that are never negative elsewhere in this file -- wrong
-                // here, where retirement income going negative is exactly the point.
-                var incStr=(incAtDenial<0?'-S$':'S$')+Math.round(Math.abs(incAtDenial)).toLocaleString('en-US')+'/mo';
-                bits.push('retirement income at just '+incStr);
-              }
-              condoWarnEl.innerHTML='⚠ <b>A condo upgrade is beyond your budget.</b> It leaves your '+bits.join(' and ')+'.';
-            }
-            condoWarnEl.style.display='block';
-          }
-          return;
-        }
         var mcst=Math.round(cd.mcst*0.7), sink=cd.mcst-mcst;
         var line='monthly outgoings today: MCST <b>'+fmt(mcst)+'</b> + sinking fund <b>'+fmt(sink)+'</b> + property tax <b>'+fmt(cd.tax)+'</b> + insurance <b>S$40</b> = <b>'+fmt(cd.mcst+cd.tax+40)+'/mo</b> · price ~<b>'+fmtK(cd.p)+'</b>, bank loan 3.2%';
         if(!o.btoSell){
@@ -4428,7 +4381,38 @@
           }
         }
         $('o-condoline').innerHTML=line;
-        var condoWarnEl2=$('condo-afford-warn'); if(condoWarnEl2) condoWarnEl2.style.display='none';
+        // Deliberately does NOT touch i-condo's value or hide f-csize/f-cage anymore --
+        // that used to auto-revert the selection back to "No" and hide the sliders the
+        // moment the current size/age was unaffordable, which meant re-selecting "Yes"
+        // to try a SMALLER condo instantly re-denied itself before the reader could ever
+        // reach the size slider again (it was still holding the too-big value from
+        // before). Now the choice and the sliders always stay exactly as the reader left
+        // them, the actual (possibly bad) numbers flow through to the headline figures
+        // for real, and only this warning box turns on or off as they adjust size, age
+        // or income -- including raising income to see what it'd take to afford it.
+        var todayNW=r.nw/r.disc, todayInc=r.income/r.disc;
+        var condoBeyondBudget=(r.condoMsr && r.condoMsr.unfunded>0) || todayNW<0 || todayInc<3000;
+        var condoWarnEl=$('condo-afford-warn');
+        if(condoWarnEl){
+          if(!condoBeyondBudget){
+            condoWarnEl.style.display='none';
+          } else if(r.condoMsr && r.condoMsr.unfunded>0){
+            condoWarnEl.innerHTML='⚠ <b>A condo upgrade is beyond your budget.</b> Even after draining CPF-OA and the STI pot completely, <b>'+fmtK(r.condoMsr.unfunded)+'</b> of the downpayment still can\'t be covered — a bank wouldn\'t fund this either.';
+            condoWarnEl.style.display='block';
+          } else {
+            var bits=[];
+            if(todayNW<0) bits.push('net worth at 65 negative ('+fmtK(todayNW)+')');
+            if(todayInc<3000){
+              // fmt() puts the minus sign after "S$" (S$-1,718) since it was written for
+              // figures that are never negative elsewhere in this file -- wrong here,
+              // where retirement income going negative is exactly the point.
+              var incStr=(todayInc<0?'-S$':'S$')+Math.round(Math.abs(todayInc)).toLocaleString('en-US')+'/mo';
+              bits.push('retirement income at just '+incStr);
+            }
+            condoWarnEl.innerHTML='⚠ <b>A condo upgrade is beyond your budget.</b> It leaves your '+bits.join(' and ')+'.';
+            condoWarnEl.style.display='block';
+          }
+        }
       } else { $('o-condoline').innerHTML=''; var cw=$('condo-afford-warn'); if(cw) cw.style.display='none'; }
       if(o.car){
         var c=carCalc(o.omv);
@@ -4657,35 +4641,24 @@
       var unallocRow0=$('row-unalloc0');
       if(unallocRow0) unallocRow0.style.display = unalloc0>1 ? '' : 'none';
       $('b-unalloc0').textContent = fmt(unalloc0);
-      // Afford-ability gate: if the budget goes negative WITH the car, and would NOT
-      // go negative WITHOUT it, the car itself is what breaks the budget -- deny the
-      // selection rather than silently letting Net Spendable read as impossible.
+      // Afford-ability check: fires when the budget goes negative WITH the car, and
+      // would NOT go negative without it -- the car itself is what breaks the budget.
+      // Used to auto-revert the selection to "No" and hide the age/OMV sliders, but
+      // that created a trap: re-selecting "Yes" to try a cheaper car instantly
+      // re-denied itself before the reader could ever reach the OMV slider again (it
+      // was still holding the too-expensive value from before denial). Now the choice
+      // and the sliders always stay exactly as the reader left them, the real numbers
+      // (however bad) flow through to the headline figures, and only this warning
+      // turns on or off as they adjust the car, its age, or their income -- including
+      // raising income to see what it'd take to actually afford it.
       var carWarn=$('car-afford-warn');
-      if(!window.__carAffordReentry && carCash0>0 && net0raw<0 && (net0raw+carCash0)>=0){
-        // The recursive calc() call below re-runs this WHOLE function with the car now
-        // off, which correctly recomputes everything else -- but it also re-reaches this
-        // same block and, seeing no car, falls into the "hide the warning" branch, wiping
-        // out the message before the user ever sees it. So: revert and recompute FIRST,
-        // then set the warning content/visibility AFTER -- nothing later in this pass can
-        // clobber it once the recursive call has already returned.
-        window.__carAffordReentry=true;
-        var carCashAtDenial=carCash0, net0rawAtDenial=net0raw;
-        $('i-car').value='no';
-        calc();
-        window.__carAffordReentry=false;
-        // Same reason as the equivalent line in the condo gate: calc() alone doesn't
-        // re-run syncUI(), which is what normally toggles f-carage/f-omv off via
-        // carOn -- without this they'd stay visible for one more interaction after
-        // denial instead of hiding right away.
-        var fca2=$('f-carage'), fom=$('f-omv'); if(fca2) fca2.style.display='none'; if(fom) fom.style.display='none';
-        var warnEl=$('car-afford-warn');
-        if(warnEl){
-          warnEl.innerHTML='\u26a0 <b>This car doesn\'t fit your budget.</b> At '+fmt(carCashAtDenial)+'/mo, it would push Net Spendable to '+fmt(net0rawAtDenial)+' \u2014 below zero, after Necessities, Wants, SRS, STI and housing are already accounted for. The car selection has been turned back off. Raise your income, cut Necessities/Wants, or delay the purchase to a point where you can genuinely afford it.';
-          warnEl.style.display='block';
+      if(carWarn){
+        if(carCash0>0 && net0raw<0 && (net0raw+carCash0)>=0){
+          carWarn.innerHTML='⚠ <b>This car doesn\'t fit your budget.</b> At '+fmt(carCash0)+'/mo, it pushes Net Spendable to '+fmt(net0raw)+' — below zero, after Necessities, Wants, SRS, STI and housing are already accounted for. Raise your income, cut Necessities/Wants, delay the purchase, or choose a cheaper car.';
+          carWarn.style.display='block';
+        } else {
+          carWarn.style.display='none';
         }
-        return;
-      } else if(carWarn){
-        carWarn.style.display='none';
       }
       // SRS: max % this slider could sensibly reach before the legal cap kicks in + tax-zero hint
       var neededAnnual=Math.max(ch0-20000,0), neededMonthly=neededAnnual/12;
