@@ -3476,6 +3476,16 @@
       // HDB economics
       var netNom=0,deposit=0,loan0=0,mortM=0,grant=0,netToday=0;
       var hdbMsr=null;
+      // Needed by BOTH paths below: a genuine future purchase (to size the loan) and,
+      // separately, an "already own" household selling their existing flat to help
+      // fund a condo upgrade (bt=sell reads flatPrice as that flat's current market
+      // value). It used to only be declared inside the !alreadyOwn branch, so an
+      // already-own household choosing to sell hit a plain `undefined` here --
+      // undefined*inflation is NaN, and that NaN then propagated through equity,
+      // the condo loan sizing, and every year after, turning the whole projection's
+      // net worth and retirement income into NaN the moment they picked "I already
+      // own a HDB"/"condo" and chose to sell it.
+      var flatPrice=FLATS[o.flatIdx].p*(o.isResale?1.5:1);
       // 'already own' means no purchase ever happens, so no grant, deposit or mortgage
       // should be computed for it — only a genuine future BTO purchase gets these.
       if(o.own && !o.alreadyOwn){
@@ -3489,7 +3499,6 @@
         // gaps -- e.g. 2-room Flexi BTOs launching from ~S$140k against a resale
         // average nearer S$360k for comparable units), before a CPF Housing Grant
         // that runs meaningfully smaller than the new-BTO EHG it's built from here.
-        var flatPrice=FLATS[o.flatIdx].p*(o.isResale?1.5:1);
         if(o.isResale) grant=grant*0.5;
         netToday=Math.max(flatPrice-grant, flatPrice*0.2);
         netNom=netToday*inflB; deposit=0.2*netNom; loan0=0.8*netNom;
