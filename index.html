@@ -3669,8 +3669,34 @@
         // buying, and equally someone who already owns their home outright.
         var familySaving = (o.alreadyOwn || (o.own && !hdbBought && a<o.buyAge && a<o.rentStartAge)) ? rentBase*infl : 0;
         if(o.own && !hdbBought && a>=o.buyAge){
-          var nd=deposit, fOA=Math.min(OA,nd); OA-=fOA; nd-=fOA;
-          if(nd>0){ var fS=Math.min(STI,nd); STI-=fS; nd-=fS; }
+          // Every draw from OA/STI in this whole purchase section (deposit, ABSD, down
+          // payment, TDSR gap, existing mortgage payoff) is now clamped at 0 on the
+          // "how much is available" side -- Math.min(STI,need) alone assumes STI is
+          // never negative, which stopped being true once unfunded shortfalls elsewhere
+          // started leaving STI negative (debt) rather than floored at zero. Once that
+          // can happen, Math.min(STI,need) with a negative STI picks the NEGATIVE value
+          // (it's smaller), and STI-=that then ADDS it back to zero while need-=that
+          // makes the remaining need bigger -- silently erasing existing debt and
+          // inflating the very shortfall being computed. Math.max(0,...) is what a real
+          // "how much can I actually draw right now" check has to mean once balances can
+          // go negative: never less than zero.
+          var nd=deposit, fOA=Math.max(0,Math.min(OA,nd)); OA-=fOA; nd-=fOA;
+          if(nd>0){
+            var fS=Math.max(0,Math.min(STI,nd)); STI-=fS; nd-=fS;
+            // Same bug the condo downpayment had, never fixed here: if OA and STI
+            // together still can't cover the HDB deposit (MSR can inflate this well
+            // past the plain 20% if the loan itself gets capped), the remainder used
+            // to just vanish -- the purchase went ahead anyway with the gap costing
+            // nothing beyond whatever was already saved. Since the HDB purchase
+            // happens FIRST, years before any condo upgrade, that made everything
+            // accumulated before it (a car bought sooner vs. later, in particular)
+            // functionally invisible to the final numbers: whatever the gap in
+            // savings was at purchase time, it just got silently written off either
+            // way, so two different pre-purchase trajectories produced the same
+            // outcome. Treated the same way the condo gap now is -- as debt that
+            // keeps compounding against the household, not a cost that disappears.
+            if(nd>0){ STI-=nd; nd=0; }
+          }
           hdbLoan=loan0; hdbBought=true; hdbMortM=mortM;
           if(wipedBy===null && (STI+OA)<1000){ wipedBy='hdb'; wipedAge=a; }
           var freed=rentBase*infl;
@@ -3693,13 +3719,13 @@
             hdbLoan=0; soldBTO=true;
           } else {
             absdPaid=0.20*cprice;
-            var ab=absdPaid, aOA=Math.min(OA,ab); OA-=aOA; ab-=aOA;
-            if(ab>0){ var aS=Math.min(STI,ab); STI-=aS; ab-=aS; }
+            var ab=absdPaid, aOA=Math.max(0,Math.min(OA,ab)); OA-=aOA; ab-=aOA;
+            if(ab>0){ var aS=Math.max(0,Math.min(STI,ab)); STI-=aS; ab-=aS; }
             rentingOutBTO=true;
           }
           var downT=0.25*cprice, need2=Math.max(downT-equity,0);
-          var dOA=Math.min(OA,need2); OA-=dOA; need2-=dOA;
-          if(need2>0){ var dS=Math.min(STI,need2); STI-=dS; need2-=dS; }
+          var dOA=Math.max(0,Math.min(OA,need2)); OA-=dOA; need2-=dOA;
+          if(need2>0){ var dS=Math.max(0,Math.min(STI,need2)); STI-=dS; need2-=dS; }
           var equityTotal=Math.min(equity+downT,cprice);
           var condoLoanDesired=Math.max(cprice-Math.max(equity,downT),0);
           var rc2=0.032/12;
@@ -3713,9 +3739,9 @@
           var extraDownCondo=condoLoanDesired-condoLoan;
           var unfundedCondo=0;
           if(extraDownCondo>0){
-            var eOA=Math.min(OA,extraDownCondo); OA-=eOA; extraDownCondo-=eOA;
+            var eOA=Math.max(0,Math.min(OA,extraDownCondo)); OA-=eOA; extraDownCondo-=eOA;
             if(extraDownCondo>0){
-              var eS=Math.min(STI,extraDownCondo); STI-=eS; extraDownCondo-=eS;
+              var eS=Math.max(0,Math.min(STI,extraDownCondo)); STI-=eS; extraDownCondo-=eS;
               // If OA and STI together still can't cover the down payment/ABSD
               // shortfall once the loan itself is TDSR-capped, the remainder used
               // to just be dropped here -- the purchase went ahead regardless,
@@ -3766,7 +3792,7 @@
         var exMortCash = 0;
         if(exMortActive){
           if(o.ownsCondo || o.se || o.mortgageCash){ exMortCash = o.exMort; }
-          else { var fromOA=Math.min(OA, o.exMort*12); OA-=fromOA; exMortCash=(o.exMort*12-fromOA)/12; }
+          else { var fromOA=Math.max(0,Math.min(OA, o.exMort*12)); OA-=fromOA; exMortCash=(o.exMort*12-fromOA)/12; }
         }
         var carCost=(car && a>=o.carAge)?car.monthly*infl:0;
         var btoNetRent=0;
