@@ -1186,7 +1186,7 @@
 <div class="field toggle-field" id="f-advanced-cpf">
         <label class="toggle-label">
           <input type="checkbox" id="i-advanced-cpf">
-          <span>Show advanced CPF controls <span class="hint"><button class="help">?</button><span class="bubble">Three extra choices most people won't need to touch: deferring CPF LIFE payouts to 70, switching CPF LIFE plans (Standard/Escalating/Basic), and a voluntary CPF top-up (RSTU, below in Allocation &amp; tax). Hidden by default to keep this screen simpler for a first look -- switching this on reveals all three, and if any is already set to something other than its default (say, from a shared link), this switches on by itself so nothing you've set stays hidden from you.</span></span></span>
+          <span>Show advanced CPF controls <span class="hint"><button class="help">?</button><span class="bubble">Two extra choices most people won't need to touch: deferring CPF LIFE payouts to 70, and switching CPF LIFE plans (Standard/Escalating/Basic). Hidden by default to keep this screen simpler for a first look -- switching this on reveals both, and if either is already set to something other than its default (say, from a shared link), this switches on by itself so nothing you've set stays hidden from you. The CPF top-up slider lives in Allocation &amp; tax instead, always visible there alongside Necessities/Wants/SRS/STI -- it's a monthly budget choice competing for the same money as those, not a retirement-payout structure choice like the two here.</span></span></span>
         </label>
       </div>
 <div id="advanced-cpf-group-1" style="display:none">
@@ -1231,7 +1231,7 @@
           <div class="milestones flow" id="a-srsnote" style="margin-top:8px"></div>
           <div class="milestones flow" id="srs-excess-note" style="display:none;margin-top:8px;background:#E2604F1A;border:1px solid #E2604F55;border-radius:6px;padding:10px 12px;color:var(--brick)"></div>
         </div>
-        <div class="alloc-row" id="advanced-cpf-group-2" style="display:none">
+        <div class="alloc-row">
           <div class="alloc-head"><span class="l"><i class="dot" style="background:var(--srs)"></i>CPF top-up (RSTU), monthly <span class="hint"><button class="help">?</button><span class="bubble" id="bub-cpftopup">A voluntary cash top-up to your own CPF Special Account — a separate relief from SRS, up to S$8,000/yr (~S$667/mo). Draws from the same shared budget as Necessities/Wants/SRS/STI below.</span></span></span><span class="amt"><output id="o-cpftopup">S$0/mo</output></span></div>
           <input type="range" id="i-cpftopup" min="0" max="667" step="10" value="0" style="accent-color:var(--srs)">
         </div>
@@ -2273,6 +2273,7 @@
       updateFloatSummary(); updateBreadcrumb(name);
       if(name==='why' && window.refreshTrapCosts) window.refreshTrapCosts();
       if(name==='why' && window.refreshDivorceScenarios) window.refreshDivorceScenarios();
+      if(name==='cover' && window.__coverRender) window.__coverRender();
     }
 
     if(opts.instant || reduceMotion || !oldEl || oldName===name){
@@ -2292,6 +2293,7 @@
       updateFloatSummary(); updateBreadcrumb(name);
       if(name==='why' && window.refreshTrapCosts) window.refreshTrapCosts();
       if(name==='why' && window.refreshDivorceScenarios) window.refreshDivorceScenarios();
+      if(name==='cover' && window.__coverRender) window.__coverRender();
       setTimeout(function(){ if(newEl) newEl.classList.remove('tab-in-l','tab-in-r'); },260);
     },160);
   }
@@ -3981,13 +3983,16 @@
         window.__advancedCpfInitialized=true;
         var deferOn = $('i-cpflifedefer') ? $('i-cpflifedefer').checked : false;
         var planNonDefault = $('i-cpflifeplan') ? $('i-cpflifeplan').value!=='standard' : false;
-        var topUpOn = $('i-cpftopup') ? (+$('i-cpftopup').value)>0 : false;
-        if(deferOn || planNonDefault || topUpOn) toggle.checked=true;
+        // CPF top-up used to also auto-reveal this toggle -- dropped along with moving
+        // its slider out of the group entirely (see the always-visible .alloc-row for
+        // it now). It's a monthly budget choice, not a CPF LIFE payout-structure choice
+        // like the two genuinely gated here, so it no longer has anything to do with
+        // this toggle in either direction.
+        if(deferOn || planNonDefault) toggle.checked=true;
       }
       var show=toggle.checked;
-      var g1=$('advanced-cpf-group-1'), g2=$('advanced-cpf-group-2');
+      var g1=$('advanced-cpf-group-1');
       if(g1) g1.style.display = show ? 'block' : 'none';
-      if(g2) g2.style.display = show ? '' : 'none';
     }
     function syncUI(){
       // Guarded: this is new code, running at the very top of syncUI() on every
@@ -5062,7 +5067,17 @@
     // showing/hiding the advanced CPF section actually happens (see i-advanced-cpf's
     // own listener below) -- the one interaction that genuinely shifts enough layout
     // to need it.
-    var recompute=function(){ syncUI(); calc(); saveCalcStateLocal(); syncSaveSlider(); refreshWhatIfs(); if(window.refreshGrantLive) window.refreshGrantLive(); if(window.__syncCoverFromCalc) window.__syncCoverFromCalc(); };
+    var recompute=function(){
+      // Marks that the reader has genuinely interacted with THIS tab's own controls, as
+      // opposed to Tab 1 merely pushing its own age/salary/household/spouse values in
+      // (that push wraps itself in __coverToCalcInProgress specifically so this can tell
+      // the difference) or the very first render on page load (which isn't an action the
+      // reader took at all). Read by Tab 1's own render() below to decide whether to keep
+      // showing its own bare-bones estimate or switch to mirroring this tab's full result.
+      if(window.__firstRecomputeDone && !window.__coverToCalcInProgress) window.__calcTabEngaged=true;
+      window.__firstRecomputeDone=true;
+      syncUI(); calc(); saveCalcStateLocal(); syncSaveSlider(); refreshWhatIfs(); if(window.refreshGrantLive) window.refreshGrantLive(); if(window.__syncCoverFromCalc) window.__syncCoverFromCalc();
+    };
 
     // Deliberately standalone -- reads income/age/mortgage/household straight from the
     // same Tab 2 inputs everything else uses, but never touches project() or feeds
@@ -6693,6 +6708,19 @@ function drawQuizResultCard(isStory){
         window.__coverToCalcInProgress = false;
       }
 
+      // Once the reader has genuinely used the calculator itself (Tab 2) -- not just
+      // had their age/salary/household mirrored into it by the push above -- prefer
+      // its full, detailed result (condo, car, existing mortgage, growth mode, custom
+      // allocations, everything) over this tab's own bare age/salary/household-only
+      // estimate. Before that point there's nothing more detailed to defer to yet, so
+      // the simple estimate remains exactly what a first-time reader sees.
+      if(window.__calcTabEngaged && window.SGMR_ENGINE){
+        try{
+          var fullO=window.SGMR_ENGINE.readOpts(), fullR=window.SGMR_ENGINE.project(fullO);
+          r=fullR; d=fullR.disc;
+        }catch(e){}
+      }
+
       countTo(document.getElementById('hero-nw'), r.nw/d);
       document.getElementById('hero-inc').textContent=money(r.income/d);
 
@@ -6799,6 +6827,12 @@ function drawQuizResultCard(isStory){
       set('cb-you',       moneyK(contributed)+' was contributed, by you and your employer.');
       set('cb-compound',  'Pure compounding added '+moneyK(growth)+' more.');
     }
+    // Exposed so switchTab() can call this whenever the reader navigates TO this tab --
+    // without it, engaging with Tab 2's presets (or any of its own controls) correctly
+    // set __calcTabEngaged, but nothing then re-ran THIS tab's own render() until the
+    // reader happened to type into one of ITS fields again, leaving Tab 1 showing a
+    // stale number until then.
+    window.__coverRender = render;
 
     salEl.addEventListener('input',function(){ formatSalaryField(salEl); autoSizeField(salEl); render(); });
     salEl.addEventListener('change',render);
