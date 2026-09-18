@@ -1270,8 +1270,12 @@
 </details>
 
       <details class="ctl-group" id="proj65-anchor">
-      <summary><span class="cg-title">Projected at 65</span></summary>
+      <summary><span class="cg-title">Projection at retirement</span></summary>
       <div class="cg-body">
+      <div class="field" id="f-worktill" style="margin-bottom:18px">
+        <label>Work till age — <output id="o-worktill">65</output> <span class="hint"><button class="help">?</button><span class="bubble">Stop earning before 65 and CPF/SRS contributions stop with it — but CPF LIFE payouts still can't legally start before 65 (or later, if deferred), no matter how early you actually stop working. Necessities and Wants freeze at whatever they were the year you stop, inflated forward, and are drawn from your STI pot to bridge the gap until 65. CPF and SRS just keep compounding untouched in the meantime — assumes you and your partner (if any) stop working the same year.</span></span></label>
+        <input type="range" id="i-worktill" min="18" max="65" step="1" value="65">
+      </div>
       <h3 class="chart-title">Net worth over your career</h3>
       <div class="chart-card"><svg id="calc-chart" viewBox="0 0 900 430" role="img" aria-label="Net worth over your career"></svg></div>
       <div class="dollar-toggle" role="group" aria-label="Dollar basis">
@@ -2454,6 +2458,7 @@
     ['i-prebuy','pb'],['i-prebuyage','pba'],['i-marry','mr'],['i-wed','w'],
     ['i-condo','cd'],['i-csize','cs'],['i-cage','ca'],['i-bto','bt'],
     ['i-car','cr'],['i-carage','cra'],['i-omv','om'],['i-pa','pa'],['i-paage','paa'],['i-cpftopup','ct'],
+    ['i-worktill','wt'],
     ['a-need','an'],['a-want','aw'],['a-srs','as'],['a-inv','ai']
   ];
   function getCalcState(){
@@ -2477,7 +2482,7 @@
     // first, so nothing set below can be silently clamped by a stale constraint from
     // whatever was showing before -- syncUI()/calc() will correctly re-narrow every one
     // of them immediately afterward, once they run against the newly-restored values.
-    ['a-need','a-want','a-inv','a-srs','i-buy','i-prebuyage','i-cage','i-carage'].forEach(function(id){
+    ['a-need','a-want','a-inv','a-srs','i-buy','i-prebuyage','i-cage','i-carage','i-worktill'].forEach(function(id){
       var el=document.getElementById(id); if(el){ el.min=0; el.max=200; }
     });
     CALC_INPUT_IDS.forEach(function(pair){
@@ -3400,6 +3405,11 @@
       var o={};
       o.age=+$('i-age').value; o.sal0=+$('i-sal').value; o.mode=$('i-mode').value;
       o.cr=+$('i-raise').value/100; o.stiR=+$('i-sti').value/100; o.retire=65;
+      // Defaults to 65 (i.e. "work the whole way") whenever the slider itself doesn't
+      // exist yet in the DOM -- keeps every other caller of readOpts() (trap costs,
+      // what-ifs, share cards, the divorce/starting-late synthetic scenarios) working
+      // unchanged without needing to know this field exists at all.
+      o.workTill=$('i-worktill')?+$('i-worktill').value:65;
       o.house=$('i-house').value; o.single=(o.house==='single'||o.house==='singlemom');
       o.hasKid=(o.house==='kid'||o.house==='kid2'||o.house==='singlemom');
       o.numKids=o.house==='kid'?1:(o.house==='kid2'?2:(o.house==='singlemom'?1:0));
@@ -3463,6 +3473,15 @@
     function project(o){
       var yrs=o.retire-o.age; if(yrs<1)yrs=1;
       var disc=Math.pow(1.025,yrs);
+      // "Work till age" is deliberately kept separate from o.retire/yrs above: the loop
+      // itself always runs all the way to 65 regardless of when the reader stops
+      // earning, because CPF-OA/SA/RA keep compounding untouched with zero new
+      // contributions (OA*=1.025, RET*=1.04 already apply unconditionally every year),
+      // and CPF LIFE legally cannot start paying out before 65 (or later, if deferred)
+      // no matter how early someone stops working. Only income, CPF/SRS contributions
+      // and new STI investing stop early -- clamped defensively in case a stale
+      // workTill from an old saved state ever fell outside the current age/65 range.
+      var workTill=Math.min(65,Math.max(o.age,o.workTill!==undefined?o.workTill:65));
       var spath=buildPath(o.sal0,yrs,o.mode,o.cr,o.prof);
       function earnAt(a){ return o.single?1:(a>=Math.min(o.marryAge,999)?2:( o.marryAge<=o.age?2:1 )); }
       var marriedFromStart=(!o.single && o.marryAge<=o.age);
@@ -3574,13 +3593,27 @@
       var curMortCPF=0, curMortCash=0, curRentOffset=0, curCarCost=0, curPaCost=0;
       var rentingOutBTO=false, soldBTO=false;
       var invest=0,lifestyle=0,prevTH=0,prevOverflow=0;
+      // Set the first time a/workTill puts the reader into a non-working year, then
+      // held fixed as a reference point -- Necessities+Wants freeze at that year's
+      // level (inflated forward from THEN, not from age 0) rather than collapsing to
+      // zero just because income did. lifestyle at that moment is always a REAL,
+      // income-derived figure, never zero: working is defined as a<=workTill (see
+      // below), and workTill's own slider minimum is the reader's current age, so
+      // year zero (today) is always still "working" and gives this a genuine baseline
+      // to freeze even in the "stop right away" edge case.
+      var lifestyleAtRetirement=null, inflAtRetirement=1;
       // partner's pay as a multiple of the user's, so one growth curve serves both
       var spouseRatio = (o.spouseSal!==undefined && o.sal0>0) ? (o.spouseSal/o.sal0) : 1;
       var nwPath=[],ageAxis=[],stiPath=[],srsPath=[],cpfPath=[],stiContrib=0,srsContrib=0,empCPFcum=0,employerCPFcum=0;
       for(var y=0;y<yrs;y++){
         var a=o.age+y, infl=Math.pow(1.025,y);
+        // Inclusive: working through and including the chosen age, stopping the year
+        // after. Combined with workTill's slider minimum being the reader's own
+        // current age, this guarantees year zero is always "working" -- see the
+        // lifestyleAtRetirement comment above for why that matters.
+        var working=(a<=workTill);
         var earners=nEarn(a);
-        var sal=spath[y], cap=8000*Math.pow(1.02,y);
+        var sal=working?spath[y]:0, cap=8000*Math.pow(1.02,y);
         var eR=o.se?0.08:empRate(a), tR=o.se?0.08:totRate(a), oS=o.se?0:oaShare(a);
         // CPF, income tax and the SRS cap are all PER PERSON in Singapore, so each earner
         // is computed separately. The partner's salary tracks the same growth curve, scaled
@@ -3656,7 +3689,22 @@
         // Separate opt-in for the opposite extreme: every raise consumed by lifestyle,
         // none of it ever increasing what's invested, even once SRS caps out.
         var raiseShare = o.paycheckToPaycheck ? 0 : Math.max(investShare, effectiveFloor);
-        if(y===0 || marriedThisYear){
+        if(!working){
+          // No income left to split -- Necessities+Wants don't vanish just because
+          // salary did, they freeze at their last working year's level (see the
+          // lifestyleAtRetirement declaration above) and inflate forward from there.
+          // Funded from STI below (the only liquid, unrestricted pot before 65 --
+          // CPF is locked, SRS effectively is too), same "let it go negative rather
+          // than vanish" treatment every other unfunded cost in this engine already
+          // gets, kept entirely separate from the extraCosts/effInvest mechanism
+          // below so it can't be partially "cut" the way Wants normally can -- it's
+          // meant to stay at its frozen level, not shrink further.
+          if(lifestyleAtRetirement===null){ lifestyleAtRetirement=lifestyle; inflAtRetirement=infl; }
+          lifestyle=lifestyleAtRetirement*(infl/inflAtRetirement);
+          invest=0;
+          STI-=lifestyle*12;
+        }
+        else if(y===0 || marriedThisYear){
           // Carve the SRS overflow out BEFORE the Necessities/Wants/STI split, so it's
           // added to invest exactly once -- not counted again inside investShare*th too,
           // which is already computed against the full (overflow-inclusive) th.
@@ -3835,24 +3883,22 @@
         var extraCosts=0.5*childCost+0.5*paCost+cashShort/12+condoOut+carCost+exMortCash;
         var effInvest=invest-extraCosts;
         if(effInvest<0){
-          if(o.uncappedInvest){
-            // Opt-in escape hatch, used only by the "what does this decision cost
-            // you" comparisons (trap costs on Tab 4, the holistic-impact cards on
-            // Tab 2) -- never by an ordinary projection, where this branch is
-            // skipped entirely and behaviour is exactly as before. Those
-            // comparisons flip a single committed cost (car/condo/etc.) on or off
-            // and diff the outcome; with the normal floor-then-cut-Wants logic
-            // below, any part of that cost bigger than the reader's own investing
-            // budget got quietly absorbed by cutting lifestyle spending instead --
-            // money that was never going to be invested anyway, so redirecting it
-            // to a bill cost no compounding at all. That understated the true
-            // cost more the smaller the reader's investing budget was, which is
-            // exactly backwards: a committed cost you can't comfortably invest
-            // around should show as MORE costly, not less. Leaving effInvest
-            // negative here instead means the full committed cost always
-            // displaces investment, so these comparisons show what the decision
-            // actually costs, independent of whether that month's investing
-            // budget happened to be big enough to cover it.
+          if(o.uncappedInvest || !working){
+            // Opt-in escape hatch (trap costs, holistic-impact cards -- see the
+            // uncappedInvest explanation below) OR a genuinely new case: once not
+            // working, lifestyle is ALREADY being funded by its own dedicated STI
+            // withdrawal just above, entirely separately from this mechanism -- so
+            // any ADDITIONAL committed cost here (a car or condo payment still
+            // running during the coast-to-65 years, say) must never cut INTO that
+            // frozen lifestyle figure the way the normal branch below does for a
+            // working year's Wants. Without this, the cut looked like it was
+            // covering the cost, but since lifestyle gets recomputed fresh from
+            // lifestyleAtRetirement every single year regardless of what happened
+            // to it THIS year, the "cut" simply vanished come next year with zero
+            // lasting effect -- the exact same silently-absorbed-for-free bug
+            // already fixed elsewhere, just reappearing here through a different
+            // door. Leaving effInvest negative instead means the cost always comes
+            // out of STI for real.
           } else {
             var shortfall=-effInvest; effInvest=0;
             var wantsShare=(o.aN+o.aW)>0?(o.aW/(o.aN+o.aW)):0;
@@ -4257,6 +4303,18 @@
       carage.min=age; carage.max=65;
       if(+carage.value<age) carage.value=age;
       if(+carage.value>65) carage.value=65;
+      var worktill=$('i-worktill');
+      if(worktill){
+        // Same applyCalcState()-widens-to-200 gap as every other dynamically-bounded
+        // slider in this file -- min is the reader's current age (can't choose to have
+        // already stopped working before today), max is a hard 65 (can't choose to
+        // work past it -- this app already treats 65 as the fixed retirement age
+        // everywhere else).
+        worktill.min=age; worktill.max=65;
+        if(+worktill.value<age) worktill.value=age;
+        if(+worktill.value>65) worktill.value=65;
+        $('o-worktill').textContent=worktill.value;
+      }
       $('ao-need').textContent=$('a-need').value+'%';
       $('ao-want').textContent=$('a-want').value+'%';
       $('ao-srs').textContent=$('a-srs').value+'%';
@@ -5373,7 +5431,7 @@
     if(typeof refreshCompare==='function') refreshCompare();
     ['i-age','i-sal','i-spouse','i-nw0','i-owncsize','i-exmort','i-exyears','i-mop','i-mortsrc','i-mode','i-raise','i-sti','i-house','i-hdb','i-flat','i-btowait','i-buy',
      'i-marry','i-wed','i-condo','i-csize','i-cage','i-bto','i-car','i-carage','i-omv','i-pa','i-paage',
-     'i-prebuy','i-prebuyage'].forEach(function(id){
+     'i-prebuy','i-prebuyage','i-worktill'].forEach(function(id){
       var el=$(id); if(el){
         el.addEventListener('input',function(){ if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets(); recompute(); });
         el.addEventListener('change',function(){ if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets(); recompute(); });
