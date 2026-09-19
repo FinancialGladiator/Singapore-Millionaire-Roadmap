@@ -10,15 +10,15 @@ That's the claim this app puts to the test. Plug in your own age, salary and hou
 
 ## What it is
 
-A single-file, no-backend web app. No sign-up, no server, nothing installed — open it in a browser and it works. Every projection runs entirely in your own browser; nothing you type is ever sent anywhere.
+A no-backend web app, installable straight to your phone's home screen. No sign-up, no server — every projection runs entirely in your own browser; nothing you type is ever sent anywhere.
 
 It's built around six tabs:
 
 1. **The Claim** — the hook, and a live preview: enter your own age, salary and household type right on the cover screen and watch the projected net worth update as you type. Once you've used the full calculator on Tab 2, this preview switches to mirror your complete scenario — condo, car, growth mode, custom allocations and all — instead of its own bare-bones estimate.
-2. **Your Number** — the full calculator. Housing (BTO/resale/condo), career assumptions, a "work till age" slider for anyone planning to stop earning before 65 (CPF LIFE still can't legally start early, so the gap between stopping work and 65 is bridged from your own STI pot, with CPF and SRS left untouched to keep compounding), CPF LIFE choices, allocation across Necessities/Wants/SRS/STI, a net worth chart running to retirement (toggle between future dollars and today's dollars), live warnings whenever a condo upgrade or car purchase would be beyond your budget, and a set of "what if" one-tap scenarios (start 5 years earlier, skip the car, save half of every raise, and so on).
+2. **Your Number** — the full calculator. Housing (BTO/resale/condo), career assumptions, a "work till age" slider for anyone planning to stop earning before 65 (CPF LIFE still can't legally start early, so the gap between stopping work and 65 is bridged from your own STI pot, with CPF and SRS left untouched to keep compounding), CPF LIFE choices, allocation across Necessities/Wants/SRS/STI, a net worth chart running to retirement — marked with milestones (first S$100k, millionaire, multi-millionaire) at the age each one actually lands, and toggleable between future dollars and today's dollars — live warnings whenever a condo upgrade or car purchase would be beyond your budget, and a set of "what if" one-tap scenarios (start 5 years earlier, skip the car, save half of every raise, and so on).
 3. **How It Works** — the playbook, step by step, and the maths behind every figure the calculator produces, for anyone who wants to check the working.
 4. **What Breaks It** — ten common traps that derail the plan (lifestyle inflation, the car, no CPF nomination, marrying someone unaligned on money, and more), each with its own fix.
-5. **Go Further** — six principles for the portfolio itself, an interactive diversification simulator, a seven-country comparison of how long it takes to save a home deposit on the same wage, and a searchable glossary of every term used across the app.
+5. **Go Further** — seven principles for the portfolio itself (including a one-tap "add a rebalance reminder to your calendar" button, since the discipline only works if you actually do it), an interactive diversification simulator, a seven-country comparison of how long it takes to save a home deposit on the same wage, and a searchable glossary of every term used across the app.
 6. **Legal & Contact** — why this was built, the full disclaimer, and how to get in touch.
 
 Also built in:
@@ -26,6 +26,7 @@ Also built in:
 - A 10-question financial literacy quiz, with your own score compared against Singapore's self-reported national average.
 - Shareable results: a downloadable image card (in two formats — a detailed scorecard, or a vertical Story-shaped version for Instagram/TikTok), plus native sharing straight to WhatsApp, Messenger, Mail and anything else your phone's share sheet offers.
 - A shareable scenario link that encodes your own inputs into the URL, so you can send someone your exact numbers to try for themselves.
+- Installable as a PWA — add it to your home screen on Android/Chrome via the install prompt (or iOS Safari's Share → Add to Home Screen), and it opens full-screen like a native app, with the last-loaded version cached for offline use.
 
 ---
 
@@ -43,20 +44,28 @@ This is an illustration of what the numbers say is *possible* under a specific, 
 
 ## Tech stack
 
-Everything — markup, styling, and logic — lives in one HTML file. No build step, no package manager, no framework, no dependencies.
+The app itself — markup, styling, and logic — lives in one HTML file, with a small service worker and web app manifest alongside it for installability. No build step, no package manager, no framework, no dependencies.
 
 - Vanilla JavaScript for the calculation engine and all interactivity
 - Plain CSS (no preprocessor)
 - Inline SVG for the charts; the Canvas API for the shareable image cards
 - The Web Share API for native sharing, where the browser supports it
+- A minimal service worker (network-first, falling back to cache) for offline access and installability, registered only when served over HTTPS — it's a no-op if you just open the `.html` file locally
 
 ---
 
 ## Running it locally
 
-Download the `.html` file and open it directly in any modern browser — that's it. There's nothing to install and nothing to build.
+Download `index.html` and open it directly in any modern browser — that's it. There's nothing to install and nothing to build. (The install-to-home-screen and offline features won't be available this way — those need a real HTTPS origin, see below.)
 
-To host it yourself (e.g. on GitHub Pages, as above): push the file to a repo, rename it to `index.html`, and enable Pages for that repo. No other configuration is needed.
+To host it yourself with full installability (e.g. on GitHub Pages, as above): push these five files to a repo, keeping `index.html` at the root and the rest alongside it, and enable Pages for that repo:
+
+- `index.html`
+- `manifest.json`
+- `sw.js`
+- `icon-192.png`, `icon-512.png`, `icon-512-maskable.png`, `icon-180.png`, `icon-32.png`
+
+No other configuration is needed. If you'd rather keep it to a single file, that's fine too — just don't add the manifest link and icon references from `index.html`'s `<head>`; the app itself doesn't depend on any of them.
 
 ---
 
