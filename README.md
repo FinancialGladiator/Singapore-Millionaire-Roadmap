@@ -14,8 +14,8 @@ A single-file, no-backend web app. No sign-up, no server, nothing installed — 
 
 It's built around six tabs:
 
-1. **The Claim** — the hook, and a live preview: enter your own age, salary and household type right on the cover screen and watch the projected net worth update as you type.
-2. **Your Number** — the full calculator. Housing (BTO/resale/condo), career assumptions, CPF LIFE choices, allocation across Necessities/Wants/SRS/STI, a 45-year net worth chart (toggle between future dollars and today's dollars), and a set of "what if" one-tap scenarios (start 5 years earlier, skip the car, save half of every raise, and so on).
+1. **The Claim** — the hook, and a live preview: enter your own age, salary and household type right on the cover screen and watch the projected net worth update as you type. Once you've used the full calculator on Tab 2, this preview switches to mirror your complete scenario — condo, car, growth mode, custom allocations and all — instead of its own bare-bones estimate.
+2. **Your Number** — the full calculator. Housing (BTO/resale/condo), career assumptions, a "work till age" slider for anyone planning to stop earning before 65 (CPF LIFE still can't legally start early, so the gap between stopping work and 65 is bridged from your own STI pot, with CPF and SRS left untouched to keep compounding), CPF LIFE choices, allocation across Necessities/Wants/SRS/STI, a net worth chart running to retirement (toggle between future dollars and today's dollars), live warnings whenever a condo upgrade or car purchase would be beyond your budget, and a set of "what if" one-tap scenarios (start 5 years earlier, skip the car, save half of every raise, and so on).
 3. **How It Works** — the playbook, step by step, and the maths behind every figure the calculator produces, for anyone who wants to check the working.
 4. **What Breaks It** — ten common traps that derail the plan (lifestyle inflation, the car, no CPF nomination, marrying someone unaligned on money, and more), each with its own fix.
 5. **Go Further** — six principles for the portfolio itself, an interactive diversification simulator, a seven-country comparison of how long it takes to save a home deposit on the same wage, and a searchable glossary of every term used across the app.
@@ -31,7 +31,11 @@ Also built in:
 
 ## Methodology
 
-Built from a month-by-month simulation, age 20 to 65. Housing prices, EHG grant tiers and CPF parameters are drawn from HDB/CPF sources (2025–26 rates); the STI is modelled at a 6% total return with dividends reinvested; headline figures are discounted to today's dollars at 2.5%/yr to strip out the effect of decades of assumed inflation. Every one of these assumptions is laid out in full on Tabs 2 and 3, with the exact formula behind each figure.
+Built from a month-by-month simulation, age 20 to 65 (or from whatever age you start at, if not 20). Housing prices, EHG grant tiers and CPF parameters are drawn from HDB/CPF sources (2025–26 rates); the STI is modelled at a 6% total return with dividends reinvested; headline figures are discounted to today's dollars at 2.5%/yr to strip out the effect of decades of assumed inflation. Every one of these assumptions is laid out in full on Tabs 2 and 3, with the exact formula behind each figure.
+
+Choosing to stop working before 65 doesn't stop the simulation at that age — CPF LIFE is fixed by law to start at 65 (or later, if deferred) no matter how early you actually retire, and CPF/SRS keep compounding with zero new contributions in the meantime, exactly as they would in reality. Necessities and Wants freeze at whatever they were the year you stop working, inflated forward, and are drawn from your STI pot to bridge the gap — so the model shows the real cost of an early retirement, not just a truncated projection.
+
+Any committed cost the household genuinely can't cover — a downpayment that outstrips both CPF and savings, a purchase that would leave income negative — is carried forward as debt that keeps compounding against the household, rather than silently disappearing from the numbers. Where a choice is being priced (the true cost of a car, a condo upgrade, five years of lifestyle inflation), the comparison always displaces the full committed amount, independent of how much room that month's budget happened to have.
 
 This is an illustration of what the numbers say is *possible* under a specific, stated set of assumptions — not a forecast, and not personalised financial advice. Markets don't move in a straight line, rules and thresholds change, and real circumstances vary. Verify specifics against the official HDB and CPF sites, and speak to a licensed adviser for decisions that matter.
 
