@@ -4541,7 +4541,7 @@
       var rstuMonthly0=tr0.rstuMonthly, rstuRelief0=tr0.rstuRelief, rRel0=tr0.rRel;
       var tax0=tax0a+tax0b;
       var th0=(s0a+s0b)-emp0-srsCash0-tax0+pRel0+cRel0-rstuMonthly0+rRel0;
-      $('b-gross').textContent=fmt(s0a+s0b)+(e0>1?' · 2 earners':'');
+      $('b-gross').textContent=fmt(s0a+s0b);
       // Explains WHY this figure is what it is -- especially the case that reads as a
       // bug without context: choosing a married household type doesn't by itself mean
       // the partner's income counts here. This "today's budget" snapshot only includes
