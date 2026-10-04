@@ -4476,15 +4476,27 @@
       $('f-exyears').style.display = (ownsAlready && (+$('i-exmort').value)>0) ? 'block' : 'none';
       $('o-exmort').textContent  = fmt(+$('i-exmort').value);
       $('o-exyears').textContent = (+$('i-exyears').value)+' yrs';
+      var exmortLineEl=$('o-exmortline');
       if(ownsAlready && (+$('i-exmort').value)>0){
         var exY=+$('i-exyears').value, exM=+$('i-exmort').value;
-        $('o-exmortline').innerHTML = exY>0
-          ? ('Paid until age <b>'+(age+exY)+'</b>'+((hdbMode==='have-condo'||hdbMode==='have-ec')
+        if(exY>0){
+          exmortLineEl.innerHTML = 'Paid until age <b>'+(age+exY)+'</b>'+((hdbMode==='have-condo'||hdbMode==='have-ec')
              ? ' from cash, so it competes directly with saving.'
              : ' from CPF-OA where available, cash beyond that.')+
-             ' After that, '+fmt(exM)+'/mo returns to your budget.')
-          : '\u26a0 Set the years remaining above 0, or the instalment won\u2019t be charged at all.';
-      } else { $('o-exmortline').innerHTML=''; }
+             ' After that, '+fmt(exM)+'/mo returns to your budget.';
+          exmortLineEl.style.cssText='margin-top:8px';
+        } else {
+          // This isn't routine confirmation text -- it's the explanation for why the
+          // instalment the reader just set has ZERO effect on net worth or retirement
+          // income, since exMortActive requires years-remaining > 0 as well. The
+          // generic .milestones.flow style (small, muted) made this read as just
+          // another info line and was easy to miss entirely while watching net worth
+          // elsewhere on the page -- styled here the same way other "this won't do
+          // what you expect yet" warnings already are (e.g. the EC singles notice).
+          exmortLineEl.innerHTML = '\u26a0 <b>This instalment has no effect yet.</b> Set \u201cYears left on that mortgage\u201d above 0, or the '+fmt(exM)+'/mo won\u2019t be charged against your net worth or retirement income at all.';
+          exmortLineEl.style.cssText='margin-top:8px;background:#E2604F1A;border:1px solid #E2604F45;border-radius:6px;padding:10px 12px;color:var(--brick)';
+        }
+      } else { exmortLineEl.innerHTML=''; exmortLineEl.style.cssText='margin-top:8px'; }
       $('f-owncsize').style.display = ownsCondoNow ? 'block' : 'none';
       $('o-owncsize').textContent = CONDOS[+$('i-owncsize').value].n;
       if(ownsCondoNow){
