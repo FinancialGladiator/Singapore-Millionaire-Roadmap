@@ -1129,14 +1129,21 @@
         <select id="i-hdb">
           <option value="own">Buy an HDB flat (BTO)</option>
           <option value="own-resale">Buy an HDB flat (Resale)</option>
+          <option value="own-ec">Buy an Executive Condo (EC)</option>
           <option value="have-hdb">I already own an HDB flat</option>
+          <option value="have-ec">I already own an EC</option>
           <option value="have-condo">I already own a condo</option>
           <option value="rent">Rent for life</option>
         </select>
+        <div class="milestones flow" id="ec-singles-warn" style="display:none;margin-top:10px;background:#E2604F1A;border:1px solid #E2604F45;border-radius:6px;padding:10px 12px;color:var(--brick)">⚠ <b>EC has no Singles Scheme.</b> Unlike HDB resale (open to singles from age 35), buying an Executive Condo requires being part of a family nucleus — a married couple, or with parents. This projection still runs the numbers, but the purchase itself wouldn't be eligible as a single buyer in reality.</div>
       </div>
 <div class="field" id="f-flat">
         <label>Flat size — <output id="o-flat">2-room Flexi</output> <span class="hint"><button class="help">?</button><span class="bubble" id="bub-flat">Slide from the smallest (2-room Flexi, ~S$140k before grants as a new BTO) to the largest (5-room, ~S$530k). New <b>BTOs</b> restrict singles to the 2-room Flexi — picking a larger size while Single is selected models buying that size on the <b>resale market</b> instead (allowed for singles from age 35), still only qualifying for the smaller singles-rate grant. This lets you compare the retirement-income impact of a bigger home.</span></span></label>
         <input type="range" id="i-flat" min="0" max="3" step="1" value="0">
+      </div>
+<div class="field" id="f-ecsize">
+        <label>EC size — <output id="o-ecsize">3-room EC</output> <span class="hint"><button class="help">?</button><span class="bubble">Slide from the smallest (3-room, ~S$850k) to the largest (5-room, ~S$1.35m), before any ballot/build-wait inflation. EC is always family-sized — there's no 1- or 2-bedroom tier the way private condo has.</span></span></label>
+        <input type="range" id="i-ecsize" min="0" max="2" step="1" value="0">
       </div>
 <div class="field" id="f-mortsrc">
         <label>Pay the HDB mortgage from <span class="hint"><button class="help">?</button><span class="bubble">By default, an HDB loan is serviced from <b>CPF-OA</b> — the standard approach, and free in the sense that it doesn't touch your take-home cash. Choosing <b>cash</b> instead means you pay it from take-home every month and leave your CPF-OA balance untouched, where it keeps compounding at CPF's <b>2.5%/yr</b>, risk-free. There's a real tradeoff here: CPF-OA growth is guaranteed but capped at 2.5%; cash freed up this way could instead go toward Necessities, Wants, or the STI, which has historically returned more — with real volatility CPF doesn't carry. Neither choice is automatically better; this lets you compare both.</span></span> — <output id="o-mortsrc">CPF-OA</output></label>
@@ -1163,6 +1170,11 @@
         <label>Your current condo <span class="hint"><button class="help">?</button><span class="bubble">Sets the monthly outgoings you already pay — MCST, sinking fund, property tax and insurance — which scale with unit size. The condo itself isn’t counted as an asset here, since net worth in this model excludes the home you live in.</span></span> — <output id="o-owncsize">2-bedroom</output></label>
         <input type="range" id="i-owncsize" min="0" max="3" step="1" value="1">
         <div class="milestones flow" id="o-owncline" style="margin-top:8px"></div>
+      </div>
+      <div class="field" id="f-ownecsize">
+        <label>Your current EC <span class="hint"><button class="help">?</button><span class="bubble">Sets the monthly outgoings you already pay — MCST, sinking fund, property tax and insurance — which scale with unit size. Like a condo, the EC itself isn’t counted as an asset here, since net worth in this model excludes the home you live in.</span></span> — <output id="o-ownecsize">4-room EC</output></label>
+        <input type="range" id="i-ownecsize" min="0" max="2" step="1" value="0">
+        <div class="milestones flow" id="o-ownecline" style="margin-top:8px"></div>
       </div>
       <div class="field" id="f-prebuy">
         <label>Before buying <span class="hint"><button class="help">?</button><span class="bubble">What happens before you own your own place. <b>Stay with family</b>: free — no rent at all until you move out, and every dollar that would've gone to rent is banked into investing instead. <b>Rent a room</b>: you pay rent from the age you choose (this matches the model's original assumption if left at your current age).</span></span></label>
@@ -2578,6 +2590,7 @@
     ['i-worktill','wt'],
     ['i-ccdebt','ccd'],['i-ccrate','ccr'],['i-pldebt','pld'],['i-plrate','plr'],
     ['i-renodebt','rnd'],['i-renorate','rnr'],['i-edudebt','edd'],['i-edurate','edr'],
+    ['i-ecsize','ecs'],['i-ownecsize','oec'],
     ['a-need','an'],['a-want','aw'],['a-srs','as'],['a-inv','ai']
   ];
   function getCalcState(){
@@ -3285,6 +3298,11 @@
     var fmtK=function(n){var s=n<0?'−':''; n=Math.abs(n); if(n>=1e6) return s+'S$'+(n/1e6).toFixed(2)+'m'; if(n>=1e3) return s+'S$'+Math.round(n/1e3)+'k'; return s+'S$'+Math.round(n);};
     var FLATS=[{n:'2-room flat',p:140000,rent:1800},{n:'3-room flat',p:260000,rent:2400},{n:'4-room flat',p:400000,rent:3000},{n:'5-room flat',p:530000,rent:3300}];
     var CONDOS=[{n:'1-bedroom',p:1100000,mcst:300,tax:100},{n:'2-bedroom',p:1500000,mcst:400,tax:160},{n:'3-bedroom',p:2000000,mcst:550,tax:230},{n:'4-bedroom',p:3000000,mcst:800,tax:380}];
+    // Executive Condominium: priced between HDB and private condo -- genuinely cheaper
+    // than an equivalent private condo at the same size (roughly a 15-25% discount in
+    // recent launches), but always family-sized -- unlike CONDOS, there's no 1-bedroom
+    // tier, since EC simply isn't sold that way.
+    var ECS=[{n:'3-room EC',p:850000,mcst:250,tax:80},{n:'4-room EC',p:1100000,mcst:320,tax:110},{n:'5-room EC',p:1350000,mcst:400,tax:150}];
     var PROFILES={
       mcd:{s:2400,note:''},
       grab:{s:3200,se:true,note:'⚠ self-employed: no employer CPF and no CPF-OA — only ~8% Medisave is mandatory. A flat deposit &amp; mortgage must be paid in <b>cash</b>, which now comes straight out of your investing.'},
@@ -3506,15 +3524,29 @@
       window.refreshGrantLive = function(){
         var body=document.getElementById('gl-body'); if(!body) return;
         var ageEl=document.getElementById('i-age'), salEl=document.getElementById('i-sal'),
-            houseEl=document.getElementById('i-house'), spEl=document.getElementById('i-spouse');
+            houseEl=document.getElementById('i-house'), spEl=document.getElementById('i-spouse'),
+            hdbEl=document.getElementById('i-hdb');
         if(!ageEl||!salEl||!houseEl) return;
         var single = houseEl.value==='single';
         var inc = +salEl.value + (!single && spEl ? +spEl.value : 0);
         var hh = single ? 'single' : 'family';
         var ceil = GT_CEIL[hh];
         var grant = gtGrant(hh, inc);
+        var hdbMode = hdbEl ? hdbEl.value : 'own';
         var text;
-        if(inc>ceil.bto){
+        // This figure only ever meant anything for a genuine NEW HDB purchase (BTO
+        // or resale) -- it used to compute and show an income-based grant estimate
+        // regardless of what the reader had actually set the Calculator to, which
+        // meant someone who'd chosen a condo, an EC, "already own", or "rent for
+        // life" still saw a dollar EHG figure that had nothing to do with their own
+        // scenario. Each of those now gets its own accurate line instead.
+        if(hdbMode==='own-ec'){
+          text='Your Calculator scenario is set to buy an <b>Executive Condo</b> — EC is financed with a private bank loan, not an HDB concessionary loan, and <b>CPF Housing Grants don\u2019t apply to it at all</b> (EHG is an HDB-specific scheme). The EHG estimate below is for a BTO or resale HDB purchase instead.';
+        } else if(hdbMode==='have-hdb' || hdbMode==='have-ec' || hdbMode==='have-condo'){
+          text='Your Calculator scenario has you <b>already owning</b> your home outright — no purchase is pending, so no grant applies. The EHG estimate below is for a BTO or resale HDB purchase instead.';
+        } else if(hdbMode==='rent'){
+          text='Your Calculator scenario is set to <b>rent for life</b> — with no HDB purchase planned, no grant applies. The EHG estimate below is for a BTO or resale HDB purchase instead.';
+        } else if(inc>ceil.bto){
           text='Your household income is <b>'+gtMoney(inc)+'/mo</b> — above the '+gtMoney(ceil.bto)
             +'/mo BTO eligibility ceiling for a '+(single?'single buyer':'family')+'. HDB would not accept a BTO application at this income; resale or private property would be the realistic route.';
         } else if(grant<=0){
@@ -3606,9 +3638,23 @@
       var _rfEl=$('i-raisefloor-pct'), _rfRaw=_rfEl?_rfEl.value:'';
       if(_rfRaw!==''){ o.raiseFloorPct=+_rfRaw; }
       var hdbMode=$('i-hdb').value;
-      o.own=(hdbMode==='own'||hdbMode==='own-resale'||hdbMode==='have-hdb'||hdbMode==='have-condo');
+      o.own=(hdbMode==='own'||hdbMode==='own-resale'||hdbMode==='own-ec'||hdbMode==='have-hdb'||hdbMode==='have-ec'||hdbMode==='have-condo');
       // 'have-*' = already owns outright: no purchase, no grant, no mortgage, and no rent.
-      o.alreadyOwn=(hdbMode==='have-hdb'||hdbMode==='have-condo');
+      o.alreadyOwn=(hdbMode==='have-hdb'||hdbMode==='have-ec'||hdbMode==='have-condo');
+      // Executive Condo: developer-built and balloted BTO-style, but financed with a
+      // bank loan (not HDB's concessionary loan) and never eligible for the EHG grant
+      // -- CPF Housing Grants are an HDB-specific scheme. Subject to the SAME 30% MSR
+      // cap as HDB, though, not the looser 55% TDSR a private condo gets -- MSR applies
+      // to EC bought directly from a developer, same as it does to HDB.
+      o.ownEC=(hdbMode==='own-ec');
+      o.ecIdx=$('i-ecsize')?+$('i-ecsize').value:0;
+      // Already owning an EC outright: same "no purchase, just ongoing outgoings"
+      // treatment as already-owning-a-condo below, just priced off ECS instead of
+      // CONDOS. Reuses the generic exMort/exYears "existing mortgage" fields rather
+      // than EC's own purchase-time loan machinery -- there's no purchase event to
+      // size a NEW loan from here, only whatever instalment is already being paid.
+      o.ownsEC=(hdbMode==='have-ec');
+      o.ownECIdx=$('i-ownecsize')?+$('i-ownecsize').value:0;
       o.mortgageCash=$('i-mortsrc') ? $('i-mortsrc').value==='cash' : false;
       // owning a condo already means paying its MCST, sinking fund, tax and insurance now
       o.ownsCondo=(hdbMode==='have-condo');
@@ -3628,7 +3674,7 @@
       o.renoRate=$('i-renorate')?+$('i-renorate').value:5.5;
       o.eduDebt=$('i-edudebt')?+$('i-edudebt').value:0;
       o.eduRate=$('i-edurate')?+$('i-edurate').value:4.5;
-      o.mopLeft=(hdbMode==='have-hdb')?+$('i-mop').value:0;
+      o.mopLeft=(hdbMode==='have-hdb'||hdbMode==='have-ec')?+$('i-mop').value:0;
       o.startNW=+$('i-nw0').value;
       o.spouseSal=+$('i-spouse').value;
       o.flatIdx=+$('i-flat').value;
@@ -3706,7 +3752,7 @@
       var flatPrice=FLATS[o.flatIdx].p*(o.isResale?1.5:1);
       // 'already own' means no purchase ever happens, so no grant, deposit or mortgage
       // should be computed for it — only a genuine future BTO purchase gets these.
-      if(o.own && !o.alreadyOwn){
+      if(o.own && !o.alreadyOwn && !o.ownEC){
         var bi=Math.min(Math.max(o.buyAge-o.age,0),yrs-1), inflB=Math.pow(1.025,Math.max(o.buyAge-o.age,0));
         var eB=nEarn(o.buyAge);
         // grant is income-tested on ACTUAL household income, so use the real partner pay
@@ -3739,6 +3785,25 @@
         var hdbBinding=loan0>maxLoanHDB;
         if(hdbBinding){ loan0=maxLoanHDB; deposit=netNom-loan0; mortM=loan0>0?loan0*rr/(1-Math.pow(1+rr,-tenureMo)):0; }
         hdbMsr={binding:hdbBinding,ratio:grossAtBuy>0?mortM/grossAtBuy:0,extraDown:Math.max(desiredLoanHDB-loan0,0),tenureYrs:tenureYrs};
+      }
+      // EC economics: same shape as the HDB block above (grant -- always zero here --
+      // deposit, loan, MSR cap), but priced off ECS, financed at a bank-loan rate over
+      // a bank-loan tenure (30 years, not HDB's 25), and at 75% LTV (not HDB's 80%) --
+      // the same LTV a private condo gets, since EC uses a private bank loan.
+      var ecNetNom=0,ecDeposit=0,ecLoan0=0,ecMortM0=0,ecMsr=null;
+      if(o.ownEC){
+        var eci=Math.min(Math.max(o.buyAge-o.age,0),yrs-1), inflEC=Math.pow(1.025,Math.max(o.buyAge-o.age,0));
+        var ecPriceAtBuy=ECS[o.ecIdx].p*inflEC;
+        ecNetNom=ecPriceAtBuy; ecDeposit=0.25*ecNetNom; ecLoan0=0.75*ecNetNom;
+        var recB=0.032/12;
+        var ecTenureYrs=Math.min(30,Math.max(0,65-o.buyAge)), ecTenureMo=ecTenureYrs*12;
+        ecMortM0 = ecTenureMo>0 ? ecLoan0*recB/(1-Math.pow(1+recB,-ecTenureMo)) : Infinity;
+        var eEarn=nEarn(o.buyAge), grossAtBuyEC=spath[eci]*eEarn;
+        var desiredLoanEC=ecLoan0, maxInstEC=0.30*grossAtBuyEC;
+        var maxLoanEC=(ecTenureMo>0 && maxInstEC>0)?maxInstEC*(1-Math.pow(1+recB,-ecTenureMo))/recB:0;
+        var ecBinding=ecLoan0>maxLoanEC;
+        if(ecBinding){ ecLoan0=maxLoanEC; ecDeposit=ecNetNom-ecLoan0; ecMortM0=ecLoan0>0?ecLoan0*recB/(1-Math.pow(1+recB,-ecTenureMo)):0; }
+        ecMsr={binding:ecBinding,ratio:grossAtBuyEC>0?ecMortM0/grossAtBuyEC:0,extraDown:Math.max(desiredLoanEC-ecLoan0,0),tenureYrs:ecTenureYrs};
       }
       // condo economics (computed at upgrade)
       var cd=CONDOS[o.condoIdx], car=o.car?carCalc(o.omv):null;
@@ -3773,6 +3838,12 @@
       // 'upgraded' flag tracks whether they've since MOVED to a different condo, so an
       // existing condo owner can still upgrade rather than being locked out.
       var condoLoan=0,condoBought=!!o.ownsCondo,condoUpgraded=false,condoMortM=0,absdPaid=0,condoMsr=null,distressYears=0;
+      // Kept entirely separate from hdbLoan/hdbBought rather than reusing them --
+      // 'own-ec' and the HDB modes are mutually exclusive via the same dropdown, so
+      // reuse would have worked, but keeping EC's own state isolates its bank-loan
+      // mechanics completely from HDB's concessionary-loan path, so nothing here can
+      // accidentally perturb the HDB numbers this app already depends on being right.
+      var ecLoan=0,ecBought=false,ecMortM=0;
       // Tracks the first lump-sum purchase (HDB deposit, condo down payment+ABSD)
       // that leaves combined STI+OA at effectively nothing afterward -- separate
       // from distressYears, which is about ongoing monthly cash flow, not a
@@ -3923,8 +3994,8 @@
         var rentBase=(earners===1?700:1000);
         // Anyone not paying rent gets the same benefit: someone living with family before
         // buying, and equally someone who already owns their home outright.
-        var familySaving = (o.alreadyOwn || (o.own && !hdbBought && a<o.buyAge && a<o.rentStartAge)) ? rentBase*infl : 0;
-        if(o.own && !hdbBought && a>=o.buyAge){
+        var familySaving = (o.alreadyOwn || (o.own && !hdbBought && !ecBought && a<o.buyAge && a<o.rentStartAge)) ? rentBase*infl : 0;
+        if(o.own && !o.ownEC && !hdbBought && a>=o.buyAge){
           // Every draw from OA/STI in this whole purchase section (deposit, ABSD, down
           // payment, TDSR gap, existing mortgage payoff) is now clamped at 0 on the
           // "how much is available" side -- Math.min(STI,need) alone assumes STI is
@@ -3958,8 +4029,22 @@
           var freed=rentBase*infl;
           invest+=freed*investShare; lifestyle+=freed*(1-investShare);
         }
+        // buy EC -- same draw-down pattern as the HDB block above (OA first, then
+        // STI, then whatever's left becomes debt rather than vanishing), just
+        // funding ecDeposit/ecLoan0 instead of HDB's deposit/loan0.
+        if(o.ownEC && !ecBought && a>=o.buyAge){
+          var ndE=ecDeposit, fOAE=Math.max(0,Math.min(OA,ndE)); OA-=fOAE; ndE-=fOAE;
+          if(ndE>0){
+            var fSE=Math.max(0,Math.min(STI,ndE)); STI-=fSE; ndE-=fSE;
+            if(ndE>0){ STI-=ndE; ndE=0; }
+          }
+          ecLoan=ecLoan0; ecBought=true; ecMortM=ecMortM0;
+          if(wipedBy===null && (STI+OA)<1000){ wipedBy='ec'; wipedAge=a; }
+          var freedE=rentBase*infl;
+          invest+=freedE*investShare; lifestyle+=freedE*(1-investShare);
+        }
         // condo upgrade (after MOP)
-        var hasHome = hdbBought || o.ownsCondo;
+        var hasHome = hdbBought || o.ownsCondo || ecBought || o.ownsEC;
         // You cannot buy private property until the MOP is served, so an existing HDB
         // owner's upgrade is pushed out to whichever is later: their chosen age, or MOP end.
         var mopClear = o.alreadyOwn
@@ -3969,7 +4054,27 @@
           var inflU=infl;
           var cprice=cd.p*inflU;
           var equity=0;
-          if(o.btoSell){
+          // o.btoSell ("sell it, proceeds fund the condo downpayment" vs "keep it
+          // and rent it out") only means anything when there's an ACTUAL HDB flat
+          // behind it. hdbBought alone isn't precise enough for that check -- it
+          // initialises to true for EVERY already-own household (o.alreadyOwn),
+          // have-condo and have-ec included, not just have-hdb -- so hasRealHdb
+          // additionally excludes o.ownsCondo/o.ownsEC to mean "specifically an
+          // HDB flat", true only for have-hdb or an actual new HDB purchase made
+          // during the simulation. For a household reaching this point via
+          // o.ownsCondo or o.ownsEC instead (upgrading FROM a condo or EC they
+          // already own, never from a simulated HDB purchase), flatPrice/hdbLoan
+          // are leftover defaults with no real flat behind them at all -- using
+          // them here was handing every such household phantom "resale proceeds"
+          // sized off the (irrelevant, hidden) HDB flat-size slider, and (in the
+          // else branch) phantom rental income off FLATS' rent table, regardless
+          // of what they'd actually set either slider to. Neither applies without
+          // a real HDB flat in play: equity from the prior condo/EC isn't modelled
+          // (this app doesn't track what an already-owned property is currently
+          // worth), but the ABSD a second-property buyer owes is real regardless
+          // of what that first property is, so it still applies either way.
+          var hasRealHdb = hdbBought && !o.ownsCondo && !o.ownsEC;
+          if(o.btoSell && hasRealHdb){
             var resale=flatPrice*inflU;
             equity=Math.max(resale-hdbLoan,0);
             hdbLoan=0; soldBTO=true;
@@ -3977,7 +4082,7 @@
             absdPaid=0.20*cprice;
             var ab=absdPaid, aOA=Math.max(0,Math.min(OA,ab)); OA-=aOA; ab-=aOA;
             if(ab>0){ var aS=Math.max(0,Math.min(STI,ab)); STI-=aS; ab-=aS; }
-            rentingOutBTO=true;
+            if(hasRealHdb) rentingOutBTO=true;
           }
           var downT=0.25*cprice, need2=Math.max(downT-equity,0);
           var dOA=Math.max(0,Math.min(OA,need2)); OA-=dOA; need2-=dOA;
@@ -4034,6 +4139,11 @@
           condoLoan-=(payc-intc); if(condoLoan<0)condoLoan=0;
           if(OA>=payc){OA-=payc;} else {cashShort+=payc-OA;OA=0;}
         }
+        if(ecBought && ecLoan>1e-6){
+          var payec=ecMortM*12, intec=ecLoan*0.032;
+          ecLoan-=(payec-intec); if(ecLoan<0)ecLoan=0;
+          if(OA>=payec){OA-=payec;} else {cashShort+=payec-OA;OA=0;}
+        }
         // monthly cash costs & incomes
         var childCost=(o.hasKid && a>=kidBorn && a<kidBorn+22)?750*infl:0;
         if(o.numKids>=2 && a>=kid2Born && a<kid2Born+22){ childCost+=600*infl; }
@@ -4041,13 +4151,21 @@
         // after upgrading, for the new one
         var curCondo = condoUpgraded ? cd : (o.ownsCondo ? CONDOS[o.ownCondoIdx||0] : cd);
         var condoOut=condoBought?(curCondo.mcst+curCondo.tax+40)*infl:0;
+        // Bought a NEW EC (ecBought) and already-own-an-EC (o.ownsEC) are mutually
+        // exclusive via the same dropdown, so only one of these branches is ever
+        // live at once -- ecBought uses the size just purchased (o.ecIdx), already-
+        // owning uses whichever size was set for the EC already lived in (o.ownECIdx).
+        var ecOut = ecBought ? (ECS[o.ecIdx].mcst+ECS[o.ecIdx].tax+40)*infl
+          : (o.ownsEC ? (ECS[o.ownECIdx||0].mcst+ECS[o.ownECIdx||0].tax+40)*infl : 0);
         // An existing mortgage the user is already paying. HDB loans are serviced from
-        // CPF-OA (so they drain OA, not cash); a condo bank loan is paid in cash and so
-        // competes with saving. The instalment is fixed in nominal terms, as loans are.
+        // CPF-OA (so they drain OA, not cash); a condo OR EC bank loan is paid in cash
+        // and so competes with saving -- EC uses a private bank loan just like condo,
+        // never HDB's concessionary one, even while still within MOP. The instalment
+        // is fixed in nominal terms, as loans are.
         var exMortActive = (o.exMort>0 && o.exYears>0 && y < o.exYears);
         var exMortCash = 0;
         if(exMortActive){
-          if(o.ownsCondo || o.se || o.mortgageCash){ exMortCash = o.exMort; }
+          if(o.ownsCondo || o.ownsEC || o.se || o.mortgageCash){ exMortCash = o.exMort; }
           else { var fromOA=Math.max(0,Math.min(OA, o.exMort*12)); OA-=fromOA; exMortCash=(o.exMort*12-fromOA)/12; }
         }
         var carCost=(car && a>=o.carAge)?car.monthly*infl:0;
@@ -4073,6 +4191,7 @@
           curMortCPF = ((hdbBought && hdbLoan>1e-6 && !o.se && !o.mortgageCash) ? hdbMortM : 0) + existingMortCPF;
           curMortCash = ((o.se || o.mortgageCash) && hdbBought && hdbLoan>1e-6 ? hdbMortM : 0)
                       + (condoBought && condoLoan>1e-6 ? condoMortM : 0)
+                      + (ecBought && ecLoan>1e-6 ? ecMortM : 0)
                       + exMortCash;
           curRentOffset = rentingOutBTO ? btoNetRent : 0;
           curCarCost = carCost;
@@ -4082,7 +4201,7 @@
         // Invest absorbs committed housing/family/car costs first; if that's not enough,
         // cut into Wants next (never into Necessities) — so Invest never exceeds what's
         // actually left over after Necessities and Wants are covered.
-        var extraCosts=0.5*childCost+0.5*paCost+cashShort/12+condoOut+carCost+exMortCash+debtCash;
+        var extraCosts=0.5*childCost+0.5*paCost+cashShort/12+condoOut+ecOut+carCost+exMortCash+debtCash;
         var effInvest=invest-extraCosts;
         if(effInvest<0){
           if(o.uncappedInvest || !working){
@@ -4201,7 +4320,8 @@
         nw:POT+CPF,income:cpflife+potdraw+retRent,taxSaved:taxSaved,spath:spath,
         nwPath:nwPath,ageAxis:ageAxis,grant:grant,netToday:netToday,mortM:mortM,loan0:loan0,
         GETF:GETF,SGDIV:SGDIV,GOLD:GOLD,CASH:CASH,diversifyStarted:diversifyStarted,goldRetireIncome:goldRetireIncome,
-        absd:absdPaid,retRent:retRent,earn0:nEarn(o.age),hdbMsr:hdbMsr,condoMsr:condoMsr,distressYears:distressYears,
+        absd:absdPaid,retRent:retRent,earn0:nEarn(o.age),hdbMsr:hdbMsr,condoMsr:condoMsr,ecMsr:ecMsr,
+        ecNetNom:ecNetNom,ecMortM0:ecMortM0,distressYears:distressYears,
         stiPath:stiPath,srsPath:srsPath,cpfPath:cpfPath,stiContrib:stiContrib,srsContrib:srsContrib,
         empCPFcum:empCPFcum,employerCPFcum:employerCPFcum,
         curMortCPF:curMortCPF,curMortCash:curMortCash,curRentOffset:curRentOffset,curCarCost:curCarCost,curPaCost:curPaCost,curDebtCost:curDebtCost,
@@ -4276,7 +4396,11 @@
       // 'own' must mean "has a home" — buying one OR already owning one — otherwise the
       // condo-upgrade control stays hidden from existing owners.
       var hdbModeV=$('i-hdb').value;
-      var own=(hdbModeV==='own'||hdbModeV==='have-hdb'||hdbModeV==='have-condo');
+      // Was missing 'own-resale' entirely -- resale HDB buyers have been unable to
+      // see the condo-upgrade option this whole time, since "has a home" here never
+      // recognised it as one. Fixed alongside adding 'own-ec' for the same reason:
+      // an EC owner has a home too, and should be able to upgrade from it later.
+      var own=(hdbModeV==='own'||hdbModeV==='own-resale'||hdbModeV==='own-ec'||hdbModeV==='have-hdb'||hdbModeV==='have-ec'||hdbModeV==='have-condo');
       var prof=PROFILES[$('i-job').value];
       var condoOn=(own && $('i-condo').value==='yes');
       $('o-age').textContent=age;
@@ -4306,26 +4430,33 @@
       // meant every one of those fields silently vanished the moment Resale was
       // selected, since o.own (in readOpts, used for the actual financial math) was
       // updated to include 'own-resale' but this UI-only twin wasn't.
-      var buying = hdbMode==='own' || hdbMode==='own-resale';
+      var buyingHdb = hdbMode==='own' || hdbMode==='own-resale';
+      var buyingEC = hdbMode==='own-ec';
+      var buying = buyingHdb || buyingEC;
       var ownsCondoNow = hdbMode==='have-condo';
-      var ownsAlready = (hdbMode==='have-hdb'||hdbMode==='have-condo');
+      var ownsEcNow = hdbMode==='have-ec';
+      var ownsAlready = (hdbMode==='have-hdb'||hdbMode==='have-ec'||hdbMode==='have-condo');
       var ownsHdbNow = hdbMode==='have-hdb';
-      // Ballot + build wait only means anything for a NEW BTO specifically -- a resale
-      // flat has no ballot to win and no construction to wait out (it's move-in ready,
-      // modulo the seller's own timeline), and someone who already owns isn't buying
-      // anything at all right now. Shown only for hdbMode==='own'.
+      // EC shares HDB's own 5-year MOP (not condo's -- private property has none),
+      // so the MOP field applies to both already-owning modes that can actually be
+      // subject to one.
+      var mopApplies = ownsHdbNow || ownsEcNow;
+      // Ballot + build wait means something for BOTH a new BTO and a new EC --
+      // EC is ALSO balloted and built BTO-style, just privately developed -- but
+      // never for resale (move-in ready) or an already-own household (nothing
+      // being bought right now).
       var fBtoWait=$('f-btowait');
-      if(fBtoWait) fBtoWait.style.display = (hdbMode==='own') ? 'block' : 'none';
+      if(fBtoWait) fBtoWait.style.display = (hdbMode==='own' || buyingEC) ? 'block' : 'none';
       // The mortgage-funding-source choice only means anything for an HDB loan --
-      // a condo loan is already always cash regardless of this toggle.
+      // EC and condo loans are already always cash regardless of this toggle.
       var fMortSrc=$('f-mortsrc');
-      if(fMortSrc) fMortSrc.style.display = (buying || ownsHdbNow) ? 'block' : 'none';
+      if(fMortSrc) fMortSrc.style.display = (buyingHdb || ownsHdbNow) ? 'block' : 'none';
       var mortSrcEl=$('i-mortsrc');
       if(mortSrcEl) $('o-mortsrc').textContent = mortSrcEl.value==='cash' ? 'Cash' : 'CPF-OA';
-      $('f-mop').style.display = ownsHdbNow ? 'block' : 'none';
+      $('f-mop').style.display = mopApplies ? 'block' : 'none';
       var mopL=+$('i-mop').value;
       $('o-mop').textContent = mopL===0 ? 'MOP already served' : (mopL+' yr'+(mopL>1?'s':'')+' left');
-      $('o-mopline').innerHTML = ownsHdbNow
+      $('o-mopline').innerHTML = mopApplies
         ? (mopL===0
            ? 'Free to sell, rent out the whole flat, or buy private property.'
            : ('Until age <b>'+(age+mopL)+'</b> you cannot sell on the open market, rent out the '+
@@ -4339,7 +4470,7 @@
       if(ownsAlready && (+$('i-exmort').value)>0){
         var exY=+$('i-exyears').value, exM=+$('i-exmort').value;
         $('o-exmortline').innerHTML = exY>0
-          ? ('Paid until age <b>'+(age+exY)+'</b>'+(hdbMode==='have-condo'
+          ? ('Paid until age <b>'+(age+exY)+'</b>'+((hdbMode==='have-condo'||hdbMode==='have-ec')
              ? ' from cash, so it competes directly with saving.'
              : ' from CPF-OA where available, cash beyond that.')+
              ' After that, '+fmt(exM)+'/mo returns to your budget.')
@@ -4352,7 +4483,19 @@
         $('o-owncline').innerHTML = 'You already pay about <b>'+fmt(oc.mcst+oc.tax+40)+
           '</b>/mo in MCST, sinking fund, property tax and insurance on this unit.';
       } else { $('o-owncline').innerHTML=''; }
-      $('f-flat').style.display=buying?'block':'none';
+      var fOwnecsize=$('f-ownecsize'); if(fOwnecsize) fOwnecsize.style.display = ownsEcNow ? 'block' : 'none';
+      var oOwnecsize=$('o-ownecsize'); if(oOwnecsize) oOwnecsize.textContent = ECS[+$('i-ownecsize').value].n;
+      var ownecLineEl=$('o-ownecline');
+      if(ownecLineEl){
+        if(ownsEcNow){
+          var oe = ECS[+$('i-ownecsize').value];
+          ownecLineEl.innerHTML = 'You already pay about <b>'+fmt(oe.mcst+oe.tax+40)+
+            '</b>/mo in MCST, sinking fund, property tax and insurance on this unit.';
+        } else { ownecLineEl.innerHTML=''; }
+      }
+      $('f-flat').style.display=buyingHdb?'block':'none';
+      var fEcsize=$('f-ecsize'); if(fEcsize) fEcsize.style.display=buyingEC?'block':'none';
+      var ecWarn=$('ec-singles-warn'); if(ecWarn) ecWarn.style.display=(buyingEC && single)?'block':'none';
       $('f-buy').style.display=buying?'block':'none';
       $('f-prebuy').style.display=buying?'block':'none';
       $('f-prebuyage').style.display=buying?'block':'none';
@@ -4368,11 +4511,17 @@
       $('l-csize').textContent = ownsCondoNow ? 'New condo size' : 'Condo size';
       $('l-cage').textContent  = ownsCondoNow ? 'Move at age' : 'Upgrade at age';
 
-      var fbto=$('f-bto'); if(fbto && ownsCondoNow) fbto.style.display='none';
+      // "Sell it vs keep & rent it out" only makes sense when there's an actual HDB
+      // flat behind the choice (see hasRealHdb's own comment in project() for why) --
+      // this used to try hiding it for an already-owned condo/EC two lines above,
+      // but the unconditional condoOn-based assignment that followed immediately
+      // overwrote that every time, so the hide never actually took effect for
+      // anyone. Combined into one assignment instead of two competing ones.
       $('f-csize').style.display=condoOn?'block':'none';
       $('f-cage').style.display=condoOn?'block':'none';
-      $('f-bto').style.display=condoOn?'block':'none';
+      $('f-bto').style.display=(condoOn && !ownsCondoNow && !ownsEcNow)?'block':'none';
       $('o-csize').textContent=CONDOS[+$('i-csize').value].n;
+      var oEcsize=$('o-ecsize'); if(oEcsize) oEcsize.textContent=ECS[+$('i-ecsize').value].n;
       var carOn=$('i-car').value==='yes';
       $('f-carage').style.display=carOn?'block':'none';
       $('f-omv').style.display=carOn?'block':'none';
@@ -4493,7 +4642,7 @@
       if(+cage.value>64) cage.value=64;
       }
       var cageLabel;
-      if(ownsHdbNow) cageLabel = mopL>0 ? (' (earliest '+minC+' \u2014 MOP ends then)') : ' (MOP already served)';
+      if(mopApplies) cageLabel = mopL>0 ? (' (earliest '+minC+' \u2014 MOP ends then)') : ' (MOP already served)';
       else if(ownsCondoNow) cageLabel = '';
       else cageLabel = ' (MOP ends at '+minC+')';
       $('o-cage').textContent=cage.value+cageLabel;
@@ -4638,7 +4787,7 @@
               if(!hasAnyInvesting){
                 msg='\u26a0 This toggle currently makes <b>zero difference</b> to your numbers \u2014 your SRS and STI sliders are both at 0%, so there\u2019s no investing allocation for a raise floor to apply to. Turning this on has nothing to raise until at least one of those sliders is above zero.';
               } else if(wipedBy){
-                var what = wipedBy==='condo' ? 'condo purchase' : 'HDB flat purchase';
+                var what = wipedBy==='condo' ? 'condo purchase' : (wipedBy==='ec' ? 'EC purchase' : 'HDB flat purchase');
                 msg='\u26a0 This toggle currently makes <b>zero difference</b> to your numbers \u2014 not because of your allocation, but because your '+what+' at age <b>'+wipedAge+'</b> draws your entire CPF-OA and STI pot down to nothing regardless (down payment, TDSR shortfall and ABSD included, where they apply). Whatever extra this toggle would bank beforehand gets spent on that purchase either way, so it never survives long enough to compound. A floor can only raise what you\u2019d have going into that purchase \u2014 it can\u2019t guarantee any of it is still there afterward.';
               } else {
                 var pct=Math.round((o.aS+o.aI)*100);
@@ -4650,7 +4799,29 @@
         }
       }catch(e){}
       // grant / condo / car info lines
-      if(o.own){
+      if(o.ownEC){
+        // r.grant/r.netToday/r.mortM are never set on the EC path (that HDB block
+        // is deliberately skipped for EC -- see its own guard) -- using them here
+        // would show a flat "S$0 instalment" for a purchase that very much isn't
+        // free. r.ecNetNom/r.ecMortM0/r.ecMsr are EC's own equivalents instead.
+        var ecDiscFactor=Math.pow(1.025,Math.max(o.buyAge-o.age,0));
+        var ecLine='no EHG grant (CPF Housing Grants are HDB-only) · price at purchase <b>'+fmtK(r.ecNetNom/ecDiscFactor)+'</b> · instalment ~<b>'+fmt(r.ecMortM0/ecDiscFactor)+'</b>/mo, bank loan';
+        if(r.ecMsr){
+          var ecPct=Math.round(r.ecMsr.ratio*100);
+          var ecTenureNote='';
+          if(r.ecMsr.tenureYrs<=0){
+            ecTenureNote=' At age <b>'+o.buyAge+'</b>, there\'s no bank loan tenure left at all — lenders cap it at 65 minus your age at purchase, so no loan is available then; the full price would need to be funded from cash/CPF instead.';
+          } else if(r.ecMsr.tenureYrs<30){
+            ecTenureNote=' Buying at <b>'+o.buyAge+'</b> also shortens the maximum loan tenure to just <b>'+r.ecMsr.tenureYrs+' year'+(r.ecMsr.tenureYrs===1?'':'s')+'</b> (capped at 65 minus your age at purchase, instead of the full 30) — a shorter tenure means a bigger instalment for the same loan amount.';
+          }
+          if(r.ecMsr.binding){
+            ecLine+='<br>⚠ <b>capped by the 30% Mortgage Servicing Ratio</b> (<span class="hint">MSR <button class="help">?</button><span class="bubble">Caps HDB and EC loan repayments at 30% of gross monthly household income — the tighter of the two loan limits for public housing; a private condo only faces the looser 55% TDSR.</span></span>) — the loan is limited so the instalment stays at 30% of gross income; an extra <b>'+fmtK(r.ecMsr.extraDown)+'</b> had to be funded as downpayment instead.'+ecTenureNote;
+          } else {
+            ecLine+='<br>instalment is <b>'+ecPct+'% of gross income</b> (within the 30% <span class="hint">MSR <button class="help">?</button><span class="bubble">Mortgage Servicing Ratio -- caps HDB and EC loan repayments at 30% of gross monthly household income, the tighter of the two loan limits for public housing.</span></span> limit that applies to EC just like HDB, not the looser 55% TDSR a private condo gets).'+ecTenureNote;
+          }
+        }
+        $('o-grantline').innerHTML=ecLine;
+      } else if(o.own){
         var hLine='est. grant <b>'+fmtK(r.grant)+'</b> · net price today <b>'+fmtK(r.netToday)+'</b> · instalment ~<b>'+fmt(r.mortM/Math.pow(1.025,Math.max(o.buyAge-o.age,0)))+'</b>/mo'+(o.se?' <b>in cash</b>':' from CPF');
         if(r.hdbMsr){
           var pct=Math.round(r.hdbMsr.ratio*100);
@@ -5909,7 +6080,7 @@
     ['i-age','i-sal','i-spouse','i-nw0','i-owncsize','i-exmort','i-exyears','i-mop','i-mortsrc','i-mode','i-raise','i-sti','i-house','i-hdb','i-flat','i-btowait','i-buy',
      'i-marry','i-wed','i-condo','i-csize','i-cage','i-bto','i-car','i-carage','i-omv','i-pa','i-paage',
      'i-prebuy','i-prebuyage','i-worktill',
-     'i-ccdebt','i-ccrate','i-pldebt','i-plrate','i-renodebt','i-renorate','i-edudebt','i-edurate'].forEach(function(id){
+     'i-ccdebt','i-ccrate','i-pldebt','i-plrate','i-renodebt','i-renorate','i-edudebt','i-edurate','i-ecsize','i-ownecsize'].forEach(function(id){
       var el=$(id); if(el){
         el.addEventListener('input',function(){ if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets(); recompute(); });
         el.addEventListener('change',function(){ if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets(); recompute(); });
