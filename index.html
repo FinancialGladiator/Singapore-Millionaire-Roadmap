@@ -3858,7 +3858,7 @@
       // snapshot of committed costs AS OF RIGHT NOW (captured at the first loop year),
       // for the "Your monthly budget now" table — separate from the long-run totals
       // above, which are end-of-simulation or cumulative figures.
-      var curMortCPF=0, curMortCash=0, curRentOffset=0, curCarCost=0, curPaCost=0, curDebtCost=0;
+      var curMortCPF=0, curMortCash=0, curRentOffset=0, curCarCost=0, curPaCost=0, curDebtCost=0, curHouseOut=0;
       var rentingOutBTO=false, soldBTO=false;
       var invest=0,lifestyle=0,prevTH=0,prevOverflow=0;
       // Set the first time a/workTill puts the reader into a non-working year, then
@@ -4197,6 +4197,15 @@
           curCarCost = carCost;
           curPaCost = paCost;
           curDebtCost = debtCash;
+          // MCST, sinking fund, property tax and insurance on an owned condo or EC --
+          // mutually exclusive at any given moment (a household is in exactly one of
+          // these states at once), so summing is safe. This was never captured before,
+          // which is exactly why the Housing line below could show "S$0, you own it
+          // outright" for a mortgage-free condo or EC owner who was still genuinely
+          // paying these every month -- the figure existed inside the full projection
+          // (it's in condoOut/ecOut, which DOES feed extraCosts and therefore net worth
+          // correctly) but was never threaded through to this "right now" snapshot.
+          curHouseOut = condoOut + ecOut;
         }
         // Invest absorbs committed housing/family/car costs first; if that's not enough,
         // cut into Wants next (never into Necessities) — so Invest never exceeds what's
@@ -4324,7 +4333,7 @@
         ecNetNom:ecNetNom,ecMortM0:ecMortM0,distressYears:distressYears,
         stiPath:stiPath,srsPath:srsPath,cpfPath:cpfPath,stiContrib:stiContrib,srsContrib:srsContrib,
         empCPFcum:empCPFcum,employerCPFcum:employerCPFcum,
-        curMortCPF:curMortCPF,curMortCash:curMortCash,curRentOffset:curRentOffset,curCarCost:curCarCost,curPaCost:curPaCost,curDebtCost:curDebtCost,
+        curMortCPF:curMortCPF,curMortCash:curMortCash,curRentOffset:curRentOffset,curCarCost:curCarCost,curPaCost:curPaCost,curDebtCost:curDebtCost,curHouseOut:curHouseOut,
         ccPay:ccPay,plPay:plPay,renoPay:renoPay,eduPay:eduPay,
         wipedBy:wipedBy,wipedAge:wipedAge};
     }
@@ -5021,6 +5030,22 @@
       else {
         house0=mortCPF0; houseCash0=0;
         houseNote='Your HDB mortgage is serviced from <b>CPF-OA</b>, so it shows no cash impact here.';
+      }
+      // MCST, sinking fund, property tax and insurance on an owned condo or EC --
+      // a real cash cost every month regardless of mortgage status, which none of
+      // the branches above ever priced in (so a mortgage-free condo/EC owner saw
+      // "S$0, you own it outright" here even while genuinely paying these). Added
+      // uniformly after the cascade, rather than inside each branch, specifically
+      // so the already-correct mortgage/rental-offset logic above stays untouched.
+      // house0/houseIsIncome are re-derived from the updated total rather than
+      // trusting the branch's own sign flag, since adding a real cost here can in
+      // principle flip a rental-income branch into a net cost.
+      var houseOut0 = r.curHouseOut||0;
+      if(houseOut0>0){
+        houseCash0 += houseOut0;
+        house0 = Math.abs(houseCash0);
+        houseIsIncome = houseCash0 < 0;
+        houseNote += (houseNote ? '<br><br>' : '') + 'This also includes <b>'+fmt(houseOut0)+'/mo</b> in MCST, sinking fund, property tax and insurance on the '+(o.ownsEC?'EC':'condo')+' you own \u2014 a real cost whether or not the mortgage is paid off.';
       }
       $('b-house').textContent = houseIsIncome ? ('+ '+fmt(house0)) : ('\u2212 '+fmt(house0));
       var houseSign=$('b-house-sign');
