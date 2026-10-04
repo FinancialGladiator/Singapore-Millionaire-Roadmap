@@ -779,15 +779,40 @@
   /* floating summary box */
   #float-summary{position:fixed;left:12px;right:12px;bottom:14px;z-index:45;
     background:var(--brand);color:#fff;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.28);
-    padding:12px 10px;display:flex;justify-content:space-around;gap:6px;
-    opacity:0;pointer-events:none;transition:opacity .35s ease;max-width:520px;margin:0 auto}
+    padding:12px 10px;display:flex;flex-direction:column;gap:0;
+    opacity:0;pointer-events:none;
+    transition:opacity .35s ease,background .4s ease;
+    max-width:520px;margin:0 auto}
   #float-summary.show{pointer-events:auto}
+  /* Red, not orange, specifically signals "this plan doesn't hold up" -- distinct
+     from the brand color used for every other state of this same box, so the
+     color change itself carries meaning rather than just being decoration. */
+  #float-summary.warn{background:var(--brick)}
+  .fs-main-row{display:flex;justify-content:space-around;gap:6px}
   #float-summary .fs-item{text-align:center;flex:1;min-width:0}
   #float-summary .fs-k{display:block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.04em;
     text-transform:uppercase;color:#1A1410;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #float-summary.warn .fs-k{color:#2A0D08}
   #float-summary .fs-v{display:block;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
     font-size:clamp(12px,4vw,19px);color:#fff;line-height:1.1;white-space:nowrap;
     overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  /* Collapsed to zero height by default -- grows into view (not just fades) only
+     once .warn is added, which is the "increase in real estate to fit the warning"
+     the box needs to make room for without cramming the net worth/income row. */
+  .fs-warn-row{display:flex;align-items:center;gap:9px;width:100%;
+    background:none;border:none;padding:0;margin:0;cursor:pointer;text-align:left;
+    font-family:inherit;max-height:0;opacity:0;overflow:hidden;
+    transition:max-height .4s cubic-bezier(.3,.9,.4,1),opacity .3s ease,margin .4s ease,padding-bottom .4s ease}
+  #float-summary.warn .fs-warn-row{max-height:54px;opacity:1;margin-bottom:10px;padding-bottom:10px;
+    border-bottom:1px solid rgba(255,255,255,.28)}
+  .fs-warn-icon{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:#fff;color:var(--brick);
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;
+    font-family:'Bricolage Grotesque',sans-serif}
+  .fs-warn-text{color:#fff;font-weight:700;font-size:12.5px;line-height:1.3}
+  .viability-modal-inner{max-width:400px;padding:28px 24px 24px;text-align:center}
+  .viability-icon{width:48px;height:48px;border-radius:50%;background:var(--brick);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:24px;
+    font-family:'Bricolage Grotesque',sans-serif;margin:0 auto 14px}
 
   .share-modal{display:none;position:fixed;inset:0;z-index:100;background:rgba(10,14,11,.75);
     align-items:center;justify-content:center;padding:16px}
@@ -868,14 +893,29 @@
   </div>
 
   <div id="float-summary" aria-live="polite">
-    <div class="fs-item">
-      <span class="fs-k">Net worth · 65</span>
-      <span class="fs-v" id="fs-nw"></span>
+    <button type="button" id="fs-warn-row" class="fs-warn-row" aria-label="This plan is not financially viable — tap for details">
+      <span class="fs-warn-icon">!</span>
+      <span class="fs-warn-text">This plan isn't holding up — tap for details</span>
+    </button>
+    <div class="fs-main-row">
+      <div class="fs-item">
+        <span class="fs-k">Net worth · 65</span>
+        <span class="fs-v" id="fs-nw"></span>
+      </div>
+      <div class="fs-div"></div>
+      <div class="fs-item">
+        <span class="fs-k">Retirement income</span>
+        <span class="fs-v" id="fs-inc"></span>
+      </div>
     </div>
-    <div class="fs-div"></div>
-    <div class="fs-item">
-      <span class="fs-k">Retirement income</span>
-      <span class="fs-v" id="fs-inc"></span>
+  </div>
+
+  <div id="viability-modal" class="share-modal">
+    <div class="share-modal-inner viability-modal-inner">
+      <button id="viability-modal-close" class="share-modal-close" aria-label="Close">✕</button>
+      <div class="viability-icon">!</div>
+      <div class="privacy-title" id="viability-title">This plan isn't financially viable</div>
+      <div class="privacy-body" id="viability-body"></div>
     </div>
   </div>
 
@@ -5411,6 +5451,25 @@
         $('f-distress').style.display='block';
         $('o-distress').innerHTML='⚠ In <b>'+r.distressYears+' year(s)</b> of this plan, committed costs (housing, car, family) exceeded take-home pay even after cutting Wants to zero — this scenario is not fully sustainable at this income. Consider a smaller flat, a later purchase, delaying the car, or a lower allowance.<br><br><b>This also means the costs shown below are understated.</b> Once a commitment exceeds what you can actually pay, the model can\u2019t subtract the shortfall from savings you don\u2019t have — so an unaffordable car or condo looks only slightly worse than an affordable one. Read those figures as a floor, not the full price.';
       } else { $('f-distress').style.display='none'; }
+      // "Not viable" for the floating bubble reuses the SAME signals already
+      // computed above -- never a separate judgment call: ongoing distress
+      // (committed costs exceeding take-home even after cutting Wants to zero),
+      // or the headline net worth/income figures themselves landing negative.
+      // The detail text is rebuilt from whichever of these is actually true each
+      // time, rather than one fixed message, so it only ever describes what's
+      // real about the current scenario.
+      var nwNeg = r.nw<0, incNeg = r.income<0;
+      var notViable = r.distressYears>0 || nwNeg || incNeg;
+      var fsBox=$('float-summary');
+      if(fsBox) fsBox.classList.toggle('warn', notViable);
+      if(notViable){
+        var viaBits=[];
+        if(r.distressYears>0) viaBits.push('In <b>'+r.distressYears+' year(s)</b> of this plan, committed costs (housing, car, family) exceed take-home pay even after cutting Wants to zero.');
+        if(nwNeg) viaBits.push('Net worth at 65 is projected to be <b>negative</b> ('+fmtK(r.nw/disc)+' in today\u2019s dollars) \u2014 this scenario ends with more owed than owned.');
+        if(incNeg) viaBits.push('Projected retirement income is <b>negative</b> ('+fmt(r.income/disc)+'/mo) \u2014 there isn\u2019t enough built up by 65 to draw a livable income from.');
+        viaBits.push('Consider a smaller flat, a later purchase, delaying the car, a lower allowance, or working a few years longer \u2014 the what-if cards and goal-seek tool below can show exactly how much difference each one makes.');
+        var viaBody=$('viability-body'); if(viaBody) viaBody.innerHTML=viaBits.join('<br><br>');
+      }
       // Holistic impacts: only show a card when that choice is actually in play AND
       // actually moves the number. An empty card teaches nothing and lengthens the page.
       var shown=0;
@@ -7283,6 +7342,18 @@ function drawQuizResultCard(isStory){
     if(trigger) trigger.addEventListener('click',function(){ openShareModal(); });
     document.getElementById('share-modal-close').addEventListener('click',closeShareModal);
     document.getElementById('share-modal').addEventListener('click',function(e){ if(e.target.id==='share-modal') closeShareModal(); });
+
+    // Viability warning modal -- same open/close shape as the share modal above
+    // (close button + click-on-backdrop), triggered only from the floating
+    // bubble's warning row, which is itself only ever visible while .warn is on.
+    var viaModal=document.getElementById('viability-modal');
+    function openViabilityModal(){ if(viaModal) viaModal.classList.add('open'); }
+    function closeViabilityModal(){ if(viaModal) viaModal.classList.remove('open'); }
+    var viaWarnRow=document.getElementById('fs-warn-row');
+    if(viaWarnRow) viaWarnRow.addEventListener('click',function(){ openViabilityModal(); });
+    var viaCloseBtn=document.getElementById('viability-modal-close');
+    if(viaCloseBtn) viaCloseBtn.addEventListener('click',closeViabilityModal);
+    if(viaModal) viaModal.addEventListener('click',function(e){ if(e.target.id==='viability-modal') closeViabilityModal(); });
     document.getElementById('share-download').addEventListener('click',function(){
       var canvas=document.getElementById('share-canvas');
       var note=document.getElementById('share-card-note');
