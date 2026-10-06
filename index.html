@@ -221,7 +221,7 @@
   .impact-diff .k{font-weight:700;font-size:13px;flex:1 1 0;min-width:0}
   .impact-diff .v{font-family:'Space Mono',monospace;font-weight:800;font-size:15.5px;
     flex:0 0 auto;white-space:nowrap;padding-left:10px}
-  .impact-diff.is-up{background:#4CAF5014} .impact-diff.is-up .v{color:#4CAF50}
+  .impact-diff.is-up{background:#4CAF5014} .impact-diff.is-up .v{color:var(--brand)}
   .impact-diff.is-down{background:#E2604F14} .impact-diff.is-down .v{color:var(--brick)}
   .impact-diff.is-neutral{background:transparent} .impact-diff.is-neutral .v{color:var(--muted)}
 
@@ -980,6 +980,99 @@
   .ty-big{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(28px,7vw,40px);color:var(--couple);line-height:1}
   .ty-sub{font-size:14px;color:var(--muted);max-width:52ch;margin:14px auto 0;line-height:1.6}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* =====================================================================================
+   DESIGN SYSTEM -- Calculator tab
+   A short list of rules so the page reads as one voice. New text should pick from these.
+
+   FONTS     Inter ................ all reading text and numbers
+             Bricolage Grotesque .. titles and big result numbers only
+             Space Mono ........... tiny uppercase section labels only
+   SIZES     11 label · 12 fine print · 14 body · 15 title / intro · 20 stat · 28 headline stat
+   COLOURS   ink (body) · muted grey (fine print, captions) · orange (values, links, accents)
+             · red (warnings, and nothing else). Green is kept for the star ratings only.
+   FRAMES    Only real cards and containers get a box. Plain text never does.
+   WARNINGS  Red text at body size, no box, starting with the warning sign.
+   ===================================================================================== */
+:root{--fs-label:11px;--fs-fine:12px;--fs-body:14px;--fs-title:15px;--fs-stat:20px;--fs-hero:28px}
+
+/* body text */
+#tab-calc .standfirst{font-size:var(--fs-title);line-height:1.55}
+#tab-calc .sec-sub,#tab-calc .note p,#tab-calc .note-sg p,#tab-calc .opt-txt,#tab-calc .verdict-text,#tab-calc .sc-val,
+#tab-calc .whatif .wi-t,#tab-calc .rdl-label,#tab-calc .rdl-val{
+  font-family:'Inter',system-ui,sans-serif;font-size:var(--fs-body);font-weight:400;line-height:1.55;color:var(--ink)}
+#tab-calc .rdl-val{font-weight:700;color:#fff}
+#tab-calc .sec-sub{margin-bottom:14px}
+#tab-calc .verdict-text b,#tab-calc .sc-val b,#tab-calc .note b,#tab-calc .sec-sub b,#tab-calc .opt-txt b{font-family:inherit;font-size:inherit;font-weight:700;color:inherit}
+/* plain text has no frame */
+#tab-calc .note,#tab-calc .note-sg,#tab-calc .verdict-banner{background:none !important;border:0 !important;border-radius:0 !important;padding:0 !important;box-shadow:none !important}
+#tab-calc .verdict-banner{gap:10px;align-items:flex-start;margin-bottom:12px}
+#tab-calc .verdict-emoji{font-size:var(--fs-title);line-height:1.55}
+@media(min-width:560px){#tab-calc .verdict-text{font-size:var(--fs-body)}}
+
+/* fine print: small, grey */
+#tab-calc .milestones,#tab-calc .chart-range-note,#tab-calc .dollar-toggle-text,#tab-calc .opt-sub,#tab-calc .scard .setup,
+#tab-calc .dd-card .dd-desc,#tab-calc .rd-bar-lab,#tab-calc .sc-sub,#tab-calc .halfraise-noeffect,#tab-calc #halfraise-noeffect{
+  font-family:'Inter',system-ui,sans-serif;font-size:var(--fs-fine);font-weight:400;line-height:1.55;color:var(--muted)}
+#tab-calc .milestones b{font-weight:700;color:var(--brand)}
+#tab-calc .hint .bubble,#tab-calc .bubble{font-size:var(--fs-fine);line-height:1.55}
+
+/* warnings: red text, no box */
+#tab-calc #ec-singles-warn,#tab-calc #srs-excess-note,#tab-calc #alloc-gap-note,#tab-calc #condo-afford-warn,
+#tab-calc #car-afford-warn,#tab-calc #f-distress,#tab-calc #f-distress p{
+  background:none !important;border:0 !important;border-radius:0 !important;padding:0 !important;
+  color:var(--brick) !important;font-family:'Inter',system-ui,sans-serif !important;font-size:var(--fs-body) !important;font-weight:400 !important;line-height:1.55 !important}
+#tab-calc #ec-singles-warn b,#tab-calc #srs-excess-note b,#tab-calc #alloc-gap-note b,#tab-calc #condo-afford-warn b,
+#tab-calc #car-afford-warn b,#tab-calc #f-distress b{color:inherit !important;font-weight:700;font-size:inherit;font-family:inherit}
+
+/* labels and values */
+#tab-calc .field label,#tab-calc .alloc-head .l{font-family:'Inter',system-ui,sans-serif;font-size:var(--fs-body);font-weight:600;color:var(--ink)}
+#tab-calc .field output,#tab-calc .alloc-head output,#tab-calc .alloc-head .v,#tab-calc .alloc-head .amt{
+  font-family:'Inter',system-ui,sans-serif;font-size:var(--fs-body);font-weight:700;color:var(--brand);font-variant-numeric:tabular-nums}
+#tab-calc .alloc-head{font-size:var(--fs-body)}
+
+/* data rows */
+#tab-calc .ded-row,#tab-calc .opt-row,#tab-calc .scard .r{font-family:'Inter',system-ui,sans-serif;font-size:var(--fs-body)}
+#tab-calc .ded-row .lab,#tab-calc .opt-row .k,#tab-calc .scard .r .k{font-family:'Inter',system-ui,sans-serif;font-size:var(--fs-body);font-weight:400;color:var(--muted)}
+#tab-calc .ded-row .amt,#tab-calc .opt-row .v,#tab-calc .scard .r .v,#tab-calc .whatif .wi-d{
+  font-family:'Inter',system-ui,sans-serif;font-size:var(--fs-body);font-weight:700;font-variant-numeric:tabular-nums}
+#tab-calc .whatif .wi-d.pos{color:var(--brand)}
+
+/* titles */
+#tab-calc .cg-title,#tab-calc .chart-title,#tab-calc .dd-card .dd-title,#tab-calc .scard .name,#tab-calc .opt-h{
+  font-family:'Bricolage Grotesque',sans-serif;font-size:var(--fs-title);font-weight:700;color:var(--ink);line-height:1.3}
+
+/* section labels */
+#tab-calc .sc-title,#tab-calc .sc-q,#tab-calc .preset-scenarios-label,#tab-calc .primary-label,#tab-calc .whatif-label,
+#tab-calc .scard .hl,#tab-calc .impact-block-label{
+  font-family:'Space Mono',monospace;font-size:var(--fs-label);font-weight:400;letter-spacing:.06em;text-transform:uppercase}
+#tab-calc .sc-q,#tab-calc .sc-title,#tab-calc .preset-scenarios-label,#tab-calc .primary-label,#tab-calc .whatif-label,#tab-calc .scard .hl{color:var(--muted)}
+
+/* result numbers */
+#tab-calc .scard .big,#tab-calc .opt-big{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:var(--fs-hero);color:var(--brand)}
+#tab-calc .contrib-card .cv{font-size:var(--fs-stat)}
+
+/* second pass: buttons, impact cards, assumptions panel, tables, legends */
+#tab-calc .cg-body,#tab-calc .dd-body{font-size:var(--fs-body)}
+#tab-calc .chart-title,#tab-calc .cg-title,#tab-calc .dd-card .dd-title{font-size:var(--fs-title) !important}
+#tab-calc .scenario-btn,#tab-calc .dt-btn,#tab-calc .preset{font-family:'Inter',system-ui,sans-serif;font-size:var(--fs-body);font-weight:600}
+#tab-calc .hero-cta{font-family:'Bricolage Grotesque',sans-serif;font-size:var(--fs-title);font-weight:700}
+#tab-calc .impact-row .k,#tab-calc .impact-diff .k{font-family:'Inter',system-ui,sans-serif;font-size:var(--fs-body)}
+#tab-calc .impact-row .v,#tab-calc .impact-diff .v{font-family:'Inter',system-ui,sans-serif;font-size:var(--fs-body);font-weight:700;font-variant-numeric:tabular-nums}
+#tab-calc .impact-diff .k{font-weight:400;color:var(--muted)}
+#tab-calc .contrib-card .ck{font-family:'Space Mono',monospace;font-size:var(--fs-label);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+#tab-calc .contrib-card .csub,#tab-calc .contrib-card .csub b{font-family:'Inter',system-ui,sans-serif;font-size:var(--fs-fine)}
+#tab-calc .chart-legend,#tab-calc .chart-legend span{font-family:'Inter',system-ui,sans-serif;font-size:var(--fs-fine)}
+#tab-calc .seg{font-family:'Inter',system-ui,sans-serif;font-size:var(--fs-fine);font-weight:700}
+#tab-calc #risk-table *{font-size:var(--fs-fine) !important}
+#tab-calc .rdl-why summary,#tab-calc .rdl-why div{font-size:var(--fs-fine) !important}
+#tab-calc #assumptions-body p,#tab-calc #assumptions-body li,#tab-calc #assumptions-body .r,#tab-calc #assumptions-body span{font-size:var(--fs-body)}
+#tab-calc #assumptions-body .chart-range-note,#tab-calc #assumptions-body .chart-range-note *{font-size:var(--fs-fine)}
+#tab-calc .scard .big{font-size:var(--fs-hero) !important}
+#tab-calc .opt-big{color:var(--brand) !important}
+#tab-calc #cp-calib *{font-size:var(--fs-body) !important}
+#tab-calc #cp-calib span{font-size:var(--fs-fine) !important}
+#tab-calc .opt-tag,#tab-calc .rdl-tag{font-family:'Inter',system-ui,sans-serif}
 </style>
 </head>
 <body>
@@ -1532,7 +1625,7 @@
       <summary><span class="cg-title">Investing<span class="pro-only">, diversification</span> &amp; tax</span></summary>
       <div class="cg-body">
       <p class="sec-sub">Drag any slider — the other three <b>won't</b> move automatically. Each one's own range shrinks to whatever room is left, so the total can never exceed 100% — but if you free up room by lowering one, you'll need to raise another yourself to put it to use.</p>
-      <p class="sec-sub"><b>Necessities, Wants and Invest split whatever’s left after car, parental allowance and a condo/HDB mortgage paid in cash are already taken out</b> — not raw take-home. SRS is the one exception: its slider still runs off income before those costs, since its S$1,275/mo legal cap is a tax-law limit tied to income, not to your spending choices. If a car or a hefty allowance is large enough on its own to break the budget, the car specifically gets blocked from being turned on.</p>
+      <p class="sec-sub">Necessities, Wants and Invest split whatever’s left after car, parental allowance and a condo/HDB mortgage paid in cash are already taken out — not raw take-home. SRS is the one exception: its slider still runs off income before those costs, since its S$1,275/mo legal cap is a tax-law limit tied to income, not to your spending choices. If a car or a hefty allowance is large enough on its own to break the budget, the car specifically gets blocked from being turned on.</p>
       <div class="alloc">
         <div class="alloc-row">
           <div class="alloc-head"><span class="l"><i class="dot" style="background:var(--single)"></i>Necessities <span class="hint"><button class="help">?</button><span class="bubble">Rent, food, transport, utilities, insurance — the unavoidable (plus your child's costs, if any). The classic guide is ~50% of take-home.</span></span></span><span class="amt"><output id="ao-need">50%</output> · <span id="ad-need"></span></span></div>
@@ -6762,8 +6855,8 @@
         // pot card
         var oc=$('seq-outcome');
         if(crash.dep!==null){ oc.textContent='Pot runs out at age '+crash.dep; oc.style.color='var(--brick)'; }
-        else if(crash.end<0.25*base.potRet){ oc.textContent='Lasts to 90 \u2014 barely'; oc.style.color='#C79A1E'; }
-        else { oc.textContent='Lasts well past 90'; oc.style.color='#2E9E5B'; }
+        else if(crash.end<0.25*base.potRet){ oc.textContent='Lasts to 90 \u2014 barely'; oc.style.color='var(--ink)'; }
+        else { oc.textContent='Lasts well past 90'; oc.style.color='var(--brand)'; }
         $('seq-end-base').textContent=fmtK(base.end);
         $('seq-end-crash').textContent=crash.dep!==null?'S$0':fmtK(crash.end);
         $('seq-trough').textContent=fmtK(crash.trough)+' (age '+crash.troughAge+')';
@@ -6840,12 +6933,12 @@
         var big=$('rd-gap');
         if(gap>0){
           $('rd-gap-label').textContent='Monthly income gap';
-          big.textContent='\u2212'+fmt(gap)+'/mo'; big.style.color=col;
+          big.textContent='\u2212'+fmt(gap)+'/mo'; big.style.color='var(--brick)';
           $('rd-gap-k').textContent='Shortfall vs. target'; $('rd-gap-v').textContent=Math.round((1-ratio)*100)+'% short';
           $('rd-note').textContent='This is the monthly shortfall, in today\u2019s dollars, between what your plan projects and what you said you want. Lifting your savings rate, working a little longer or trimming a big purchase can all narrow it \u2014 the \u201cWhat if\u201d and \u201cWork backward from a goal\u201d tools above show how much each one is worth.';
         } else {
           $('rd-gap-label').textContent='Monthly surplus';
-          big.textContent='+'+fmt(-gap)+'/mo'; big.style.color=col;
+          big.textContent='+'+fmt(-gap)+'/mo'; big.style.color='var(--brand)';
           $('rd-gap-k').textContent='Above your target'; $('rd-gap-v').textContent=Math.round((ratio-1)*100)+'% ahead';
           $('rd-note').textContent='Your projected income covers your target with room to spare. Remember this is the average-case projection \u2014 see the Monte Carlo stress test below for how often markets would actually deliver it.';
         }
