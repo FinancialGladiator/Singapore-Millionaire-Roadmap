@@ -893,6 +893,16 @@
      color change itself carries meaning rather than just being decoration. */
   #float-summary.warn{background:var(--brick)}
   .fs-main-row{display:flex;justify-content:space-around;gap:6px}
+  /* Second row: the two scorecard ratings. Collapsed while the real cards are on screen, and
+     slides open once they have scrolled out of view (class fs-expanded, set from JS). */
+  .fs-extra{display:flex;justify-content:space-around;gap:6px;max-height:0;opacity:0;overflow:hidden;
+    margin-top:0;padding-top:0;border-top:1px solid transparent;
+    transition:max-height .35s cubic-bezier(.3,.9,.4,1),opacity .3s ease,margin .35s ease,padding .35s ease}
+  #float-summary.fs-expanded .fs-extra{max-height:48px;opacity:1;margin-top:9px;padding-top:9px;border-top-color:rgba(26,20,16,.2)}
+  #float-summary.warn.fs-expanded .fs-extra{border-top-color:rgba(255,255,255,.3)}
+  .fs-stars{display:inline-flex;gap:1px;font-size:15px;line-height:1;vertical-align:middle}
+  .fs-stars .st{background:linear-gradient(90deg,#fff calc(var(--f)*100%),rgba(26,20,16,.3) calc(var(--f)*100%));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+  .fs-pc{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:13px;color:#fff;margin-left:6px;vertical-align:middle;white-space:nowrap}
   #float-summary .fs-item{text-align:center;flex:1;min-width:0}
   #float-summary .fs-k{display:block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.04em;
     text-transform:uppercase;color:#1A1410;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1011,6 +1021,17 @@
       <div class="fs-item">
         <span class="fs-k">Retirement income</span>
         <span class="fs-v" id="fs-inc"></span>
+      </div>
+    </div>
+    <div class="fs-extra" id="fs-extra">
+      <div class="fs-item">
+        <span class="fs-k">On track</span>
+        <span><span class="fs-stars" id="fs-st1"></span><span class="fs-pc" id="fs-pc1"></span></span>
+      </div>
+      <div class="fs-div"></div>
+      <div class="fs-item">
+        <span class="fs-k">Resilience</span>
+        <span><span class="fs-stars" id="fs-st2"></span><span class="fs-pc" id="fs-pc2"></span></span>
       </div>
     </div>
   </div>
@@ -7160,6 +7181,7 @@
         var o, r; try{ o=readOpts(); r=project(o); }catch(e){ return null; }
         var target=parseFloat($('rd-target').value)||2400, proj=Math.max(0,r.income/r.disc), ratio=target>0?proj/target:0;
         stars($('tq1-stars'), toStars(Math.min(1,ratio)), col(Math.min(1,ratio)), 'On track');
+        try{ stars($('fs-st1'), toStars(Math.min(1,ratio)), '', 'On track'); $('fs-pc1').textContent=Math.round(ratio*100)+'%'; }catch(e){}
         $('tq1-val').innerHTML='<b>'+fmt(proj)+'</b> of <b>'+fmt(target)+'</b>/mo ('+Math.round(ratio*100)+'%)';
         try{
           var res=sgmrRankLevers(o,r,proj).slice(0,3), mx=res.length?res[0].add:1;
@@ -7167,23 +7189,60 @@
         }catch(e){}
         return {o:o,target:target};
       }
-      var timer=null, dirty=true;
+      var timer=null, dirty=true, gen=0, rafId=0, quickMs=10, lastQuick=0;
+      // The bar's second row (the two star ratings) opens only once the real scorecard has
+      // scrolled out of sight, and only after the first resilience result exists.
+      var fsBar=$('float-summary'), tilesOut=false, fsReady=false;
+      function applyFs(){ if(fsBar) fsBar.classList.toggle('fs-expanded', tilesOut && fsReady); }
+      if(fsBar && 'IntersectionObserver' in window){
+        new IntersectionObserver(function(es){ tilesOut=!es[0].isIntersecting; applyFs(); },{rootMargin:'-112px 0px 0px 0px'}).observe(box);
+      }
+      function paintResilience(cf, approx){
+        stars($('tq2-stars'), toStars(cf.to95), col(cf.to95), 'Resilience');
+        try{ stars($('fs-st2'), toStars(cf.to95), '', 'Resilience'); $('fs-pc2').textContent=(approx?'\u2248':'')+Math.round(cf.to95*100)+'%'; fsReady=true; applyFs(); }catch(e){}
+        $('tq2-val').innerHTML=(approx?'&asymp; ':'')+'<b>'+Math.round(cf.to95*100)+'%</b> of simulated futures fund <b>'+fmt(cf.spend)+'</b>/mo to 95';
+      }
+      // While a slider is moving: a small run (120 markets, about 20 ms) at most every few
+      // frames, throttled to how fast this device actually managed the last one, so dragging
+      // never stutters. Shown with a "≈". The full run replaces it once the reader pauses.
+      function liveEstimate(st){
+        var now=performance.now();
+        if(now-lastQuick < Math.max(160, quickMs*6)) return;
+        var t=now;
+        try{ paintResilience(runMonteCarlo(st.o,120,0).cashflow, true); }catch(e){}
+        quickMs=performance.now()-t; lastQuick=performance.now();
+      }
+      // Settled result: the full 1,500 markets, done as five slices of 300 with a breath
+      // between each so the page stays responsive, and abandoned if the reader moves again.
       function renderFragile(){
         var st=renderFast(); if(!st) return;
         if(!box.offsetParent){ dirty=true; return; }
         dirty=false;
-        $('tq2-val').textContent='Checking 1,500 simulated markets…';
-        setTimeout(function(){
-          try{
-            var mc=runMonteCarlo(st.o,1500,0), cf=mc.cashflow;
-            stars($('tq2-stars'), toStars(cf.to95), col(cf.to95), 'Resilience');
-            $('tq2-val').innerHTML='<b>'+Math.round(cf.to95*100)+'%</b> of simulated futures fund <b>'+fmt(cf.spend)+'</b>/mo to 95';
-          }catch(e){ $('tq2-val').textContent='The stress test could not run here.'; }
-        },20);
+        var cur=$('tq2-val').textContent;
+        if(!cur || cur==='—') $('tq2-val').textContent='Checking 1,500 simulated markets…';
+        var my=++gen, seed0=(window.SGMR_MC&&window.SGMR_MC.SEED)||0, k=0, N=5, sum=0, spend=0;
+        (function step(){
+          if(my!==gen) return;
+          try{ var cf=runMonteCarlo(st.o,300,0,seed0+k).cashflow; sum+=cf.to95; spend=cf.spend; }
+          catch(e){ $('tq2-val').textContent='The stress test could not run here.'; return; }
+          k++;
+          if(k<N){ setTimeout(step,0); return; }
+          paintResilience({to95:sum/N, spend:spend}, false);
+        })();
       }
-      var fastT=null;
-      function schedule(){ clearTimeout(fastT); fastT=setTimeout(renderFast,150); clearTimeout(timer); timer=setTimeout(renderFragile,700); }
+      function schedule(){
+        gen++;  // abandons any settle run still in progress
+        if(!rafId) rafId=requestAnimationFrame(function(){
+          rafId=0;
+          var st=renderFast();
+          if(st && box.offsetParent) liveEstimate(st);
+        });
+        clearTimeout(timer); timer=setTimeout(renderFragile,450);
+      }
       document.addEventListener('input', schedule); document.addEventListener('change', schedule);
+      // Programmatic changes (persona buttons, goal-seek, what-if, cover sync) set values without firing
+      // input events, so recompute() calls this too -- the cards then follow every kind of change.
+      window.__refreshGlance=schedule;
       if('IntersectionObserver' in window){ new IntersectionObserver(function(es){ if(es[0].isIntersecting && dirty) renderFragile(); }).observe(box); }
       setTimeout(renderFragile,1200);
     })();
@@ -7271,7 +7330,7 @@
       // showing its own bare-bones estimate or switch to mirroring this tab's full result.
       if(window.__firstRecomputeDone && !window.__coverToCalcInProgress) window.__calcTabEngaged=true;
       window.__firstRecomputeDone=true;
-      syncUI(); calc(); syncSaveSlider(); refreshWhatIfs(); if(window.refreshGrantLive) window.refreshGrantLive(); if(window.__syncCoverFromCalc) window.__syncCoverFromCalc();
+      syncUI(); calc(); syncSaveSlider(); refreshWhatIfs(); if(window.refreshGrantLive) window.refreshGrantLive(); if(window.__syncCoverFromCalc) window.__syncCoverFromCalc(); if(window.__refreshGlance) window.__refreshGlance();
     };
 
     // Deliberately standalone -- reads income/age/mortgage/household straight from the
