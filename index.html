@@ -7754,6 +7754,12 @@
         recompute();
       });
     }
+    ['i-preset','i-srsmode','i-goldkeep'].forEach(function(id){
+      if($(id)) $(id).addEventListener('change',function(){
+        if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets();
+        recompute();
+      });
+    });
     if($('i-cpflifeplan')){
       $('i-cpflifeplan').addEventListener('change',function(){
         if(window.__markDeviatedFromPresets) window.__markDeviatedFromPresets();
