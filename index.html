@@ -30,12 +30,15 @@
   html{-webkit-text-size-adjust:100%;background:var(--paper)}
   body{background:var(--paper) !important;color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;
     padding:0 16px 44px;max-width:1080px;margin:0 auto;overflow-x:hidden;overflow-wrap:break-word;word-wrap:break-word}
+  /* overflow-x:hidden on <body> breaks position:sticky in Safari/iOS (the header scrolls away).
+     'clip' trims sideways overflow the same way without making body a scroll container. */
+  @supports (overflow:clip){ body{overflow-x:clip} }
 
   /* tab bar */
-  .tabbar{position:sticky;top:0;z-index:30;background:var(--paper);
+  .tabbar{position:-webkit-sticky;position:sticky;top:0;z-index:30;background:var(--paper);
     padding:calc(12px + env(safe-area-inset-top, 0px)) 0 12px;
     display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);margin-bottom:0}
-  #breadcrumb{position:sticky;top:calc(66px + env(safe-area-inset-top, 0px));z-index:28;background:var(--paper);display:flex;align-items:center;
+  #breadcrumb{position:-webkit-sticky;position:sticky;top:calc(66px + env(safe-area-inset-top, 0px));z-index:28;background:var(--paper);display:flex;align-items:center;
     justify-content:center;gap:14px;padding:7px 0;border-bottom:1px solid var(--line);margin-bottom:8px}
   #breadcrumb .bc-arrow{background:var(--panel);border:1px solid var(--line);color:var(--ink);
     width:26px;height:26px;border-radius:50%;font-size:16px;line-height:1;cursor:pointer;
@@ -56,6 +59,23 @@
   .nav-toggle-btn[aria-expanded="true"] span:nth-child(1){transform:translateY(6px) rotate(45deg)}
   .nav-toggle-btn[aria-expanded="true"] span:nth-child(2){opacity:0}
   .nav-toggle-btn[aria-expanded="true"] span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+  /* Pro toggle: same 42px rounded square as the glossary button. Grey when off, orange when on. */
+  .pro-btn{flex:0 0 auto;width:42px;height:42px;background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;color:var(--muted);cursor:pointer;padding:0;opacity:.7;
+    font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:12px;letter-spacing:.02em;
+    display:none;align-items:center;justify-content:center;transition:background .2s,color .2s,opacity .2s}
+  .pro-btn.on-tab{display:flex}
+  .pro-btn[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--brand-ink);opacity:1}
+  .pro-btn:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  body:not(.pro-on) .pro-only{display:none !important}
+  #f-advanced-cpf{display:none !important}
+  .pro-only > summary .cg-title::after,.pro-only > summary .dd-title::after{content:"PRO";margin-left:8px;
+    font-family:'Space Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.06em;color:var(--brand);
+    border:1px solid var(--brand);border-radius:4px;padding:1px 5px;vertical-align:middle}
+  #pro-note{display:none;margin:0 0 12px;padding:9px 12px;border:1px dashed var(--line);border-radius:10px;
+    font-size:12.5px;color:var(--muted);line-height:1.5}
+  #pro-note.show{display:block}
+  #pro-note button{background:none;border:none;color:var(--brand);font:inherit;font-weight:700;cursor:pointer;padding:0;text-decoration:underline}
   .glossary-open-btn{flex:0 0 auto;width:42px;height:42px;background:var(--panel);
     border:1px solid var(--line);border-radius:10px;color:var(--ink);cursor:pointer;padding:0;
     font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:18px;
@@ -279,9 +299,12 @@
   .dd-card>summary{list-style:none;cursor:pointer;display:flex;align-items:flex-start;gap:14px;
     padding:16px 18px}
   .dd-card>summary::-webkit-details-marker{display:none}
-  .dd-card>summary:after{content:"\203A";font-size:22px;line-height:1;color:var(--muted);
-    margin-left:auto;flex:0 0 auto;transform:rotate(90deg);transition:transform .2s ease;padding-top:2px}
-  .dd-card[open]>summary:after{transform:rotate(-90deg)}
+  /* Chevron drawn from borders in a fixed square box, so it turns about its own centre and
+     the open (up) and closed (down) arrows sit in exactly the same spot. */
+  .dd-card>summary:after{content:"";box-sizing:border-box;width:9px;height:9px;flex:0 0 auto;margin:7px 4px 0 auto;
+    border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);
+    transform:translateY(-2px) rotate(45deg);transition:transform .2s ease}
+  .dd-card[open]>summary:after{transform:translateY(3px) rotate(225deg)}
   .dd-card .dd-txt{display:flex;flex-direction:column;min-width:0;gap:3px}
   .dd-card .dd-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:16px;
     color:var(--ink);line-height:1.25}
@@ -321,16 +344,17 @@
     justify-content:space-between;gap:12px;padding:14px 16px;
     font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14.5px;color:var(--ink)}
   .ctl-group>summary::-webkit-details-marker{display:none}
-  .ctl-group>summary:after{content:"⌄";font-size:16px;color:var(--muted);transition:transform .18s ease;
-    margin-left:auto;padding-left:10px}
-  .ctl-group[open]>summary:after{transform:rotate(180deg)}
+  .ctl-group>summary:after{content:"";box-sizing:border-box;width:9px;height:9px;flex:0 0 auto;margin:0 4px 0 auto;
+    border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);
+    transform:translateY(-2px) rotate(45deg);transition:transform .18s ease}
+  .ctl-group[open]>summary:after{transform:translateY(3px) rotate(225deg)}
   /* Scoped to this one accordion only -- matches the orange, filled .hero-cta quiz
      button style, rather than changing every other accordion summary in the app. */
   #grp-diversify-sim>summary{background:var(--brand);color:var(--brand-ink);
     border-radius:8px 8px 0 0}
   #grp-diversify-sim[open]>summary{border-radius:8px 8px 0 0}
   #grp-diversify-sim:not([open])>summary{border-radius:8px}
-  #grp-diversify-sim>summary:after{color:var(--brand-ink)}
+  #grp-diversify-sim>summary:after{border-color:var(--brand-ink)}
   .ctl-group .cg-body{padding:2px 16px 14px;border-top:1px solid var(--line)}
   .ctl-group[open]{box-shadow:0 1px 3px rgba(0,0,0,.04)}
 
@@ -445,9 +469,12 @@
   @media (prefers-reduced-motion: reduce){
     .hero-spark i{animation:none;transform:scaleY(1)}
   }
-  .hero-result .hr-sub{font-family:'Space Mono',monospace;font-size:12px;color:#a4b0a9;margin-top:16px}
-  .hero-result .hr-foot{font-family:'Space Mono',monospace;font-size:11px;color:#7d8a80;
-    margin-top:14px;padding-top:14px;border-top:1px solid #ffffff1a;line-height:1.6}
+  .hr-valuewrap{display:inline-flex;align-items:flex-start;gap:6px;max-width:100%}
+  .hr-hint{margin-left:0;margin-top:6px;align-self:flex-start}
+  .hero-result .hr-bubble{width:min(86vw,330px);line-height:1.55;font-size:13px}
+  .hero-result .hr-bubble .hr-sub,.hero-result .hr-bubble .hr-foot,.hero-result .hr-bubble .hr-legal{display:block;margin:9px 0 0;padding:0;border:0;font-family:inherit;font-size:13px;color:var(--ink);line-height:1.55}
+  .hero-result .hr-bubble .hr-foot{color:var(--muted)}
+  .hero-result .hr-bubble .hr-legal{color:var(--muted);padding-top:9px;border-top:1px solid var(--line);margin-bottom:6px}
   .delay-cost{margin-top:18px;background:#E2604F14;border:1px solid #E2604F3a;
     border-radius:10px;padding:16px 18px}
   .delay-cost-label{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.06em;
@@ -488,6 +515,29 @@
     color:var(--brand-ink);background:var(--brand);border:none;border-radius:9px}
   .hero-cta:hover{opacity:.9}
   @media(min-width:560px){ .hero-cta{width:auto;padding:16px 32px} }
+  .scorecard{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0 6px}
+  .sc-tile{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:6px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel);min-width:0}
+  .sc-tile:hover,.sc-tile:focus-visible{border-color:var(--brand)}
+  .sc-q{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  .sc-stars{display:flex;gap:2px;font-size:26px;line-height:1}
+  .sc-stars .st{background:linear-gradient(90deg,var(--c,#7F877E) calc(var(--f)*100%),#F3F5F022 calc(var(--f)*100%));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+  .sc-val{font-size:13px;color:var(--ink);line-height:1.35}
+  .sc-val b{font-weight:700}
+  .sc-bars{display:flex;flex-direction:column;gap:7px;margin-top:2px}
+  .sc-bar{display:grid;grid-template-columns:1fr auto;gap:2px 8px;font-size:12px;line-height:1.3;color:var(--ink)}
+  .sc-bar i{grid-column:1/-1;display:block;height:5px;border-radius:3px;background:var(--brand)}
+  .sc-bar span{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sc-head{display:flex;align-items:center;gap:4px;margin:16px 0 8px}
+  .sc-title{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .sc-sub{font-size:12px;color:var(--muted);margin-top:-2px}
+  .scorecard{margin-top:0}
+  @media(max-width:760px){ .scorecard{grid-template-columns:1fr} .sc-tile{padding:10px 12px} .sc-stars{font-size:24px} }
+  .trust-strip{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:center;font-size:12.5px;color:var(--muted);margin:16px 0 0;line-height:1.6;text-align:center}
+  .trust-strip button:not(.help){background:none;border:0;padding:0;color:var(--ink);font:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+  .bubble .tq-link,.trust-strip .bubble .tq-link{display:block;margin:0;padding:3px 0;background:none;border:0;color:var(--brand);font:inherit;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;text-align:left}
+  .trust-strip .bubble button.tq-link{color:var(--brand);text-decoration:none}
+  .bubble .tq-link:hover{text-decoration:underline}
+  .trust-strip .ts-sep{opacity:.5}
   .hero-or{text-align:center;font-family:'Space Mono',monospace;font-size:12px;
     letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 0}
   .cover-sub{font-size:16px;color:var(--muted);margin:30px 0 4px}
@@ -831,7 +881,7 @@
   .cmp-barwrap{flex-wrap:wrap}
   .cmp-sub{grid-column:1 / -1;font-family:'Space Mono',monospace;font-size:10.5px;color:var(--muted);padding:2px 0 8px;border-bottom:1px solid var(--line)}
   /* floating summary box */
-  #float-summary{position:fixed;left:12px;right:12px;bottom:14px;z-index:45;
+  #float-summary{position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom, 0px));z-index:45;
     background:var(--brand);color:#fff;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.28);
     padding:12px 10px;display:flex;flex-direction:column;gap:0;
     opacity:0;pointer-events:none;
@@ -932,6 +982,7 @@
       <span class="nt-l1">The Singapore</span>
       <span class="nt-l2">Millionaire Roadmap</span>
     </div>
+    <button id="pro-toggle" class="pro-btn" type="button" aria-pressed="false" aria-label="Pro features: show advanced calculator controls" title="Pro features (calculator)">PRO</button>
     <button id="glossary-open" class="glossary-open-btn" aria-label="Open glossary">?</button>
     <!-- Generated by buildNavDropdown() from TAB_ORDER, right after it's defined below --
          empty here deliberately, so there is no static copy of these six tabs' labels
@@ -1018,7 +1069,7 @@
       <button id="privacy-modal-close" class="share-modal-close" aria-label="Close">✕</button>
       <div class="privacy-icon">🔒</div>
       <h3 class="privacy-title">Just so you know</h3>
-      <p class="privacy-body">This app doesn't have a server, and nothing you enter is ever sent anywhere. Every number you type &mdash; your age, salary, savings &mdash; stays only on this device, in your browser's own storage. Close the tab, and it's still there next time; nobody else, including us, ever sees it.</p>
+      <p class="privacy-body">This app doesn't have a server, and nothing you enter is ever sent anywhere. It doesn't save your numbers either: everything you type &mdash; your age, salary, savings &mdash; lives only on this page while it's open. Refresh or close the tab and it starts fresh from the Classic Saver profile. (Your browser only remembers that you've seen this notice.)</p>
       <p class="privacy-body privacy-body-sub">Play with your real numbers freely &mdash; that's the whole point.</p>
       <button type="button" class="hero-cta" id="privacy-modal-ok" style="margin-top:6px">Got it, thanks</button>
     </div>
@@ -1030,7 +1081,7 @@
     <div class="hero-dark">
       <div class="hero-dark-in">
         <div class="eyebrow">Singapore · CPF, housing &amp; investing, month by month</div>
-        <h1 class="cover-h1">How an ordinary Singaporean can build <em>S$1 million</em>.</h1>
+        <h1 class="cover-h1">How an ordinary Singaporean can build <em style="white-space:nowrap">S$1&nbsp;million</em>.</h1>
 
         <div class="hero-ask">
           <p class="hero-ask-lead">The challenge: can a fast-food worker really get there? The numbers below start at a fast-food wage — try it, then put yourself in it. Salary before CPF and tax:</p>
@@ -1051,21 +1102,20 @@
 
         <div class="hero-result" id="hero-result" aria-live="polite">
           <div class="hr-label">Your projected net worth at 65</div>
-          <div class="hr-value" id="hero-nw">—</div>
+          <div class="hr-valuewrap">
+            <div class="hr-value" id="hero-nw">—</div>
+            <span class="hint hr-hint"><button type="button" class="help" aria-label="About this number">?</button><span class="bubble hr-bubble" style="text-align:left">
+              <b>About this number.</b>
+              <span class="hr-sub">in today's dollars (<span id="hero-nom">—</span> in future dollars at 65) &middot; <span id="hero-inc">—</span> a month, for life</span>
+              <span class="hr-foot" id="hero-foot"></span>
+              <span class="hr-legal">An illustration of your own inputs under this app&rsquo;s stated assumptions &mdash; not a forecast, and not financial advice. Rules last reviewed <span data-review-date></span>.</span>
+              <button type="button" class="tq-link" data-trust="assump">Assumptions &rarr;</button><button type="button" class="tq-link" data-trust="limits">What this can&rsquo;t do &rarr;</button><button type="button" class="tq-link" data-trust="checks">Self-checks &rarr;</button><button type="button" class="tq-link" data-trust="privacy">Privacy: nothing is saved &rarr;</button>
+            </span></span>
+          </div>
           <div class="hero-spark" id="hero-spark" aria-hidden="true"></div>
-          <div class="hr-sub">in today's dollars (<span id="hero-nom">—</span> in future dollars at 65) · <span id="hero-inc">—</span> a month, for life</div>
-          <div class="hr-foot" id="hero-foot"></div>
         </div>
 
-        <div class="hero-plain" id="hero-plain" style="display:none">
-          <div class="hp-title">Your plan in plain English</div>
-          <div class="hp-verdict" id="hp-verdict"></div>
-          <div class="hp-sub" id="hp-sub"></div>
-          <div class="hp-actions-title">What would move your number most</div>
-          <ol class="hp-actions" id="hp-actions"></ol>
-          <div class="hp-foot">Illustrative what-ifs based on your age, pay and household &mdash; not advice or a recommendation. Open <b>Your Number</b> for the full detail.</div>
-        </div>
-
+        
         <div class="delay-cost" id="delay-cost">
           <div class="delay-cost-label">Waiting to start costs you, in today's dollars <span class="delay-cost-live">●</span></div>
           <div class="delay-carousel" id="delay-carousel">
@@ -1104,8 +1154,28 @@
     <h1>Your salary in,<br>your <em>future</em> out.</h1>
     <p class="standfirst">Move the sliders. The calculator splits your pay into necessities, wants, CPF and tax, tells you what to invest each month across a diversified portfolio, and projects your CPF, investments and net worth at 65. It opens on a real Singapore graduate public-servant career as the baseline. Tap any <b>?</b> for an explanation.</p>
 
+    <div class="sc-head"><span class="sc-title">Your plan at a glance</span><span data-trust-hint></span></div>
+    <section class="scorecard" id="three-q" aria-label="Your plan scorecard">
+      <button type="button" class="sc-tile" data-open="grp-readiness">
+        <span class="sc-q">Am I on track?</span>
+        <span class="sc-stars" id="tq1-stars" role="img" aria-label=""></span>
+        <span class="sc-val" id="tq1-val">&mdash;</span>
+      </button>
+      <button type="button" class="sc-tile" data-open="grp-montecarlo">
+        <span class="sc-q">How resilient is it?</span>
+        <span class="sc-stars" id="tq2-stars" role="img" aria-label=""></span>
+        <span class="sc-val" id="tq2-val">&mdash;</span>
+      </button>
+      <button type="button" class="sc-tile" data-open="grp-readiness">
+        <span class="sc-q">What moves it most?</span>
+        <span class="sc-sub">Extra income per month</span>
+        <span class="sc-bars" id="tq3-bars"></span>
+      </button>
+    </section>
+
+    <div id="pro-note" role="status"></div>
     <div class="preset-scenarios">
-      <div class="preset-scenarios-label">Or start from a persona</div>
+      <div class="preset-scenarios-label">Select a persona</div>
       <div class="preset-scenarios-row">
         <button type="button" class="scenario-btn" id="btn-scenario-started">Survival Saver</button>
         <button type="button" class="scenario-btn active" id="btn-scenario-conservative">Classic Saver</button>
@@ -1114,7 +1184,7 @@
       </div>
     </div>
 
-    <details class="ctl-group" id="grp-goalseek">
+    <details class="ctl-group pro-only" id="grp-goalseek">
       <summary><span class="cg-title">Work backward from a goal</span></summary>
       <div class="cg-body">
 <div class="field">
@@ -1161,10 +1231,14 @@
           <input type="range" id="i-nw0" min="0" max="5000000" step="25000" value="0">
         </div>
         <div class="field">
-          <label>Target Savings Rate <span class="hint"><button class="help">?</button><span class="bubble">The share of take-home you put into SRS and investing combined. Moving this splits the change across your existing SRS/Invest balance and takes the difference from Necessities and Wants. For hands-on control of all four, open <b>Investing, diversification &amp; tax</b> below.</span></span> — <output id="o-save">20%</output></label>
+          <label>Target Savings Rate <span class="hint"><button class="help">?</button><span class="bubble">The share of take-home you put into SRS and investing combined. Moving this splits the change across your existing SRS/Invest balance and takes the difference from Necessities and Wants. For hands-on control of all four, open <b>Investing &amp; tax</b> below.</span></span> — <output id="o-save">20%</output></label>
           <input type="range" id="i-save" min="0" max="80" step="1" value="20">
           <div class="milestones flow" id="o-saveline" style="margin-top:8px"></div>
         </div>
+      <div class="field">
+        <label>Monthly income I want in retirement &mdash; <output id="rd-target-out">S$2,400</output> <span class="hint"><button class="help">?</button><span class="bubble">What you would like to live on each month once you stop working, in <b>today&rsquo;s dollars</b> (so it means what it sounds like, not a bigger number inflated decades from now). Compared against the total your plan projects: CPF LIFE, the 4% drawdown from your investments, gold income and any rental income.</span></span></label>
+        <input type="range" id="rd-target" min="1000" max="20000" step="100" value="2400">
+      </div>
       </div>
 
       <details class="ctl-group" id="grp-debt">
@@ -1248,7 +1322,7 @@
         <label>EC size — <output id="o-ecsize">3-room EC</output> <span class="hint"><button class="help">?</button><span class="bubble">Slide from the smallest (3-room, ~S$850k) to the largest (5-room, ~S$1.35m), before any ballot/build-wait inflation. EC is always family-sized — there's no 1- or 2-bedroom tier the way private condo has.</span></span></label>
         <input type="range" id="i-ecsize" min="0" max="2" step="1" value="0">
       </div>
-<div class="field" id="f-mortsrc">
+<div class="field pro-only" id="f-mortsrc">
         <label>Pay the HDB mortgage from <span class="hint"><button class="help">?</button><span class="bubble">By default, an HDB loan is serviced from <b>CPF-OA</b> — the standard approach, and free in the sense that it doesn't touch your take-home cash. Choosing <b>cash</b> instead means you pay it from take-home every month and leave your CPF-OA balance untouched, where it keeps compounding at CPF's <b>2.5%/yr</b>, risk-free. There's a real tradeoff here: CPF-OA growth is guaranteed but capped at 2.5%; cash freed up this way could instead go toward Necessities, Wants, or investing, which has historically returned more — with real volatility CPF doesn't carry. Neither choice is automatically better; this lets you compare both.</span></span> — <output id="o-mortsrc">CPF-OA</output></label>
         <select id="i-mortsrc">
           <option value="cpf">CPF-OA (default)</option>
@@ -1395,6 +1469,10 @@
         <input type="range" id="i-sti" min="3" max="8" step="0.5" value="6">
       </div>
 <input type="hidden" id="i-raisefloor-pct" value="">
+      <div class="field" id="f-worktill" style="margin-top:4px">
+        <label>I want to retire at age — <output id="o-worktill">65</output> <span class="hint"><button class="help">?</button><span class="bubble">Stop earning before 65 and CPF/SRS contributions stop with it — but CPF LIFE payouts still can't legally start before 65 (or later, if deferred), no matter how early you actually stop working. Necessities and Wants freeze at whatever they were the year you stop, inflated forward, and are drawn from your full investing portfolio (STI and the diversification sleeves together) to bridge the gap until 65. CPF and SRS just keep compounding untouched in the meantime — assumes you and your partner (if any) stop working the same year.</span></span></label>
+        <input type="range" id="i-worktill" min="18" max="65" step="1" value="65">
+      </div>
 <div class="field toggle-field" id="f-halfraise">
         <label class="toggle-label">
           <input type="checkbox" id="i-halfraise" checked>
@@ -1430,7 +1508,7 @@
       </details>
 
       <details class="ctl-group" id="grp-alloc">
-      <summary><span class="cg-title">Investing, diversification &amp; tax</span></summary>
+      <summary><span class="cg-title">Investing<span class="pro-only">, diversification</span> &amp; tax</span></summary>
       <div class="cg-body">
       <p class="sec-sub">Drag any slider — the other three <b>won't</b> move automatically. Each one's own range shrinks to whatever room is left, so the total can never exceed 100% — but if you free up room by lowering one, you'll need to raise another yourself to put it to use.</p>
       <p class="sec-sub"><b>Necessities, Wants and Invest split whatever’s left after car, parental allowance and a condo/HDB mortgage paid in cash are already taken out</b> — not raw take-home. SRS is the one exception: its slider still runs off income before those costs, since its S$1,275/mo legal cap is a tax-law limit tied to income, not to your spending choices. If a car or a hefty allowance is large enough on its own to break the budget, the car specifically gets blocked from being turned on.</p>
@@ -1462,6 +1540,7 @@
       <div class="bar" id="b-bar"></div>
       <div class="milestones flow" id="alloc-gap-note" style="display:none;margin-top:10px;background:#B8C2441A;border:1px solid #B8C24455;border-radius:6px;padding:10px 12px;color:var(--family)"></div>
 
+      <div class="pro-only">
       <p class="sec-sub" style="margin-top:18px">How that Invest % splits across five sleeves — drag any one and the rest make room, same as the sliders above. Dollar figures below are what to actually set up each month.</p>
       <div class="alloc">
         <div class="alloc-row">
@@ -1487,11 +1566,12 @@
       </div>
       <div class="chart-range-note" style="margin-top:8px">The dollar amounts show what your chosen percentages mean inside this projection. They are modelling outputs, not instructions to buy anything or a suggested allocation, and are not regulated financial advice. You may wish to approach a licensed financial adviser before making any decision to buy, sell or hold any investment product.</div>
       <div class="milestones flow" id="div-note" style="margin-top:8px"></div>
+      </div>
 
             </div>
     </details>
 
-    <details class="ctl-group" id="grp-risk">
+    <details class="ctl-group pro-only" id="grp-risk">
       <summary><span class="cg-title">Return &amp; risk assumptions</span></summary>
       <div class="cg-body">
       <div class="note" style="margin-top:6px"><p><b>Two numbers per asset, not one.</b> The <i>expected return</i> is the long-run average the projection uses. The <i>volatility</i> is how widely single years swing around it, which the Monte Carlo uses. Both are assumptions, not forecasts, and a different investor might reasonably choose different ones. Pick a set below to see how much the answer depends on them.</p></div>
@@ -1550,10 +1630,6 @@
       <details class="ctl-group" id="proj65-anchor">
       <summary><span class="cg-title">Projection at retirement</span></summary>
       <div class="cg-body">
-      <div class="field" id="f-worktill" style="margin-bottom:18px">
-        <label>Work till age — <output id="o-worktill">65</output> <span class="hint"><button class="help">?</button><span class="bubble">Stop earning before 65 and CPF/SRS contributions stop with it — but CPF LIFE payouts still can't legally start before 65 (or later, if deferred), no matter how early you actually stop working. Necessities and Wants freeze at whatever they were the year you stop, inflated forward, and are drawn from your full investing portfolio (STI and the diversification sleeves together) to bridge the gap until 65. CPF and SRS just keep compounding untouched in the meantime — assumes you and your partner (if any) stop working the same year.</span></span></label>
-        <input type="range" id="i-worktill" min="18" max="65" step="1" value="65">
-      </div>
       <h3 class="chart-title">Net worth over your career</h3>
       <div class="chart-card"><svg id="calc-chart" viewBox="0 0 900 430" role="img" aria-label="Net worth over your career"></svg></div>
       <div class="dollar-toggle" role="group" aria-label="Dollar basis">
@@ -1612,10 +1688,6 @@
     <details class="ctl-group" id="grp-readiness">
       <summary><span class="cg-title">Retirement readiness</span></summary>
       <div class="cg-body">
-      <div class="field" style="margin-top:6px">
-        <label>Monthly income I want in retirement &mdash; <output id="rd-target-out">S$5,000</output> <span class="hint"><button class="help">?</button><span class="bubble">What you would like to live on each month once you stop working, in <b>today&rsquo;s dollars</b> (so it means what it sounds like, not a bigger number inflated decades from now). Compared against the total your plan projects: CPF LIFE, the 4% drawdown from your investments, gold income and any rental income.</span></span></label>
-        <input type="range" id="rd-target" min="1000" max="20000" step="100" value="5000">
-      </div>
       <div class="verdict-banner" id="rd-verdict" style="margin-top:12px">
         <span class="verdict-emoji" id="rd-emoji">🟢</span>
         <span class="verdict-text" id="rd-text"></span>
@@ -1647,12 +1719,12 @@
       </div>
     </details>
 
-    <details class="ctl-group" id="grp-montecarlo">
+    <details class="ctl-group pro-only" id="grp-montecarlo">
       <summary><span class="cg-title">Monte Carlo stress test</span></summary>
       <div class="cg-body">
       <p class="chart-range-note" id="mc-target-line" style="margin-top:6px"></p>
       <div class="note" id="mc-explain" style="margin-top:8px">
-        <p><b>What this means in plain English.</b> The projection above assumes the market grows by exactly the same amount every single year. Real life doesn&rsquo;t &mdash; there are boom years, crashes and long flat stretches. This stress test &mdash; known in finance as a <b>Monte Carlo analysis</b> &mdash; replays <i>your exact plan</i> through <b>10,000 different made-up futures</b> &mdash; some kind, some brutal &mdash; and counts how often you still end up with at least the monthly retirement income your projection promises.</p>
+        <p><b>What this means in plain English.</b> The projection above assumes the market grows by exactly the same amount every single year. Real life doesn&rsquo;t &mdash; there are boom years, crashes and long flat stretches. This stress test &mdash; known in finance as a <b>Monte Carlo analysis</b> &mdash; replays <i>your exact plan</i> through <b>10,000 different made-up futures</b> &mdash; some kind, some brutal &mdash; and counts how often you still end up with at least the monthly retirement income <i>you said you want</i>.</p>
         <p style="margin-top:8px"><b>How to read it:</b> &ldquo;80%&rdquo; would mean that in about 8 of 10 possible futures you reach your projected income, and in 2 of 10 you fall short. It is a measure of how fragile or robust the plan is &mdash; not a prediction. Because your projection is the <i>average</i> case, expect roughly half of futures to land a little under it &mdash; the colour-coded ladder below shows how much income you can count on at each level of confidence.</p>
       </div>
       <p class="chart-range-note" id="mc-stale-note" style="display:none;color:var(--brick)">Your inputs have changed since the last run &mdash; run it again to refresh these results.</p>
@@ -1660,7 +1732,7 @@
       <p class="chart-range-note" id="mc-running-note" style="display:none">Running 10,000 simulations, plus a few scenario comparisons — a couple of seconds…</p>
       <div id="mc-results" style="display:none">
         <div class="mc-headline">
-          <div class="mc-hl-lab">Share of simulated futures reaching your target income <span class="hint"><button class="help">?</button><span class="bubble" style="text-align:left"><b>How to read this number.</b> It is the share of 10,000 simulated futures in which your plan reaches the income your projection shows, <i>given the return, volatility and correlation assumptions listed in this app</i>. It is not an objective probability of retirement success and not a forecast: change the assumptions and the number changes. The target here is the projection&rsquo;s average-case income, so the share depends on how the simulated outcomes are spread around it &mdash; see the ladder below for the full range.</span></span></div>
+          <div class="mc-hl-lab">Share of simulated futures reaching your target income <span class="hint"><button class="help">?</button><span class="bubble" style="text-align:left"><b>How to read this number.</b> It is the share of 10,000 simulated futures in which your plan reaches the monthly income you said you want, <i>given the return, volatility and correlation assumptions listed in this app</i>. It is not an objective probability of retirement success and not a forecast: change the assumptions and the number changes. Change your desired income and the number changes with it. The ladder below shows the full range of outcomes.</span></span></div>
           <div class="mc-hl-big" id="mc-goal-pct"></div>
           <div class="mc-hl-sub" id="mc-goal-sub"></div>
         </div>
@@ -1673,7 +1745,7 @@
     </details>
 
 
-    <details class="ctl-group" id="grp-sequence">
+    <details class="ctl-group pro-only" id="grp-sequence">
       <summary><span class="cg-title">Sequence-of-returns test</span></summary>
       <div class="cg-body">
       <div class="note" style="margin-top:6px">
@@ -1721,7 +1793,7 @@
       </div>
     </details>
 
-    <details class="ctl-group" id="grp-cparts">
+    <details class="ctl-group pro-only" id="grp-cparts">
       <summary><span class="cg-title">Where your CPF ends up</span></summary>
       <div class="cg-body">
       <div class="note" style="margin-top:6px"><p><b>Only part of your CPF becomes lifelong income.</b> Your CPF sits in separate accounts. Just the Retirement Account feeds CPF LIFE; the Ordinary Account pays for housing and what is left is flexible; MediSave is held for healthcare. Shown below in today&rsquo;s dollars, at 65, from your own projection.</p></div>
@@ -1735,7 +1807,7 @@
       </div>
     </details>
 
-    <details class="ctl-group" id="grp-cx">
+    <details class="ctl-group pro-only" id="grp-cx">
       <summary><span class="cg-title">CPF top-up vs SRS vs investing</span></summary>
       <div class="cg-body">
       <div class="note" style="margin-top:6px"><p><b>Where should your next dollar go?</b> The same amount, three homes: topped up into your CPF, put into SRS, or invested outside with no tax relief. Compared on your own tax rate and your own portfolio&rsquo;s return.</p></div>
@@ -1750,7 +1822,7 @@
       </div>
     </details>
 
-    <details class="ctl-group" id="grp-lf">
+    <details class="ctl-group pro-only" id="grp-lf">
       <summary><span class="cg-title">CPF LIFE: when and how?</span></summary>
       <div class="cg-body">
       <div class="note" style="margin-top:6px"><p><b>CPF LIFE is the one income that can&rsquo;t run out.</b> The choices that matter are when it starts, which plan you pick, and how much CPF you build before 65. Compared below in today&rsquo;s dollars, using your own CPF projection.</p></div>
@@ -1784,7 +1856,7 @@
 
       <button class="preset" id="btn-share" style="margin-top:10px;border-style:solid">🔗 Copy my scenario link</button>
       <div class="milestones flow" id="share-status" style="margin-top:8px"></div>
-      <div class="milestones flow" id="save-status" style="margin-top:4px;color:var(--muted)">💾 Your inputs save automatically on this device — come back anytime.</div>
+      <div class="milestones flow" id="save-status" style="margin-top:4px;color:var(--muted)">🔒 Nothing you enter is saved — refreshing the page resets to the Classic Saver profile. Use “Copy my scenario link” to keep a setup.</div>
     </div>
 
         <div class="deep-dive" id="deep-dive-anchor">
@@ -1850,7 +1922,7 @@
     </section>
         </div>
       </details>
-      <details class="dd-card" id="dd-2">
+      <details class="dd-card pro-only" id="dd-2">
         <summary><span class="dd-txt"><span class="dd-title">Where the money sits over time</span><span class="dd-desc">SRS, investing and CPF stacked across your whole career.</span></span></summary>
         <div class="dd-body">
 <section>
@@ -1865,12 +1937,12 @@
     </section>
         </div>
       </details>
-      <details class="dd-card" id="dd-compare">
+      <details class="dd-card pro-only" id="dd-compare">
         <summary><span class="dd-txt"><span class="dd-title">Compare two scenarios</span><span class="dd-desc">Save your current inputs as A or B, then see them side by side.</span></span></summary>
         <div class="dd-body">
 <section>
       <div class="sec-label">Scenario A vs Scenario B</div>
-      <p class="sec-sub">Set every input above however you like, save it as A. Change the one thing you're actually weighing up — buy a car or don't, marry at 25 or 35, whatever the real decision is — save that as B. Both stay saved on this device until you overwrite or clear them.</p>
+      <p class="sec-sub">Set every input above however you like, save it as A. Change the one thing you're actually weighing up — buy a car or don't, marry at 25 or 35, whatever the real decision is — save that as B. Both are held only while this page stays open — refreshing clears them.</p>
       <div class="compare-buttons">
         <button type="button" class="preset" id="btn-save-a" style="border-style:solid">Save current as A</button>
         <button type="button" class="preset" id="btn-save-b" style="border-style:solid">Save current as B</button>
@@ -2353,7 +2425,7 @@
 
         <p>Owning 30 Singapore companies is one bet on one asset class in one country. Equities, property, gold, bills and income each respond <em>differently</em> to growth, recession, inflation and deflation — so in any given season, something in the portfolio is working. Uncorrelated assets don't just smooth the ride; they let you rebalance from winners into losers, which is where extra return quietly comes from.</p>
         <div class="formula">Your income streams end up uncorrelated too: salary + SG dividends + REIT distributions + CPF interest + coupon income — five taps that rarely run dry at once.</div>
-        <p class="sec-sub">This is now the <b>default</b> mix for every dollar you invest, not an optional add-on — set it directly in the Calculator's <b>Investing, diversification &amp; tax</b> section on the Your Number tab, where it already reflects the all-weather weights above (global equities as the core, SG dividends/REITs, gold and cash as explicit satellite sleeves), applied from day one rather than waiting for any balance threshold. Gold specifically is sold at your own retirement and reallocated into 75% dividend stocks/S-REITs and 25% Singapore Savings Bonds, since it pays no income of its own to draw down — already reflected in your net worth and retirement income figures.</p>
+        <p class="sec-sub">This is now the <b>default</b> mix for every dollar you invest, not an optional add-on — set it directly in the Calculator's <b>Investing, diversification &amp; tax</b> section on the Your Number tab (switch on PRO to see the mix), where it already reflects the all-weather weights above (global equities as the core, SG dividends/REITs, gold and cash as explicit satellite sleeves), applied from day one rather than waiting for any balance threshold. Gold specifically is sold at your own retirement and reallocated into 75% dividend stocks/S-REITs and 25% Singapore Savings Bonds, since it pays no income of its own to draw down — already reflected in your net worth and retirement income figures.</p>
         <div id="div-sim-end-anchor"></div>
   </div>
 </details>
@@ -2569,6 +2641,22 @@
           <li>This app was <b>built with Claude (Anthropic) in a single day</b>. It is a genuinely large, fast build, and it is <b>likely that some errors, rounding quirks, or outdated assumptions remain</b> in the calculations, tax brackets, CPF rules, or grant figures. Please double-check anything that matters to you against official sources (IRAS, CPF Board, HDB, MAS) before relying on it.</li>
           <li>Figures reference Singapore rules and rates believed accurate as of construction (2025–26) — CPF rates, tax brackets, grant amounts, COE prices and similar figures change over time and should be reverified.</li>
         </ul>
+      </div>
+  </div>
+</details>
+
+    <details class="dd-card" id="dd-legal-data">
+  <summary><div class="num">&bull;</div><span class="dd-txt"><span class="dd-title">Your data, what&rsquo;s assumed, and what this can&rsquo;t do</span><span class="dd-desc">Privacy, when the rules were last reviewed, and the limits of the model.</span></span></summary>
+  <div class="dd-body">
+      <div class="callout">
+        <ul>
+          <li><b>Privacy.</b> There is no server. Nothing you type is sent anywhere, and nothing is saved in your browser either: refresh the page and it resets to the Classic Saver profile. A share link puts your inputs in the link itself, so only share one with someone you want to see them.</li>
+          <li><b>When the rules were last reviewed.</b> Version <span id="legal-ver">&mdash;</span>, last reviewed <span id="legal-rev">&mdash;</span>, against the 1 Jan 2026 CPF and IRAS tables. Rules are not updated automatically.</li>
+          <li><b>What it assumes.</b> Investment returns and volatility are illustrative, not forecasts, and not drawn from a named data set. Every figure and its source is listed under <i>Rules &amp; assumptions used</i>.</li>
+          <li><b>What it can&rsquo;t do.</b> It does not model healthcare or long-term-care shocks, female CPF LIFE payouts, the Basic or Enhanced Retirement Sums, bonds as a separate asset, your own tax situation beyond the basics, or any change to the rules after the review date. It cannot review your actual portfolio or tell you what to buy.</li>
+          <li><b>How it is tested.</b> The built-in self-checks compare it with CPF Board and IRAS tables and check its internal consistency. They are not an independent audit.</li>
+        </ul>
+        <p style="margin:10px 0 0;font-size:13px"><button type="button" class="tq-link" data-trust="assump">See the rules &amp; assumptions &rarr;</button> &nbsp; <button type="button" class="tq-link" data-trust="checks">Run the self-checks &rarr;</button></p>
       </div>
   </div>
 </details>
@@ -2805,7 +2893,7 @@
   // or springs back to normal if the drag didn't go far enough.
   (function(){
     if(reduceMotion) return;
-    var sx=0, sy=0, tracking=false, active=null, verticalIntent=false;
+    var sx=0, sy=0, tracking=false, active=null, verticalIntent=false, horizontalIntent=false;
     var THRESHOLD=70;
     var skipSelector='input,select,button,a,.hint,.bubble,.nav-dropdown,.alloc-row,.field,.calc-card,.ded,#breadcrumb,.delay-cost';
     function resetInline(el){ if(!el) return; el.style.transform=''; el.style.opacity=''; el.style.borderRadius=''; el.style.transition=''; }
@@ -2813,7 +2901,7 @@
       var t=e.target;
       if(t.closest && t.closest(skipSelector)){ tracking=false; return; }
       if(e.touches.length!==1){ tracking=false; return; }
-      sx=e.touches[0].clientX; sy=e.touches[0].clientY; tracking=true; verticalIntent=false;
+      sx=e.touches[0].clientX; sy=e.touches[0].clientY; tracking=true; verticalIntent=false; horizontalIntent=false;
       active=document.querySelector('.tab.active');
       if(active){ active.style.transition='none'; }
     },{passive:true});
@@ -2821,8 +2909,17 @@
       if(!tracking || !active) return;
       var touch=e.touches[0];
       var dx=touch.clientX-sx, dy=touch.clientY-sy;
-      if(!verticalIntent && Math.abs(dy)>Math.abs(dx)*1.3 && Math.abs(dy)>16){ verticalIntent=true; }
-      if(verticalIntent) return;
+      // Decide the gesture's direction ONCE, early, and only animate the page for a clearly
+      // horizontal swipe. Previously any small sideways wobble during an ordinary vertical
+      // scroll shrank and rounded the whole page ("floating" off the screen edges).
+      if(!verticalIntent && !horizontalIntent){
+        var adx=Math.abs(dx), ady=Math.abs(dy);
+        if(adx<12 && ady<12) return;
+        if(adx>ady*2.2 && adx>=24) horizontalIntent=true;
+        else if(ady>=12 || adx>=24) verticalIntent=true;
+        else return;
+      }
+      if(verticalIntent){ if(active) resetInline(active); return; }
       var progress=Math.max(-1,Math.min(1, dx/240));
       var scale=1-Math.abs(progress)*0.055;
       var op=1-Math.abs(progress)*0.15;
@@ -2836,7 +2933,7 @@
       tracking=false;
       if(active){ active.style.transition='transform .18s ease,opacity .18s ease,border-radius .18s ease'; }
       var touch=e.changedTouches && e.changedTouches[0];
-      if(!touch || verticalIntent){ resetInline(active); active=null; return; }
+      if(!touch || verticalIntent || !horizontalIntent){ resetInline(active); active=null; return; }
       var dx=touch.clientX-sx, dy=touch.clientY-sy;
       var crossed = Math.abs(dx)>THRESHOLD && Math.abs(dx)>Math.abs(dy)*1.5;
       if(crossed){
@@ -2913,6 +3010,7 @@
     }
   });
   document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeNavDropdown(); });
+  window.__switchTab=switchTab;
   document.querySelectorAll('[data-goto]').forEach(c=>c.addEventListener('click',()=>switchTab(c.dataset.goto)));
 
 
@@ -2960,16 +3058,15 @@
       else el.value=state[pair[1]];
     });
   }
-  function saveCalcStateLocal(){
-    try{ localStorage.setItem('sgmr_calc_v1', JSON.stringify(getCalcState())); }catch(e){}
-  }
-  function loadCalcStateLocal(){
+  // Inputs are deliberately NOT saved in the browser: a refresh always starts from the
+  // Classic Saver profile. Only a share link (the reader's own choice) carries inputs.
+  // Anything an earlier version of this app stored is deleted here, so nobody is left with
+  // old data sitting in their browser.
+  (function purgeLegacyStorage(){
     try{
-      var raw=localStorage.getItem('sgmr_calc_v1');
-      if(raw) return JSON.parse(raw);
+      ['sgmr_calc_v1','sgmr_scenario_a','sgmr_scenario_b','smr_rd_target','smr_cx_amt','sgmr_pro_v1'].forEach(function(k){ localStorage.removeItem(k); });
     }catch(e){}
-    return null;
-  }
+  })();
 
   /* ===== SCENARIO A/B: save two full input sets, compare their projections ===== */
   function scenarioLabel(state){
@@ -2991,31 +3088,16 @@
       var todayPath=r.nwPath.map(function(v,i){ return v/Math.pow(1.025,i+1); });
       var payload={v:2,state:state,label:scenarioLabel(state),ageAxis:r.ageAxis,nwPath:todayPath,
         nw:r.nw/r.disc,startAge:o.age};
-      localStorage.setItem('sgmr_scenario_'+slot, JSON.stringify(payload));
+      SCENARIO_MEM[slot]=payload;
     }catch(e){}
     refreshCompare();
   }
+  var SCENARIO_MEM={};  // held in memory only, gone on refresh
   function loadScenario(slot){
-    try{
-      var raw=localStorage.getItem('sgmr_scenario_'+slot);
-      if(!raw) return null;
-      var payload=JSON.parse(raw);
-      // Anything saved before v2 stored NOMINAL values in nwPath, not today's dollars --
-      // silently re-derive it here so a scenario saved before this fix shipped doesn't
-      // keep showing a chart that visually contradicts its own card forever. The user
-      // has no way to know their saved data predates a fix; don't make fixing it their
-      // job too.
-      if(payload.v!==2 && payload.nwPath){
-        payload.nwPath=payload.nwPath.map(function(v,i){ return v/Math.pow(1.025,i+1); });
-        payload.v=2;
-        try{ localStorage.setItem('sgmr_scenario_'+slot, JSON.stringify(payload)); }catch(e){}
-      }
-      return payload;
-    }catch(e){}
-    return null;
+    return SCENARIO_MEM[slot]||null;
   }
   function clearScenarios(){
-    try{ localStorage.removeItem('sgmr_scenario_a'); localStorage.removeItem('sgmr_scenario_b'); }catch(e){}
+    SCENARIO_MEM={};
     refreshCompare();
   }
   function drawCompareChart(a,b){
@@ -3607,8 +3689,6 @@
   (function restoreCalcStateIfAny(){
     var urlState=stateFromURL();
     if(urlState){ applyCalcState(urlState); RESTORED_FROM_SHARE=true; return; }
-    var localState=loadCalcStateLocal();
-    if(localState){ applyCalcState(localState); RESTORED_FROM_SHARE=true; }
   })();
   // Classic Saver is this app's own baseline discipline (9% SRS + 11% STI, raises
   // banked at least half), matching Tab 1's own default outcome exactly -- so it's the
@@ -3695,6 +3775,8 @@
       for(i=0;i<5;i++) out[ks[i]]=mcr?mcr[ks[i]][y]:sleeveMean(o,ks[i]);
       return out;
     }
+    // Future value of `amount` saved every year for `n` years under the mid-year convention (the same one project() uses).
+    function fvMidYear(amount, rate, n){ var v=0; for(var k=0;k<n;k++) v=v*(1+rate)+amount*Math.sqrt(Math.max(0,1+rate)); return v; }
     // What this model says CPF LIFE would pay for a Retirement Account formed at 55 with `sum`, so it can be
     // compared directly with CPF Board's published examples (RA only, interest to 65, Standard plan, male).
     function cpfLifeCalibration(sum){
@@ -4305,6 +4387,7 @@
       var spouseRatio = (o.spouseSal!==undefined && o.sal0>0) ? (o.spouseSal/o.sal0) : 1;
       var nwPath=[],ageAxis=[],stiPath=[],srsPath=[],cpfPath=[],stiContrib=0,srsContrib=0,empCPFcum=0,employerCPFcum=0;
       for(var y=0;y<yrs;y++){
+        var _OA0=OA, _SA0=SA, _MA0=MA;
         var a=o.age+y, infl=Math.pow(1.025,y);
         // Inclusive: working through and including the chosen age, stopping the year
         // after. Combined with workTill's slider minimum being the reader's own
@@ -4355,6 +4438,7 @@
         // Age-55 event: SA closes into the Retirement Account (formed up to the Full Retirement
         // Sum; OA tops it up if short, surplus falls back to OA).
         if(!raFormed && a>=55){ var fr=cpfFormRA(OA,SA,rsAt55); OA=fr.oa; SA=fr.sa; raFormed=true; }
+        _OA0=OA; _SA0=SA;   // the age-55 transfer happens on the birthday, so it earns the full year
         var maC12=(o.se?tot:tot*(function(){ var t=_CC.maShare; for(var i=0;i<t.length;i++){ if(a<t[i][0]) return t[i][1]; } return t[t.length-1][1]; })())*12;
         var saC12=Math.max(0,retC*12-maC12);
         OA+=oaC*12; MA+=maC12;
@@ -4726,7 +4810,12 @@
         // what-ifs, goal-seek, the tornado chart, or any other existing consumer.
         var mcr=o.mcReturns;
         var _yr=yearRets(o,mcr,y);
-        SRS=(SRS+srsTargetHH*12)*(1+srsRate(o,_yr));
+        // CONTRIBUTION TIMING (mid-year convention): money is saved monthly through the year, so on average each
+        // year's contributions earn HALF of that year's return, not all of it (and not none). Opening balances earn
+        // the full year; contributions are added with (1+r)^0.5. The same convention is used for CPF and in the
+        // CPF/SRS comparison helper.
+        var _rs=srsRate(o,_yr);
+        SRS=SRS*(1+_rs)+srsTargetHH*12*Math.sqrt(Math.max(0,1+_rs));
         // STI + SRS only -- deliberately excluding CPF. Diversification is about
         // reallocating money the reader actually controls day to day; CPF sits in
         // government-mandated accounts under its own rules regardless of this choice,
@@ -4763,15 +4852,17 @@
         if(divSum>1){ divGetf/=divSum; divSgdiv/=divSum; divGold/=divSum; divCash/=divSum; divSti/=divSum; }
         var divIdle = Math.max(0, 1-divGetf-divSgdiv-divGold-divCash-divSti);
         var newInvest = effInvest*12;
-        STI=(STI+newInvest*divSti)*(1+_yr.sti);
+        STI=STI*(1+_yr.sti)+newInvest*divSti*Math.sqrt(Math.max(0,1+_yr.sti));
         if(STI<-peakDebt) peakDebt=-STI;
-        GETF=(GETF+newInvest*divGetf)*(1+_yr.getf);
-        SGDIV=(SGDIV+newInvest*divSgdiv)*(1+_yr.sgdiv);
-        GOLD=(GOLD+newInvest*divGold)*(1+_yr.gold);
-        CASH=(CASH+newInvest*divCash)*(1+_yr.cash);
+        GETF=GETF*(1+_yr.getf)+newInvest*divGetf*Math.sqrt(Math.max(0,1+_yr.getf));
+        SGDIV=SGDIV*(1+_yr.sgdiv)+newInvest*divSgdiv*Math.sqrt(Math.max(0,1+_yr.sgdiv));
+        GOLD=GOLD*(1+_yr.gold)+newInvest*divGold*Math.sqrt(Math.max(0,1+_yr.gold));
+        CASH=CASH*(1+_yr.cash)+newInvest*divCash*Math.sqrt(Math.max(0,1+_yr.cash));
         IDLE+=newInvest*divIdle;
         stiContrib+=effInvest*12; srsContrib+=srsTargetHH*12;
-        var _ci=cpfInterest(OA,SA,MA,a); OA=_ci.oa; SA=_ci.sa; MA=_ci.ma; RET=SA+MA;
+        // Mid-year convention for CPF too: interest accrues on the opening balance plus half of this year's net movement.
+        var _dO=OA-_OA0, _dS=SA-_SA0, _dM=MA-_MA0;
+        var _ci=cpfInterest(OA-_dO/2,SA-_dS/2,MA-_dM/2,a); OA=_ci.oa+_dO/2; SA=_ci.sa+_dS/2; MA=_ci.ma+_dM/2; RET=SA+MA;
         prevTH=th;
         ageAxis.push(a+1); nwPath.push(STI+SRS+GETF+SGDIV+GOLD+CASH+IDLE+OA+RET);
         // Despite the name (kept to avoid touching every consumer), this is now the
@@ -4885,7 +4976,8 @@
         // this toggle in either direction.
         if(deferOn || planNonDefault) toggle.checked=true;
       }
-      var show=toggle.checked;
+      var show=document.body.classList.contains('pro-on');
+      toggle.checked=show;
       var g1=$('advanced-cpf-group-1');
       if(g1) g1.style.display = show ? 'block' : 'none';
     }
@@ -4945,7 +5037,7 @@
       $('o-saveline').innerHTML = saveTotal<=0 ? '' :
         ('That\u2019s <b>'+Math.round(saveSrs)+'%</b> to SRS and <b>'+Math.round(saveInv)+'%</b> to STI, '+
          'preserving your current split between them -- Necessities and Wants absorb the rest. '+
-         'For hands-on control of all four separately, open Investing, diversification &amp; tax below.');
+         'For hands-on control of all four separately, open Investing &amp; tax below.');
             $('o-jobnote').innerHTML=prof?prof.note:'';
       $('f-raise').style.display=$('i-mode').value==='custom'?'block':'none';
       // Only a genuine future purchase needs flat size, buy age and pre-buy arrangement.
@@ -6502,10 +6594,11 @@
           +'<p class="chart-range-note">'+ageLine(c)+' This is a result under this app&rsquo;s stated assumptions, not a forecast; it does not include healthcare shocks, long-term care, or any change to CPF rules.</p>'
           +'<div class="note" style="margin-top:10px"><p><b>A simpler second measure:</b> the investment pot alone lasts 25 years (to 90) in <b>'+Math.round(mc.probSurvive*100)+'%</b> of simulations if you withdraw 4% of it in the first year, then the same amount plus inflation each year, with no CPF LIFE or other income helping. It ignores everything the cash-flow result above counts, so treat the cash-flow result as the main answer.</p></div>';
       }
-      function currentGoal(){ try{ var r=project(readOpts()); return r.income/r.disc; }catch(e){ return NaN; } }
+      function currentGoal(){ var el=$('rd-target'); var g=el?parseFloat(el.value):NaN; return g>0?g:NaN; }
       function refreshTarget(){
         var g=currentGoal(), tl=$('mc-target-line'), st=$('mc-stale-note');
-        if(tl) tl.innerHTML=(g>0)?('Success here means matching the <b>'+fmt(Math.max(0,g))+'/mo</b> (today&rsquo;s dollars) your projection above currently shows.'):'Your plan currently projects no retirement income &mdash; adjust the sliders above first.';
+        var pj=NaN; try{ var rr=project(readOpts()); pj=rr.income/rr.disc; }catch(e){}
+        if(tl) tl.innerHTML=(g>0)?('Success here means reaching the <b>'+fmt(g)+'/mo</b> (today&rsquo;s dollars) you said you want in retirement, set under <i>Retirement readiness</i>.'+(pj>=0?(' Your plan&rsquo;s average-case projection is <b>'+fmt(Math.max(0,pj))+'/mo</b>.'):'')):'Set the monthly income you want under Retirement readiness first.';
         if(st) st.style.display=(lastRunGoal!==null && Math.abs((g||0)-lastRunGoal)>0.5)?'block':'none';
       }
       var grpMc=$('grp-montecarlo');
@@ -6527,11 +6620,11 @@
         setTimeout(function(){
           var o=readOpts();
           var rDet=project(o);
-          var goal=rDet.income/rDet.disc;   // target = the calculator's own projection
+          var goal=currentGoal();   // target = the monthly income the reader says they want
           var results=$('mc-results');
           if(!(goal>0)){
             $('mc-goal-pct').textContent='—'; $('mc-goal-pct').style.color='var(--muted)';
-            $('mc-goal-sub').textContent='Your plan currently projects no retirement income, so there is nothing to test yet.';
+            $('mc-goal-sub').textContent='Set the monthly income you want under Retirement readiness first, then run the test.';
             $('mc-ladder').innerHTML='';
           } else {
             lastRunGoal=goal;
@@ -6540,7 +6633,7 @@
             function col(ch){ return ch>=0.75?'#2E9E5B':(ch>=0.50?'#C79A1E':(ch>=0.25?'#D9772B':'var(--brick)')); }
             var pct=Math.round(mc.probGoal*100);
             var big=$('mc-goal-pct'); big.textContent=pct+'%'; big.style.color=col(mc.probGoal);
-            $('mc-goal-sub').textContent='of 10,000 simulated markets reach at least '+fmt(goal)+'/mo (your projection, today\u2019s $), under this app\u2019s stated assumptions. Simulation margin of error: about \u00b1'+(mc.moeGoal*100).toFixed(1)+' points.';
+            $('mc-goal-sub').textContent='of 10,000 simulated markets reach at least '+fmt(goal)+'/mo (the income you want, today\u2019s $), under this app\u2019s stated assumptions. Simulation margin of error: about \u00b1'+(mc.moeGoal*100).toFixed(1)+' points.';
             // income at p(100-X)% = amount you reach or beat in X% of futures
             var rows=[
               {ch:0.10, inc:mc.incomeAt65.p90},
@@ -6691,7 +6784,6 @@
     (function(){
       var grp=$('grp-readiness'); if(!grp) return;
       var sl=$('rd-target'), KEY='smr_rd_target';
-      try{ var sv=parseFloat(localStorage.getItem(KEY)); if(isFinite(sv)&&sv>=1000&&sv<=20000) sl.value=sv; }catch(e){}
       // Retirement-phase income tax (ret-4). Working-years tax is already inside
       // project(); the retirement income it reports is gross. In Singapore most
       // retirement income is untaxed (CPF LIFE, SG dividends, SSB interest,
@@ -6702,7 +6794,7 @@
         return {gross:Math.max(0,r.incomeGross/disc), taxYr:Math.max(0,r.retTaxMo*12/disc), net:Math.max(0,r.income/disc)};
       }
       function compute(){
-        var target=parseFloat(sl.value)||5000;
+        var target=parseFloat(sl.value)||2400;
         $('rd-target-out').textContent=fmt(target);
         var o, r;
         try{ o=readOpts(); r=project(o); }catch(e){ return; }
@@ -6760,7 +6852,7 @@
         var ra=project(alt), tot=netIncome(alt,ra).net, addAll=tot-proj;
         combo.innerHTML=top.length>1?('<b>If the top '+Math.min(3,top.length)+' all applied together:</b> +'+fmt(addAll)+'/mo, taking your projected income to <b>'+fmt(tot)+'/mo</b>'+(gap>0?(tot>=target?' &mdash; enough to reach your target.':' &mdash; still '+fmt(target-tot)+'/mo short of your target.'):'.')):'';
       }
-      sl.addEventListener('input', function(){ try{ localStorage.setItem(KEY, sl.value); }catch(e){} compute(); });
+      sl.addEventListener('input', function(){ compute(); });
       grp.addEventListener('toggle', function(){ if(grp.open) compute(); });
       function again(ev){ if(grp.open && !(ev && ev.target===sl)) setTimeout(compute,0); }
       document.addEventListener('input', again); document.addEventListener('change', again);
@@ -6781,6 +6873,7 @@
       rows.push(['SRS contribution cap','S$'+A.srs.capAnnual.toLocaleString()+'/yr (S$'+A.srs.capMonthly.toLocaleString()+'/mo) per person']);
       rows.push(['SRS withdrawals in retirement',pct(A.srs.retirementTaxableShare)+' taxable, spread over '+A.topUp.srsWithdrawYears+' years']);
       rows.push(['CPF top-up (SA/RA) interest',pct(A.topUp.saRate)+'/yr, relief capped at S$'+A.topUp.reliefCapAnnual.toLocaleString()+'/yr']);
+      rows.push(['Contribution timing','Saved monthly, so each year\u2019s contributions earn half that year\u2019s return (mid-year convention), for investments, SRS and CPF']);
       rows.push(['Income tax','Resident brackets, 0% up to S$20,000 rising to '+pct(A.tax.brackets[A.tax.brackets.length-1][1])+' at the top']);
       var h='<p style="margin:0 0 10px">Every CPF, SRS and tax figure in this app is read from one table, so a rule change is a one-line update. <b>Version '+A.version+'</b> &middot; basis: '+A.basis+' &middot; last reviewed '+A.lastReviewed+'. These are not updated automatically &mdash; check the current figures on <b>'+A.sources.cpf+'</b> and <b>'+A.sources.tax+'</b> before relying on any of them.</p>';
       h+='<div class="chart-card" style="padding:4px 14px">'+rows.map(function(r){ return '<div class="r" style="display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)"><span>'+r[0]+'</span><b style="text-align:right">'+r[1]+'</b></div>'; }).join('')+'</div>';
@@ -6819,7 +6912,6 @@
     (function(){
       var grp=$('grp-cx'); if(!grp) return;
       var sl=$('cx-amt'), KEY='smr_cx_amt';
-      try{ var sv=parseFloat(localStorage.getItem(KEY)); if(isFinite(sv)&&sv>=1000&&sv<=15300) sl.value=sv; }catch(e){}
       function blended(o,r){
         var parts=[[r.STI+r.SRS,sleeveMean(o,'sti')],[r.GETF,sleeveMean(o,'getf')],[r.SGDIV,sleeveMean(o,'sgdiv')],[r.GOLD,sleeveMean(o,'gold')],[r.CASH+r.IDLE,sleeveMean(o,'cash')]], w=0, m=0;
         parts.forEach(function(x){ var v=Math.max(0,x[0]); w+=v; m+=v*x[1]; });
@@ -6838,8 +6930,9 @@
         var savedCpf=saved(reliefCpf), savedSrs=saved(reliefSrs);
         // marginal rate for the text
         var mr=0, sum=0; for(var i=0;i<ASSUMPTIONS.tax.brackets.length;i++){ var b=ASSUMPTIONS.tax.brackets[i]; if(ch<=sum+b[0]){ mr=b[1]; break; } sum+=b[0]; mr=b[1]; }
-        // Contributing the same A every year until 65 (end-of-year growth, as elsewhere in the app).
-        function fvAnnuity(amount,rate){ var v=0; for(var k=0;k<yrs;k++) v=(v+amount)*(1+rate); return v; }
+        // Contributing the same A every year until 65. Mid-year convention, the same as the main projection: saved monthly, so
+        // each year's contribution earns half that year's growth. Closed form: A*(1+r)^0.5*((1+r)^N-1)/r.
+        function fvAnnuity(amount,rate){ return fvMidYear(amount,rate,yrs); }
         var defl=Math.pow(1.025,yrs);
         var vCpf=fvAnnuity(A,T.saRate)/defl, vSrs=fvAnnuity(A,g)/defl, vOrd=fvAnnuity(A,g)/defl;
         // Tax refunds from the relief are reinvested outside at the same return, so all three cost you the same out of pocket.
@@ -6871,7 +6964,7 @@
         $('cx-text').innerHTML='On pure after-tax value at 65, <b>'+names[runner[0][0]]+'</b> comes out ahead ('+fmtK(runner[0][1])+') of '+names[runner[1][0]]+' ('+fmtK(runner[1][1])+') and '+names[runner[2][0]]+' ('+fmtK(runner[2][1])+')'+(mr===0?' &mdash; and at a 0% marginal rate the tax relief is worth nothing to you, which tilts it toward keeping money flexible.':'. It is not the whole picture: the other two buy you something this ranking can&rsquo;t price (guaranteed income, or flexibility).');
         $('cx-notes').innerHTML='How to read this: each option puts the same amount in every year until 65, and the tax refunds from CPF and SRS are reinvested outside at your portfolio&rsquo;s return, so all three cost you the same out of pocket. SRS withdrawals are taxed at 50% spread over '+T.srsWithdrawYears+' years against today&rsquo;s brackets. CPF LIFE pays more per month because it uses up the pot and insures you against living long; the other two leave the capital behind. Not tax or investment advice &mdash; CPF top-ups and SRS both have limits and lock-ups worth checking on cpf.gov.sg and iras.gov.sg.';
       }
-      sl.addEventListener('input', function(){ try{ localStorage.setItem(KEY, sl.value); }catch(e){} compute(); });
+      sl.addEventListener('input', function(){ compute(); });
       grp.addEventListener('toggle', function(){ if(grp.open) compute(); });
       function again(ev){ if(grp.open && !(ev && ev.target===sl)) setTimeout(compute,0); }
       document.addEventListener('input', again); document.addEventListener('change', again);
@@ -6975,6 +7068,126 @@
       document.addEventListener('input', again); document.addEventListener('change', again);
     })();
 
+
+    // ---- Pro mode: basic calculator by default, advanced controls behind the PRO button ----
+    (function(){
+      var btn=$('pro-toggle'), note=$('pro-note'), KEY='sgmr_pro_v1';
+      if(!btn) return;
+      function isPro(){ return document.body.classList.contains('pro-on'); }
+      function nonDefaults(){
+        var l=[], v=function(id){ var e=$(id); return e?e.value:null; };
+        if(v('i-preset') && v('i-preset')!=='central') l.push(v('i-preset')==='cautious'?'cautious returns':'optimistic returns');
+        if(v('i-srsmode') && v('i-srsmode')!=='sti') l.push(v('i-srsmode')==='cash'?'SRS in cash':'SRS in your mix');
+        if(v('i-goldkeep')==='keep') l.push('gold kept');
+        if($('i-cpflifedefer') && $('i-cpflifedefer').checked) l.push('CPF LIFE deferred to 70');
+        if(v('i-cpflifeplan') && v('i-cpflifeplan')!=='standard') l.push('CPF LIFE '+v('i-cpflifeplan'));
+        if(v('i-mortsrc')==='cash') l.push('mortgage paid in cash');
+        var D={'i-div-getf':45,'i-div-sti':10,'i-div-sgdiv':20,'i-div-gold':15,'i-div-cash':10}, dv=false;
+        for(var k in D){ if(v(k)!==null && +v(k)!==D[k]) dv=true; }
+        if(dv) l.push('a custom diversification mix');
+        return l;
+      }
+      function renderNote(){
+        if(!note) return;
+        var l=isPro()?[]:nonDefaults();
+        if(!l.length){ note.className=''; note.innerHTML=''; return; }
+        note.className='show';
+        note.innerHTML='Your numbers include PRO settings: <b>'+l.join(', ')+'</b>. <button type="button" id="pro-note-btn">Show PRO controls</button>';
+        var b=$('pro-note-btn'); if(b) b.onclick=function(){ setPro(true); };
+      }
+      function setPro(on, quiet){
+        document.body.classList.toggle('pro-on', !!on);
+        btn.setAttribute('aria-pressed', on?'true':'false');
+        btn.setAttribute('aria-label', on?'Pro features on: click to hide advanced calculator controls':'Pro features off: click to show advanced calculator controls');
+        try{ if(window.updateAdvancedCpfVisibility) window.updateAdvancedCpfVisibility(); }catch(e){}
+        try{ var t=$('i-advanced-cpf'); if(t){ t.checked=!!on; var g=$('advanced-cpf-group-1'); if(g) g.style.display=on?'block':'none'; } }catch(e){}
+        renderNote();
+        try{ updateFloatSummary(); }catch(e){}
+      }
+      window.__setPro=setPro; window.__isPro=isPro;
+      btn.addEventListener('click', function(){ setPro(!isPro()); });
+      setPro(false, true);  // PRO always starts off
+      document.addEventListener('input', function(){ setTimeout(renderNote,0); });
+      document.addEventListener('change', function(){ setTimeout(renderNote,0); });
+      // The button only means something on the Calculator tab, so only show it there.
+      var tab=$('tab-calc');
+      function syncBtn(){ btn.classList.toggle('on-tab', !!(tab && tab.classList.contains('active'))); }
+      if(tab){ syncBtn(); try{ new MutationObserver(syncBtn).observe(tab,{attributes:true,attributeFilter:['class']}); }catch(e){} }
+    })();
+
+    // ---- Three questions (ux-5) and the trust strip (ux-6) ----
+    (function(){
+      var box=$('three-q'); if(!box) return;
+      function openNode(id){
+        var g=$(id); if(!g) return;
+        if(g.closest && g.closest('.pro-only') && window.__setPro) window.__setPro(true);
+        var n=g; while(n){ if(n.tagName==='DETAILS' && !n.open){ n.open=true; n.dispatchEvent(new Event('toggle')); } n=n.parentElement; }
+        setTimeout(function(){ try{ g.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){} },80);
+      }
+      function goTab(tab,id){
+        if(window.__switchTab) window.__switchTab(tab);
+        setTimeout(function(){ openNode(id); }, 400);
+      }
+      document.addEventListener('click', function(ev){
+        var b=ev.target.closest && ev.target.closest('[data-open]');
+        if(b){ openNode(b.getAttribute('data-open')); return; }
+        var tr=ev.target.closest && ev.target.closest('[data-trust]');
+        if(!tr) return;
+        var k=tr.getAttribute('data-trust');
+        if(k==='assump') goTab('calc','dd-assumptions');
+        else if(k==='checks') goTab('calc','dd-selfcheck');
+        else if(k==='limits') goTab('legal','dd-legal-data');
+        else if(k==='privacy'){ var m=$('privacy-modal'); if(m) m.classList.add('open'); }
+      });
+      var A=ASSUMPTIONS;
+      Array.prototype.forEach.call(document.querySelectorAll('[data-trust-hint]'), function(el){
+        el.className='hint';
+        el.innerHTML='<button type="button" class="help" aria-label="About these numbers">?</button><span class="bubble" style="text-align:left"><b>About these numbers.</b> Everything is in today&rsquo;s dollars and uses this app&rsquo;s stated assumptions. It is an illustration of your own inputs, not a forecast, and not financial advice.<br><br>Rules last reviewed <b>'+A.lastReviewed+'</b> (v'+A.version+').<br><br><button type="button" class="tq-link" data-trust="assump">Assumptions &rarr;</button><button type="button" class="tq-link" data-trust="limits">What this can&rsquo;t do &rarr;</button><button type="button" class="tq-link" data-trust="checks">Self-checks &rarr;</button><button type="button" class="tq-link" data-trust="privacy">Privacy: nothing is saved &rarr;</button></span>';
+      });
+      Array.prototype.forEach.call(document.querySelectorAll('[data-review-date]'), function(el){ el.textContent=A.lastReviewed+' (v'+A.version+')'; });
+      var lv=$('legal-ver'), lr=$('legal-rev'); if(lv) lv.textContent=A.version; if(lr) lr.textContent=A.lastReviewed;
+
+      function col(ch){ return ch>=0.75?'#2E9E5B':(ch>=0.50?'#C79A1E':(ch>=0.25?'#D9772B':'#E2604F')); }
+      // stars: 0 to 5 in half-star steps, painted by gradient so a half star really is half filled
+      function stars(el, score, c, label){
+        var h='', i, f;
+        for(i=0;i<5;i++){ f=Math.max(0,Math.min(1,score-i)); h+='<span class="st" style="--f:'+f+';--c:'+c+'">★</span>'; }
+        el.innerHTML=h; el.setAttribute('aria-label',label+': '+score+' out of 5 stars');
+      }
+      function toStars(x){ return Math.max(0,Math.min(5,Math.floor(x*10)/2)); }
+      function shortLabel(s){ return s.replace(/\s*\(.*$/,'').replace(/^Save at least /,'Save ').replace(' of your take-home',''); }
+      function renderFast(){
+        var o, r; try{ o=readOpts(); r=project(o); }catch(e){ return null; }
+        var target=parseFloat($('rd-target').value)||2400, proj=Math.max(0,r.income/r.disc), ratio=target>0?proj/target:0;
+        stars($('tq1-stars'), toStars(Math.min(1,ratio)), col(Math.min(1,ratio)), 'On track');
+        $('tq1-val').innerHTML='<b>'+fmt(proj)+'</b> of <b>'+fmt(target)+'</b>/mo ('+Math.round(ratio*100)+'%)';
+        try{
+          var res=sgmrRankLevers(o,r,proj).slice(0,3), mx=res.length?res[0].add:1;
+          $('tq3-bars').innerHTML=res.length?res.map(function(x){ return '<span class="sc-bar"><span>'+shortLabel(x.label)+'</span><b>+'+fmt(x.add)+'/mo</b><i style="width:'+Math.max(8,Math.round(x.add/mx*100))+'%"></i></span>'; }).join(''):'<span class="sc-val">No single change moves it much.</span>';
+        }catch(e){}
+        return {o:o,target:target};
+      }
+      var timer=null, dirty=true;
+      function renderFragile(){
+        var st=renderFast(); if(!st) return;
+        if(!box.offsetParent){ dirty=true; return; }
+        dirty=false;
+        $('tq2-val').textContent='Checking 1,500 simulated markets…';
+        setTimeout(function(){
+          try{
+            var mc=runMonteCarlo(st.o,1500,0), cf=mc.cashflow;
+            stars($('tq2-stars'), toStars(cf.to95), col(cf.to95), 'Resilience');
+            $('tq2-val').innerHTML='<b>'+Math.round(cf.to95*100)+'%</b> of simulated futures fund <b>'+fmt(cf.spend)+'</b>/mo to 95';
+          }catch(e){ $('tq2-val').textContent='The stress test could not run here.'; }
+        },20);
+      }
+      var fastT=null;
+      function schedule(){ clearTimeout(fastT); fastT=setTimeout(renderFast,150); clearTimeout(timer); timer=setTimeout(renderFragile,700); }
+      document.addEventListener('input', schedule); document.addEventListener('change', schedule);
+      if('IntersectionObserver' in window){ new IntersectionObserver(function(es){ if(es[0].isIntersecting && dirty) renderFragile(); }).observe(box); }
+      setTimeout(renderFragile,1200);
+    })();
+
     // Ranked levers shared by the readiness section and the cover's plain-English card.
     var LEVER_INFO=[
       ['Save 5% more',{why:'More money is invested every month, so it has more years to compound and a bigger pot is drawn down in retirement.',cost:'Lower spending today: the model takes the extra 5% out of take-home pay, so lifestyle spending falls.',assume:'Markets return your chosen rates; the extra saving goes into your own investment mix and is not spent elsewhere.',limit:'Needs room in your budget. The model does not check whether the lower spending is realistic for you.'}],
@@ -7058,7 +7271,7 @@
       // showing its own bare-bones estimate or switch to mirroring this tab's full result.
       if(window.__firstRecomputeDone && !window.__coverToCalcInProgress) window.__calcTabEngaged=true;
       window.__firstRecomputeDone=true;
-      syncUI(); calc(); saveCalcStateLocal(); syncSaveSlider(); refreshWhatIfs(); if(window.refreshGrantLive) window.refreshGrantLive(); if(window.__syncCoverFromCalc) window.__syncCoverFromCalc();
+      syncUI(); calc(); syncSaveSlider(); refreshWhatIfs(); if(window.refreshGrantLive) window.refreshGrantLive(); if(window.__syncCoverFromCalc) window.__syncCoverFromCalc();
     };
 
     // Deliberately standalone -- reads income/age/mortgage/household straight from the
@@ -7307,7 +7520,7 @@
 
     // Expose the engine so the cover page's live projection uses THIS engine — never a
     // second copy of the maths that could silently drift out of step with the calculator.
-    window.SGMR_ENGINE={ project:project, recompute:recompute, readOpts:readOpts, fmtK:fmtK, carCalc:carCalc, rankLevers:function(o,r,p){ return sgmrRankLevers(o,r,p); }, sgTax:sgTax, empRate:empRate, totRate:totRate, oaShare:oaShare, cpfInterest:cpfInterest, cpfFormRA:cpfFormRA, cpfLifeCalibration:cpfLifeCalibration, sleeveMean:sleeveMean, sleeveVol:sleeveVol, srsRate:srsRate, yearRets:yearRets };
+    window.SGMR_ENGINE={ project:project, recompute:recompute, readOpts:readOpts, fmtK:fmtK, carCalc:carCalc, rankLevers:function(o,r,p){ return sgmrRankLevers(o,r,p); }, sgTax:sgTax, empRate:empRate, totRate:totRate, oaShare:oaShare, cpfInterest:cpfInterest, cpfFormRA:cpfFormRA, cpfLifeCalibration:cpfLifeCalibration, sleeveMean:sleeveMean, sleeveVol:sleeveVol, fvMidYear:fvMidYear, srsRate:srsRate, yearRets:yearRets };
     // refreshCompare() bailed out safely earlier (SGMR_ENGINE wasn't set yet) -- now
     // that it is, retry once so anyone with a previously-saved A/B comparison actually
     // sees it rendered, rather than the empty placeholder forever.
@@ -8894,7 +9107,7 @@ function drawQuizResultCard(isStory){
       // allocations, everything) over this tab's own bare age/salary/household-only
       // estimate. Before that point there's nothing more detailed to defer to yet, so
       // the simple estimate remains exactly what a first-time reader sees.
-      if(window.__calcTabEngaged && window.SGMR_ENGINE){
+      if(window.SGMR_ENGINE){
         try{
           var fullO=window.SGMR_ENGINE.readOpts(), fullR=window.SGMR_ENGINE.project(fullO);
           r=fullR; d=fullR.disc;
@@ -8904,24 +9117,6 @@ function drawQuizResultCard(isStory){
       countTo(document.getElementById('hero-nw'), r.nw/d);
       document.getElementById('hero-inc').textContent=money(r.income/d);
       var _hn=document.getElementById('hero-nom'); if(_hn) _hn.textContent=(r.nw>=1e6?'S$'+(r.nw/1e6).toFixed(2)+'m':money(r.nw));
-      // Beginner-friendly verdict + top three moves, from the same full engine as the calculator.
-      try{
-        var _E=window.SGMR_ENGINE, _hp=document.getElementById('hero-plain');
-        if(_E && _hp){
-          var _o=_E.readOpts(), _r=_E.project(_o), _d=_r.disc;
-          var _inc=Math.max(0,_r.income/_d);
-          var _finalSal=(_r.spath&&_r.spath.length)?_r.spath[_r.spath.length-1]/_d:_o.sal0;
-          var _tgt=0.7*_finalSal, _ratio=_tgt>0?_inc/_tgt:0;
-          var _v=document.getElementById('hp-verdict'), _s=document.getElementById('hp-sub'), _a=document.getElementById('hp-actions');
-          var _emoji=_ratio>=1?'🟢':(_ratio>=0.8?'🟡':'🔴');
-          var _word=_ratio>=1?'You\u2019re on track.':(_ratio>=0.8?'You\u2019re close \u2014 a gap to close.':'You\u2019re behind where you\u2019d like to be.');
-          _v.textContent=_emoji+' '+_word;
-          _s.textContent='At 65 you could have about '+money(_inc)+' a month for life (today\u2019s dollars). A common rule of thumb is about 70% of your final salary, roughly '+money(_tgt)+' a month for you \u2014 so you\u2019re at '+Math.round(_ratio*100)+'% of that.';
-          var _lv=_E.rankLevers(_o,_r,_inc).slice(0,3);
-          _a.innerHTML=_lv.length?_lv.map(function(x){ return '<li>If: '+x.label.charAt(0).toLowerCase()+x.label.slice(1)+' &mdash; about <b>+'+money(x.add)+'/mo</b></li>'; }).join(''):'<li>No single change stands out in this model \u2014 your plan is already balanced across the main levers.</li>';
-          _hp.style.display='';
-        }
-      }catch(_e){}
 
       // Cost of delay, as a rotating carousel -- one scenario visible at a time, cycling
       // automatically like a news ticker, rather than a wall of numbers at once. Every
@@ -9644,6 +9839,41 @@ function drawQuizResultCard(isStory){
     guard('Monte Carlo','The estimate converges: 2,500 and 10,000 simulations agree within sampling error',function(){
       var a=M.run(base,2500,goal,11), b=M.run(base,10000,goal,11);
       return {pass: Math.abs(a.probGoal-b.probGoal)<=a.moeGoal+b.moeGoal, detail:(a.probGoal*100).toFixed(1)+'% (±'+(a.moeGoal*100).toFixed(1)+') vs '+(b.probGoal*100).toFixed(1)+'% (±'+(b.moeGoal*100).toFixed(1)+')'};
+    });
+
+
+    // ---- Contribution timing (mid-year convention) -------------------------
+    guard('Timing','Annual savings use the mid-year convention: closed form matches the helper',function(){
+      var A0=1000, r=0.06, n=20, closed=A0*Math.sqrt(1+r)*(Math.pow(1+r,n)-1)/r, got=E.fvMidYear(A0,r,n);
+      return {pass:Math.abs(closed-got)<1e-6*closed, detail:S(got)+' vs closed form '+S(closed)};
+    });
+    guard('Timing','One year of SRS saving earns half a year of growth, not a full year or none',function(){
+      var x=proj({age:64, mcReturns:flat(0.06,5)});
+      var exp=x.srsContrib*Math.sqrt(1.06);
+      return {pass: x.srsContrib>0 && Math.abs(x.SRS-exp)<1 && x.SRS>x.srsContrib && x.SRS<x.srsContrib*1.06, detail:'saved '+S(x.srsContrib)+' \u2192 '+S(x.SRS)+' (expected '+S(exp)+')'};
+    });
+    guard('Timing','With no returns, timing makes no difference to any pot',function(){
+      var z=proj({mcReturns:flat(0,N)});
+      return {pass: Math.abs(z.SRS-z.srsContrib)<1, detail:'SRS '+S(z.SRS)+' = saved '+S(z.srsContrib)};
+    });
+
+
+    // ---- "Save at least half of every raise" toggle --------------------------
+    guard('Raise toggle','Switching the toggle on never lowers net worth, and every case where it changes nothing has one of the reasons the page gives',function(){
+      var modes=['unambitious','average','warrior'], ages=[20,30,45], sals=[2400,6000,20000], allocs=[[0,0],[0.05,0.05],[0.09,0.11],[0.15,0.45]];
+      var n=0, changed=0, neg=0, unexplained=[];
+      modes.forEach(function(m){ ages.forEach(function(a){ sals.forEach(function(s){ allocs.forEach(function(al){
+        var off=proj({mode:m,age:a,sal0:s,aS:al[0],aI:al[1],saveHalfRaise:false}), on=proj({mode:m,age:a,sal0:s,aS:al[0],aI:al[1],saveHalfRaise:true});
+        n++;
+        if(on.nw<off.nw-1) neg++;
+        if(Math.abs(on.nw-off.nw)>=1) changed++;
+        else if(!(al[0]+al[1]===0 || off.wipedBy || on.wipedBy || al[0]+al[1]>=0.5)) unexplained.push(m+' age '+a+' S$'+s+' '+al.join('/'));
+      }); }); }); });
+      return {pass: neg===0 && unexplained.length===0 && changed>0, detail:n+' scenarios: changed the result in '+changed+', lowered it in '+neg+', unexplained no-ops '+unexplained.length+(unexplained.length?(' ('+unexplained[0]+')'):'')};
+    });
+    guard('Raise toggle','A custom raise floor of 75% is at least as strong as 50%',function(){
+      var a=proj({aS:0.05,aI:0.05,saveHalfRaise:true}), b=proj({aS:0.05,aI:0.05,raiseFloorPct:0.75}), z=proj({aS:0.05,aI:0.05,saveHalfRaise:false});
+      return {pass: b.nw>=a.nw-1 && a.nw>z.nw, detail:'off '+S(z.nw)+' < 50% '+S(a.nw)+' <= 75% '+S(b.nw)};
     });
 
     // ---- Retirement cash flow, return sets, SRS and gold choices -----------
