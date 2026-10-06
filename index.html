@@ -1618,21 +1618,21 @@
       <div class="cg-body">
       <p class="chart-range-note" id="mc-target-line" style="margin-top:6px"></p>
       <div class="note" id="mc-explain" style="margin-top:8px">
-        <p><b>What this means in plain English.</b> The projection above assumes the market grows by exactly the same amount every single year. Real life doesn&rsquo;t &mdash; there are boom years, crashes and long flat stretches. This stress test &mdash; known in finance as a <b>Monte Carlo analysis</b> &mdash; replays <i>your exact plan</i> through <b>2,000 different made-up futures</b> &mdash; some kind, some brutal &mdash; and counts how often you still end up with at least the monthly retirement income your projection promises.</p>
+        <p><b>What this means in plain English.</b> The projection above assumes the market grows by exactly the same amount every single year. Real life doesn&rsquo;t &mdash; there are boom years, crashes and long flat stretches. This stress test &mdash; known in finance as a <b>Monte Carlo analysis</b> &mdash; replays <i>your exact plan</i> through <b>10,000 different made-up futures</b> &mdash; some kind, some brutal &mdash; and counts how often you still end up with at least the monthly retirement income your projection promises.</p>
         <p style="margin-top:8px"><b>How to read it:</b> &ldquo;80%&rdquo; would mean that in about 8 of 10 possible futures you reach your projected income, and in 2 of 10 you fall short. It is a measure of how fragile or robust the plan is &mdash; not a prediction. Because your projection is the <i>average</i> case, expect roughly half of futures to land a little under it &mdash; the colour-coded ladder below shows how much income you can count on at each level of confidence.</p>
       </div>
       <p class="chart-range-note" id="mc-stale-note" style="display:none;color:var(--brick)">Your inputs have changed since the last run &mdash; run it again to refresh these results.</p>
-      <button type="button" class="hero-cta" id="btn-run-mc" style="margin-top:4px">Run Monte Carlo analysis (2,000 markets)</button>
-      <p class="chart-range-note" id="mc-running-note" style="display:none">Running 2,000 simulations, plus a few scenario comparisons — a couple of seconds…</p>
+      <button type="button" class="hero-cta" id="btn-run-mc" style="margin-top:4px">Run Monte Carlo analysis (10,000 markets)</button>
+      <p class="chart-range-note" id="mc-running-note" style="display:none">Running 10,000 simulations, plus a few scenario comparisons — a couple of seconds…</p>
       <div id="mc-results" style="display:none">
         <div class="mc-headline">
-          <div class="mc-hl-lab">Chance of reaching your target retirement income <span class="hint"><button class="help">?</button><span class="bubble" style="text-align:left"><b>Why isn&rsquo;t this closer to 100%?</b> Your target is the projection&rsquo;s <i>average</i> case, so by design roughly half of the simulated futures land a little below it and half above &mdash; around 40% is normal, not a warning sign. Markets move up and down: in a weaker market your income at 65 could be temporarily lower, and it can climb back once markets recover &mdash; as long as you are not forced to sell at the worst possible moment (which is why a cash buffer and a diversified mix matter). The ladder below shows how much you can count on at each level of confidence. Recovery is likely over long periods but never guaranteed.</span></span></div>
+          <div class="mc-hl-lab">Share of simulated futures reaching your target income <span class="hint"><button class="help">?</button><span class="bubble" style="text-align:left"><b>How to read this number.</b> It is the share of 10,000 simulated futures in which your plan reaches the income your projection shows, <i>given the return, volatility and correlation assumptions listed in this app</i>. It is not an objective probability of retirement success and not a forecast: change the assumptions and the number changes. The target here is the projection&rsquo;s average-case income, so the share depends on how the simulated outcomes are spread around it &mdash; see the ladder below for the full range.</span></span></div>
           <div class="mc-hl-big" id="mc-goal-pct"></div>
           <div class="mc-hl-sub" id="mc-goal-sub"></div>
         </div>
         <div class="mc-ladder-title">How much you could expect, from best case to worst</div>
         <div class="mc-ladder" id="mc-ladder"></div>
-        <p class="chart-range-note" id="mc-ladder-note">Read each row as: &ldquo;in this share of the 2,000 simulated futures, your monthly retirement income at 65 is at least this much&rdquo; (today&rsquo;s dollars). Simulated with random year-by-year returns per asset class; assets are drawn independently, so real-world diversification may help a little less than shown.</p>
+        <p class="chart-range-note" id="mc-ladder-note">Read each row as: &ldquo;in this share of the 10,000 simulated futures, your monthly retirement income at 65 is at least this much&rdquo; (today&rsquo;s dollars). Simulated with random year-by-year returns per asset class. Equities are modelled as tending to fall together (correlated), gold and cash move mostly on their own, and no asset can lose more than 100% in a year. A fixed random seed means the same plan always gives the same answer. Real correlations tend to rise in a crisis, which this fixed set of assumptions does not capture, so treat the result as an illustration under stated assumptions, not a forecast.</p>
       </div>
       </div>
     </details>
@@ -1683,6 +1683,20 @@
         <p class="chart-range-note" id="seq-takeaway" style="margin-top:12px"></p>
         <p class="chart-range-note">A simplified illustration, in today&rsquo;s dollars. Each sleeve is hit differently: equities fall by the full amount, SG dividend stocks/REITs about three-quarters as much, gold edges up and cash is unchanged. Balancing stronger years keep each sleeve&rsquo;s total growth equal to the no-crash case. Withdrawals are the 4% rule, rising with inflation, taken proportionally from the pot. Not a forecast.</p>
       </div>
+      </div>
+    </details>
+
+    <details class="ctl-group" id="grp-cparts">
+      <summary><span class="cg-title">Where your CPF ends up</span></summary>
+      <div class="cg-body">
+      <div class="note" style="margin-top:6px"><p><b>Only part of your CPF becomes lifelong income.</b> Your CPF sits in separate accounts. Just the Retirement Account feeds CPF LIFE; the Ordinary Account pays for housing and what is left is flexible; MediSave is held for healthcare. Shown below in today&rsquo;s dollars, at 65, from your own projection.</p></div>
+      <p class="chart-range-note" id="cp-line"></p>
+      <div class="opt-grid" id="cp-cards"></div>
+      <p class="chart-range-note" id="cp-total" style="margin-top:12px"></p>
+      <h3 class="chart-title" style="margin-top:18px;font-size:15px">How closely does this match CPF Board?</h3>
+      <p class="chart-range-note" id="cp-calib-intro"></p>
+      <div id="cp-calib"></div>
+      <p class="chart-range-note" id="cp-notes" style="margin-top:12px"></p>
       </div>
     </details>
 
@@ -1853,6 +1867,14 @@
       <details class="dd-card" id="dd-assumptions">
         <summary><span class="dd-txt"><span class="dd-title">Rules &amp; assumptions used</span><span class="dd-desc">The CPF, SRS and tax numbers behind every figure &mdash; and what&rsquo;s changing next.</span></span></summary>
         <div class="dd-body" id="assumptions-body"></div>
+      </details>
+      <details class="dd-card" id="dd-selfcheck">
+        <summary><span class="dd-txt"><span class="dd-title">Model self-checks</span><span class="dd-desc">Automated tests the model runs on itself &mdash; edge cases, the IRAS tax table and the Monte Carlo engine.</span></span></summary>
+        <div class="dd-body">
+          <p class="chart-range-note" style="margin-top:0">These checks run the app&rsquo;s real calculation engine against boundary cases (zero salary, early retirement, over- and under-allocated portfolios, falling markets), the published IRAS resident tax table, and the Monte Carlo simulation (reproducibility, return limits, correlations, convergence). They use copies of your current inputs and change nothing. The CPF checks compare the model with CPF Board&rsquo;s published contribution and allocation tables, retirement sums, interest rules and its three CPF LIFE payout examples (Standard plan, male), plus the SRS cap. <b>Not yet covered:</b> the Escalating and Basic CPF LIFE plans (CPF Board publishes no matching worked examples to test against), female payouts, and SRS tax on withdrawals against an IRAS worked example. Passing these checks is evidence the model behaves consistently; it is not an independent audit.</p>
+          <button type="button" class="hero-cta" id="btn-selfcheck" style="margin-top:6px">Run the self-checks</button>
+          <div id="selfcheck-out" style="margin-top:14px"></div>
+        </div>
       </details>
       
     </div>
@@ -2055,8 +2077,8 @@
       </div></div>
       <div class="step"><div class="num">6</div><div>
         <h3>At 65 → retirement income</h3>
-        <p>The Retirement Account is annuitised into CPF LIFE (~9.4% of the sum paid out per year, for life). The STI pot is drawn at a safe 4%/yr. No rent, because the flat is owned.</p>
-        <div class="formula">income = RA × 9.4%/12 + STI × 4%/12 (+ S$0 rent)</div>
+        <p>Only the Retirement Account (formed at 55) is annuitised into CPF LIFE &mdash; about 6.4% of it paid out per year, for life, calibrated to CPF Board&rsquo;s published examples. Leftover Ordinary Account savings and the STI pot are drawn at 4%/yr. MediSave is not counted. No rent, because the flat is owned.</p>
+        <div class="formula">income = RA × 6.4%/12 + (STI pot + OA left) × 4%/12 (+ S$0 rent)</div>
       </div></div>
       <div class="step"><div class="num">7</div><div>
         <h3>Future dollars → today's dollars</h3>
@@ -2422,7 +2444,7 @@
       <div class="gloss-item"><div class="gt">Safe withdrawal rate <span>the 4% rule</span></div><div class="gd">A rule of thumb that you can draw about 4% of an investment pot each year in retirement without running out over a normal lifespan.</div></div>
       <div class="gloss-item"><div class="gt">Behaviour gap</div><div class="gd">The gap between what investments earn and what investors actually earn — because people panic-sell, chase winners and mistime the market. It typically costs around 1% a year.</div></div>
       <div class="gloss-item"><div class="gt">Sequence-of-returns risk</div><div class="gd">The danger that a crash just before or early in retirement does far more damage than the same crash later, because you're drawing down an already-shrunken pot. See the &quot;Sequence-of-returns test&quot; section on the calculator tab.</div></div>
-      <div class="gloss-item"><div class="gt">Monte Carlo analysis <span>stress test</span></div><div class="gd">A way of testing a plan against uncertainty: instead of assuming markets grow by the same amount every year, the computer replays your plan through thousands of randomly generated good-and-bad market histories and counts how often you still reach your goal. Named after the Monte Carlo casino &mdash; the randomness is the point. Here it runs 2,000 simulations in the "Monte Carlo stress test" section.</div></div>
+      <div class="gloss-item"><div class="gt">Monte Carlo analysis <span>stress test</span></div><div class="gd">A way of testing a plan against uncertainty: instead of assuming markets grow by the same amount every year, the computer replays your plan through thousands of randomly generated good-and-bad market histories and counts how often you still reach your goal. Named after the Monte Carlo casino &mdash; the randomness is the point. Here it runs 10,000 simulations in the "Monte Carlo stress test" section.</div></div>
       <div class="gloss-item"><div class="gt">Percentile <span>10th, 25th, median, 90th</span></div><div class="gd">Where a result ranks among all the simulated futures. The 10th percentile means 1 in 10 futures did worse than that figure (a bad-markets outcome); the median (50th) is the middle result; the 90th means only 1 in 10 did better (a good-markets outcome).</div></div>
       <div class="gloss-item"><div class="gt">Net worth</div><div class="gd">Everything you own minus everything you owe. Here it means your investments plus CPF (your home isn't counted).</div></div>
     </section>
@@ -2578,11 +2600,26 @@
     cpf:{
       wageCeilingMonthly:8000, wageCeilingGrowth:0.02,
       // [upper age (exclusive), employee share, total (employee + employer)]
-      rates:[[55,.20,.37],[60,.18,.34],[65,.125,.25],[Infinity,.075,.165]],
+      // 1 Jan 2026 CPF Board table: 55 and below 20/37, above 55-60 18/34, above 60-65 12.5/25,
+      // above 65-70 7.5/16.5, above 70 5/12.5
+      rates:[[55,.20,.37],[60,.18,.34],[65,.125,.25],[70,.075,.165],[Infinity,.05,.125]],
       // [upper age (exclusive), share of contributions landing in the Ordinary Account]
-      oaShare:[[35,.62],[45,.57],[50,.51],[55,.40],[60,.353],[65,.14],[70,.0607],[Infinity,.08]]
+      oaShare:[[35,.62],[45,.57],[50,.51],[55,.40],[60,.353],[65,.14],[70,.0607],[Infinity,.08]],
+      // [upper age (exclusive), share of contributions landing in MediSave] -- CPF Board allocation
+      // table (MA % of wages 8/9/10/10.5/10.5/10.5/10.5/10.5 over the total rate for each band).
+      // Whatever is left after OA and MA goes to the Special Account (Retirement Account from 55).
+      maShare:[[35,8/37],[45,9/37],[50,10/37],[55,10.5/37],[60,10.5/34],[65,10.5/25],[70,10.5/16.5],[Infinity,10.5/12.5]],
+      // Basic Healthcare Sum (MediSave cap): S$79,000 in 2026, grown at a placeholder rate and
+      // frozen from the year the member turns 65 (CPF Board rule). MediSave above it overflows.
+      bhs:79000, bhsGrowth:0.045,
+      interest:{ oa:0.025, other:0.04, oaCountedCap:20000, extraBelow55:{cap:60000, rate:0.01}, extra55plus:{tier1:30000, rate1:0.02, tier2:30000, rate2:0.01} }
     },
-    cpfLife:{ payoutFactor:0.0941, frs:220400, ers:440800, deferBonus:0.35, deferYears:5, escalatingStart:0.91, escalatingRise:0.02, basicStart:0.88 },
+    // payoutFactor = annual CPF LIFE payout (Standard plan, male, from 65) as a share of the Retirement
+    // Account balance at 65. Calibrated against CPF Board's published 2026 examples (see
+    // officialExamples), NOT a formula from CPF Board: it reproduces them within about 3%.
+    cpfLife:{ payoutFactor:0.0637, brs:110200, frs:220400, ers:440800, retSumGrowth:0.035, payoutAge:65,
+      officialExamples:[ {label:'Basic Retirement Sum',sum:110200,m65:950,m70:1280}, {label:'Full Retirement Sum',sum:220400,m65:1780,m70:2380}, {label:'Enhanced Retirement Sum',sum:440800,m65:3440,m70:4580} ],
+      calibrationTolerance:0.04, deferBonus:0.35, deferYears:5, escalatingStart:0.91, escalatingRise:0.02, basicStart:0.88 },
     topUp:{ saRate:0.04, reliefCapAnnual:8000, srsWithdrawYears:10, swr:0.04 },
     srs:{ capAnnual:15300, capMonthly:1275, retirementTaxableShare:0.5 },
     tax:{ // resident brackets: [band width, marginal rate], read top to bottom
@@ -3554,6 +3591,33 @@
       banker:{s:7000,note:'base salary only — bonuses not modelled.'},
       surgeon:{s:14000,ty:10,ts:5500,note:'⚠ delayed earnings: modelled as ~10 years at junior-doctor pay (from S$5,500, rising) <b>before</b> the surgeon salary begins.'}
     };
+    // ===== CPF account mechanics (shared by the 45-year loop and the roll-forward to 65) =====
+    // One year of CPF interest for a member who is `age` during the year. OA earns 2.5%; SA/MA/RA
+    // earn 4%; extra interest is 1% on the first S$60,000 of combined balances (OA counted up to
+    // S$20,000) below 55, and from 55 it is 2% on the first S$30,000 plus 1% on the next S$30,000.
+    // Extra interest is credited to the SA/RA. Balances in, balances out (nominal dollars).
+    function cpfInterest(oa, sa, ma, age){
+      var I=ASSUMPTIONS.cpf.interest;
+      var comb=Math.max(0,sa)+Math.max(0,ma)+Math.min(Math.max(0,oa),I.oaCountedCap), extra;
+      if(age<55) extra=I.extraBelow55.rate*Math.min(comb,I.extraBelow55.cap);
+      else extra=I.extra55plus.rate1*Math.min(comb,I.extra55plus.tier1)+I.extra55plus.rate2*Math.max(0,Math.min(comb,I.extra55plus.tier1+I.extra55plus.tier2)-I.extra55plus.tier1);
+      return {oa:oa*(1+I.oa), sa:sa*(1+I.other)+extra, ma:ma*(1+I.other)};
+    }
+    // The age-55 Retirement Account formation: the SA is closed into the RA, topped up from the OA
+    // if it is short of the retirement sum `rs`, or any surplus above `rs` falls back to the OA.
+    function cpfFormRA(oa, sa, rs){
+      if(sa>=rs) return {oa:oa+(sa-rs), sa:rs};
+      var take=Math.min(Math.max(0,oa), rs-sa);
+      return {oa:oa-take, sa:sa+take};
+    }
+    // What this model says CPF LIFE would pay for a Retirement Account formed at 55 with `sum`, so it can be
+    // compared directly with CPF Board's published examples (RA only, interest to 65, Standard plan, male).
+    function cpfLifeCalibration(sum){
+      var s=sum, age;
+      for(age=55;age<ASSUMPTIONS.cpfLife.payoutAge;age++) s=cpfInterest(0,s,0,age).sa;
+      var m65=s*ASSUMPTIONS.cpfLife.payoutFactor/12;
+      return {ra65:s, m65:m65, m70:m65*(1+ASSUMPTIONS.cpfLife.deferBonus)};
+    }
     function sgTax(ci){
       var b=ASSUMPTIONS.tax.brackets;
       var tt=0,rem=ci;
@@ -4046,6 +4110,13 @@
       var cd=CONDOS[o.condoIdx], car=o.car?carCalc(o.omv):null;
       // Money already accumulated compounds from day one alongside new contributions.
       var STI=(o.startNW||0),SRS=0,OA=0,RET=0,taxSaved=0;
+      // CPF is tracked by account: OA, SA (which becomes the Retirement Account at 55) and MA.
+      // RET stays as SA+MA, so every existing consumer of OA+RET keeps working unchanged.
+      var SA=0, MA=0;
+      var _CL=ASSUMPTIONS.cpfLife, _CC=ASSUMPTIONS.cpf;
+      var raFormed=(o.age>55);                                   // already past 55: no age-55 event ahead
+      var rsAt55=_CL.frs*Math.pow(1+_CL.retSumGrowth, Math.max(0,55-o.age));   // FRS set aside at 55 (nominal)
+      var _yrsTo65=Math.max(0,65-o.age);
       // Diversification (Global ETF, SG Dividend Stocks/REITs, Gold, Cash) as parallel
       // pots alongside STI, matching the five income streams this app's own "why this
       // shape" principle describes (salary, SG dividends, REIT distributions, CPF
@@ -4191,7 +4262,22 @@
         // RSTU top-up itself is cash leaving take-home into CPF -- rRel is only the tax
         // it saves, added back the same way pRel and cRel already are.
         var th=(sal1+sal2)-emp-srsTargetHH-(tax1+tax2)+pRel+cRel-rstuMonthly+rRel;
-        OA+=oaC*12; RET+=retC*12+rstuMonthly*12;
+        // --- CPF by account ---
+        // Age-55 event: SA closes into the Retirement Account (formed up to the Full Retirement
+        // Sum; OA tops it up if short, surplus falls back to OA).
+        if(!raFormed && a>=55){ var fr=cpfFormRA(OA,SA,rsAt55); OA=fr.oa; SA=fr.sa; raFormed=true; }
+        var maC12=(o.se?tot:tot*(function(){ var t=_CC.maShare; for(var i=0;i<t.length;i++){ if(a<t[i][0]) return t[i][1]; } return t[t.length-1][1]; })())*12;
+        var saC12=Math.max(0,retC*12-maC12);
+        OA+=oaC*12; MA+=maC12;
+        if(!raFormed){ SA+=saC12; }
+        else { var raRoom=Math.max(0,rsAt55-SA), toRA=Math.min(saC12,raRoom); SA+=toRA; OA+=saC12-toRA; }
+        SA+=rstuMonthly*12;                                       // voluntary RA top-up always lands in the RA/SA
+        // MediSave is capped at the Basic Healthcare Sum; the overflow goes to SA (below 55),
+        // otherwise to the RA while it is below its sum, otherwise to OA.
+        var bhsCap=_CC.bhs*Math.pow(1+_CC.bhsGrowth, Math.min(y,_yrsTo65));
+        if(MA>bhsCap){ var ex=MA-bhsCap; MA=bhsCap;
+          if(!raFormed) SA+=ex; else { var rm=Math.max(0,rsAt55-SA), tr2=Math.min(ex,rm); SA+=tr2; OA+=ex-tr2; } }
+        RET=SA+MA;
         // budget engine: init at start and at marriage
         var marriedThisYear=(!o.single && !marriedFromStart && a===o.marryAge);
         // SRS is already extracted from th above. Invest's share of th is its DIRECT
@@ -4578,6 +4664,13 @@
         var divGold = o.divGold||0;
         var divCash = o.divCash||0;
         var divSti = o.divStiSlider||0;
+        // Each slider runs 0-100% on its own, so together they can exceed 100% --
+        // which would invest more dollars than actually exist. When they do, scale
+        // all five down proportionally so the total is exactly 100% (the reader is
+        // told this in updateDiversify's note). Under 100% is left as it is: the
+        // gap goes to IDLE below, on purpose, so its cost stays visible.
+        var divSum = divGetf+divSgdiv+divGold+divCash+divSti;
+        if(divSum>1){ divGetf/=divSum; divSgdiv/=divSum; divGold/=divSum; divCash/=divSum; divSti/=divSum; }
         var divIdle = Math.max(0, 1-divGetf-divSgdiv-divGold-divCash-divSti);
         var newInvest = effInvest*12;
         STI=(STI+newInvest*divSti)*(1+(mcr?mcr.sti[y]:o.stiR));
@@ -4588,7 +4681,7 @@
         CASH=(CASH+newInvest*divCash)*(1+(mcr?mcr.cash[y]:0.025));
         IDLE+=newInvest*divIdle;
         stiContrib+=effInvest*12; srsContrib+=srsTargetHH*12;
-        OA*=1.025; RET*=1.04;
+        var _ci=cpfInterest(OA,SA,MA,a); OA=_ci.oa; SA=_ci.sa; MA=_ci.ma; RET=SA+MA;
         prevTH=th;
         ageAxis.push(a+1); nwPath.push(STI+SRS+GETF+SGDIV+GOLD+CASH+IDLE+OA+RET);
         // Despite the name (kept to avoid touching every consumer), this is now the
@@ -4599,7 +4692,17 @@
         // nothing for a household whose real investing sits mostly elsewhere.
         stiPath.push(STI+GETF+SGDIV+GOLD+CASH+IDLE); srsPath.push(SRS); cpfPath.push(OA+RET);
       }
-      var POT=STI+SRS+GETF+SGDIV+GOLD+CASH+IDLE, CPF=OA+RET, annu=CPF*0.7;
+      var POT=STI+SRS+GETF+SGDIV+GOLD+CASH+IDLE, CPF=OA+RET;
+      // The CPF LIFE premium is the Retirement Account balance when payouts start (65). If the plan
+      // ends earlier than 65, roll the accounts forward (with the age-55 event if still ahead).
+      var _o=OA, _s=SA, _m=MA, _f=raFormed;
+      for(var _age=o.age+yrs; _age<_CL.payoutAge; _age++){
+        if(!_f && _age>=55){ var fr2=cpfFormRA(_o,_s,rsAt55); _o=fr2.oa; _s=fr2.sa; _f=true; }
+        var ci2=cpfInterest(_o,_s,_m,_age); _o=ci2.oa; _s=ci2.sa; _m=ci2.ma;
+      }
+      var raPremium=Math.max(0,_s);
+      // OA left over is not annuitised; it is drawn like the investment pot (4%/yr, see below).
+      var oaAtPayout=Math.max(0,_o), maAtPayout=Math.max(0,_m);
       // Deferring CPF LIFE past 65 raises the monthly payout by roughly 7%/yr of
       // deferral (CPF Board's own published figure) -- 35% more at the full 5-year
       // deferral to 70. This app's CPF LIFE figure is a single, steady-state "monthly
@@ -4629,8 +4732,11 @@
       // fully counted in net worth above.
       var goldDivYield=0.06, goldSsbYield=0.025, goldDivShare=0.75, goldSsbShare=0.25;
       var goldRetireIncome = GOLD*(goldDivShare*goldDivYield+goldSsbShare*goldSsbYield)/12;
-      var potdrawBase = POT-GOLD;
-      var cpflife=annu*ASSUMPTIONS.cpfLife.payoutFactor*cpfLifePlanMult*(1+cpfLifeDeferBonus)/12, potdraw=potdrawBase*0.04/12+goldRetireIncome;
+      // Floored at zero: a negative pot is debt, not something to "withdraw" a
+      // negative retirement income from (the shortfall still shows in net worth).
+      var potdrawBase = Math.max(0, POT-GOLD);
+      var cpflife=raPremium*ASSUMPTIONS.cpfLife.payoutFactor*cpfLifePlanMult*(1+cpfLifeDeferBonus)/12, potdraw=potdrawBase*0.04/12+goldRetireIncome;
+      var cpfOtherDraw=oaAtPayout*0.04/12;
       var retRent=rentingOutBTO?(FLATS[o.flatIdx].rent*Math.pow(1.025,yrs)*0.78):0;
       // Retirement-phase income tax. Working-years tax is modelled in the loop above;
       // in retirement almost everything is untaxed in Singapore (CPF LIFE, SG dividends,
@@ -4641,8 +4747,9 @@
       var _people=o.single?1:2;
       var _taxableEach=(ASSUMPTIONS.srs.retirementTaxableShare*0.04*Math.max(0,SRS)/disc + retRent*12/disc)/_people;
       var retTaxMo=_people*sgTax(_taxableEach)*disc/12;
-      var incomeGross=cpflife+potdraw+retRent;
-      return {yrs:yrs,disc:disc,STI:STI,SRS:SRS,POT:POT,CPF:CPF,cpflife:cpflife,potdraw:potdraw,
+      var incomeGross=cpflife+potdraw+cpfOtherDraw+retRent;
+      return {yrs:yrs,disc:disc,STI:STI,SRS:SRS,POT:POT,CPF:CPF,cpflife:cpflife,potdraw:potdraw,cpfOtherDraw:cpfOtherDraw,raPremium:raPremium,oaAtPayout:oaAtPayout,maAtPayout:maAtPayout,
+        cpfAtRet:{oa:OA,sa:SA,ma:MA},
         nw:POT+CPF,income:incomeGross-retTaxMo,incomeGross:incomeGross,retTaxMo:retTaxMo,taxSaved:taxSaved,spath:spath,
         nwPath:nwPath,ageAxis:ageAxis,grant:grant,netToday:netToday,mortM:mortM,loan0:loan0,
         GETF:GETF,SGDIV:SGDIV,GOLD:GOLD,CASH:CASH,IDLE:IDLE,goldRetireIncome:goldRetireIncome,
@@ -6032,32 +6139,86 @@
     // not market risk itself; SG dividend stocks/REITs are modelled more
     // defensively (~13%) given their income tilt; gold around 15%; cash/T-bills
     // deliberately low (~1.5%) since that sleeve's whole purpose is stability.
-    // Each sleeve's own yearly draw is independent of the others' -- correlation
-    // between asset classes (equities tending to fall together, gold sometimes
-    // moving opposite them) isn't modelled, which means this somewhat OVERSTATES
-    // the diversification benefit a real portfolio would show. Stated plainly in
-    // the UI's own methodology note rather than left for the reader to discover.
+    // CORRELATED: the five sleeves' yearly shocks are drawn together from one
+    // multivariate normal (via a Cholesky factor of MC_CORR below), so equities
+    // tend to fall in the same years -- the property that makes a crash hurt even
+    // a "diversified" equity-heavy portfolio. These correlations are a stated
+    // modelling assumption, not a measurement: long-run global-equity vs STI and
+    // vs SG dividend/REIT correlations run high (0.7-0.85); gold is close to
+    // uncorrelated with equities on average (small positive, 0.05) while still
+    // able to move opposite them in a crisis; cash is treated as uncorrelated.
+    // Real correlations also rise in crises, which a single static matrix cannot
+    // capture -- stated in the UI's own methodology note.
     var MC_VOL = {sti:0.17, getf:0.16, sgdiv:0.13, gold:0.15, cash:0.015};
+    var MC_KEYS = ['sti','getf','sgdiv','gold','cash'];
+    var MC_CORR = [
+      [1.00, 0.85, 0.80, 0.05, 0.00],   // sti
+      [0.85, 1.00, 0.70, 0.05, 0.00],   // getf
+      [0.80, 0.70, 1.00, 0.05, 0.00],   // sgdiv
+      [0.05, 0.05, 0.05, 1.00, 0.00],   // gold
+      [0.00, 0.00, 0.00, 0.00, 1.00]    // cash
+    ];
+    // Lower-triangular Cholesky factor L, such that L * L^T = MC_CORR. Throws if
+    // the matrix is not positive-definite, so a bad future edit fails loudly.
+    function mcCholesky(M){
+      var n=M.length, L=[], i, j, k, s;
+      for(i=0;i<n;i++){ L.push([]); for(j=0;j<n;j++) L[i].push(0); }
+      for(i=0;i<n;i++){
+        for(j=0;j<=i;j++){
+          s=0; for(k=0;k<j;k++) s+=L[i][k]*L[j][k];
+          if(i===j){ var d=M[i][i]-s; if(!(d>1e-12)) throw new Error('MC_CORR is not positive-definite'); L[i][j]=Math.sqrt(d); }
+          else L[i][j]=(M[i][j]-s)/L[j][j];
+        }
+      }
+      return L;
+    }
+    var MC_CHOL = mcCholesky(MC_CORR);
+    // Fixed default seed: the same plan always gives the same Monte Carlo result.
+    var MC_SEED = 20261006;
+    // mulberry32 -- a small, well-known seeded PRNG (32-bit state), returns U[0,1).
+    function mcMakeRng(seed){
+      var a=(seed>>>0)||1;
+      return function(){
+        a=(a+0x6D2B79F5)>>>0;
+        var t=a; t=Math.imul(t^(t>>>15), t|1); t^=t+Math.imul(t^(t>>>7), t|61);
+        return ((t^(t>>>14))>>>0)/4294967296;
+      };
+    }
+    var mcRng = mcMakeRng(MC_SEED);
     // Box-Muller transform -- two independent U(0,1) draws become one standard
-    // normal draw. JS has no built-in Gaussian random; this is the standard,
-    // well-tested way to get one without pulling in a library for it.
+    // normal draw, from whichever RNG is currently active.
     function mcRandNormal(){
-      var u1=Math.random(), u2=Math.random();
+      var u1=mcRng(), u2=mcRng();
       if(u1<1e-12) u1=1e-12;
       return Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2);
     }
+    // One year's worth of correlated standard-normal shocks, in MC_KEYS order.
+    function mcCorrNormals(){
+      var n=MC_KEYS.length, z=[], out=[], i, j, s;
+      for(i=0;i<n;i++) z.push(mcRandNormal());
+      for(i=0;i<n;i++){ s=0; for(j=0;j<=i;j++) s+=MC_CHOL[i][j]*z[j]; out.push(s); }
+      return out;
+    }
+    // BOUNDED return from a standard-normal shock z: lognormal, parameterised so
+    // the ARITHMETIC mean is exactly `mean` and the arithmetic standard deviation
+    // is `vol` (matching how every other rate in this app is an arithmetic annual
+    // %). Because it is exp(...)-1 it can never fall below -100%, unlike a plain
+    // normal return, and it has the realistic positive skew (a long right tail).
+    function mcLogRet(mean, vol, z){
+      var k=vol/(1+mean), s2=Math.log(1+k*k);
+      var mu=Math.log(1+mean)-s2/2;
+      return Math.exp(mu+Math.sqrt(s2)*z)-1;
+    }
     // One simulated path of annual returns for all five sleeves, `years` long.
-    // Normal (not lognormal) returns -- the standard, simplest choice for a
-    // retail Monte Carlo tool, and consistent with how every other rate in this
-    // app is a flat annual %, not a continuously-compounded one.
     function mcGeneratePath(years, stiMean){
       var out={sti:[],getf:[],sgdiv:[],gold:[],cash:[]};
       for(var y=0;y<years;y++){
-        out.sti.push(stiMean + MC_VOL.sti*mcRandNormal());
-        out.getf.push(0.08 + MC_VOL.getf*mcRandNormal());
-        out.sgdiv.push(0.06 + MC_VOL.sgdiv*mcRandNormal());
-        out.gold.push(0.07 + MC_VOL.gold*mcRandNormal());
-        out.cash.push(0.025 + MC_VOL.cash*mcRandNormal());
+        var z=mcCorrNormals();
+        out.sti.push(mcLogRet(stiMean, MC_VOL.sti, z[0]));
+        out.getf.push(mcLogRet(0.08, MC_VOL.getf, z[1]));
+        out.sgdiv.push(mcLogRet(0.06, MC_VOL.sgdiv, z[2]));
+        out.gold.push(mcLogRet(0.07, MC_VOL.gold, z[3]));
+        out.cash.push(mcLogRet(0.025, MC_VOL.cash, z[4]));
       }
       return out;
     }
@@ -6092,10 +6253,11 @@
           var frac=need/pos;
           sti-=posSti*frac; getf-=posGetf*frac; sgdiv-=posSgdiv*frac; cash-=posCash*frac;
         }
-        sti=Math.max(0,sti)*(1+stiMean+MC_VOL.sti*mcRandNormal());
-        getf=Math.max(0,getf)*(1+0.08+MC_VOL.getf*mcRandNormal());
-        sgdiv=Math.max(0,sgdiv)*(1+0.06+MC_VOL.sgdiv*mcRandNormal());
-        cash=Math.max(0,cash)*(1+0.025+MC_VOL.cash*mcRandNormal());
+        var z=mcCorrNormals();
+        sti=Math.max(0,sti)*(1+mcLogRet(stiMean, MC_VOL.sti, z[0]));
+        getf=Math.max(0,getf)*(1+mcLogRet(0.08, MC_VOL.getf, z[1]));
+        sgdiv=Math.max(0,sgdiv)*(1+mcLogRet(0.06, MC_VOL.sgdiv, z[2]));
+        cash=Math.max(0,cash)*(1+mcLogRet(0.025, MC_VOL.cash, z[4]));
       }
       return true;
     }
@@ -6110,8 +6272,12 @@
     // one is given), and the probability of the at-risk portfolio lasting to 90
     // once retired -- the two decision-relevant numbers a reviewer specifically
     // flagged as more useful than percentiles alone.
-    function runMonteCarlo(o, nSims, incomeGoal){
+    function runMonteCarlo(o, nSims, incomeGoal, seed){
+      // Re-seed at the start of every run, so identical inputs always reproduce
+      // identical results (and a validation test can rely on that).
+      mcRng = mcMakeRng(seed===undefined ? MC_SEED : seed);
       var yrs=Math.max(1, o.retire-o.age);
+      var conv=[], nextCk=Math.max(1,Math.floor(nSims/4)), ckStep=nextCk;
       var nwPaths=[], finalNW=[], finalIncome=[], goalHits=0, survived=0;
       for(var i=0;i<nSims;i++){
         var mc=mcGeneratePath(yrs+2, o.stiR);
@@ -6122,6 +6288,9 @@
         finalNW.push(r.nw/r.disc);
         finalIncome.push(incomeToday);
         if(incomeGoal>0 && incomeToday>=incomeGoal) goalHits++;
+        // Convergence trail: the running goal probability at each quarter of the
+        // run, so the estimate settling down (or not) can be inspected.
+        if(i+1===nextCk || i+1===nSims){ conv.push({n:i+1, p:goalHits/(i+1)}); nextCk+=ckStep; }
         var potdrawBase=r.POT-r.GOLD;
         var startPots={sti:r.STI+r.SRS, getf:r.GETF, sgdiv:r.SGDIV, cash:r.CASH+r.IDLE};
         var annualWithdrawal=Math.max(0,potdrawBase)*0.04;
@@ -6146,8 +6315,16 @@
       return {p10:p10,p25:p25,p50:p50,p75:p75,p90:p90,
               nwAt65:pcts(finalNW), incomeAt65:pcts(finalIncome),
               probGoal: incomeGoal>0 ? goalHits/nSims : null,
-              probSurvive: survived/nSims};
+              probSurvive: survived/nSims,
+              // Sampling error of the goal probability: the standard error of a
+              // proportion, and its 95% margin (what more simulations would shrink).
+              moeGoal: incomeGoal>0 ? 1.96*Math.sqrt((goalHits/nSims)*(1-goalHits/nSims)/nSims) : null,
+              convergence: conv, nSims: nSims, seed: (seed===undefined ? MC_SEED : seed)};
     }
+    // Exposed for the validation suite (and so tests can exercise the real code).
+    window.SGMR_MC = {run:runMonteCarlo, genPath:mcGeneratePath, logRet:mcLogRet, makeRng:mcMakeRng,
+                      corrNormals:mcCorrNormals, setRng:function(f){ mcRng=f; },
+                      VOL:MC_VOL, KEYS:MC_KEYS, CORR:MC_CORR, SEED:MC_SEED};
 
     (function(){
       var btnFuture=$('dt-future'), btnToday=$('dt-today');
@@ -6198,12 +6375,12 @@
             $('mc-ladder').innerHTML='';
           } else {
             lastRunGoal=goal;
-            var mc=runMonteCarlo(o, 2000, goal);
+            var mc=runMonteCarlo(o, 10000, goal);
             // Colour by chance of reaching that income level.
             function col(ch){ return ch>=0.75?'#2E9E5B':(ch>=0.50?'#C79A1E':(ch>=0.25?'#D9772B':'var(--brick)')); }
             var pct=Math.round(mc.probGoal*100);
             var big=$('mc-goal-pct'); big.textContent=pct+'%'; big.style.color=col(mc.probGoal);
-            $('mc-goal-sub').textContent='of 2,000 simulated markets reach at least '+fmt(goal)+'/mo (your projection, today\u2019s $)';
+            $('mc-goal-sub').textContent='of 10,000 simulated markets reach at least '+fmt(goal)+'/mo (your projection, today\u2019s $), under this app\u2019s stated assumptions. Simulation margin of error: about \u00b1'+(mc.moeGoal*100).toFixed(1)+' points.';
             // income at p(100-X)% = amount you reach or beat in X% of futures
             var rows=[
               {ch:0.10, inc:mc.incomeAt65.p90},
@@ -6434,7 +6611,7 @@
       var rows=[];
       A.cpf.rates.forEach(function(r,i){ rows.push(['CPF, age '+bandLabel(A.cpf.rates,i), 'you '+pct(r[1])+' \u00b7 total '+pct(r[2])]); });
       rows.push(['CPF monthly wage ceiling','S$'+A.cpf.wageCeilingMonthly.toLocaleString()+', assumed to grow '+pct(A.cpf.wageCeilingGrowth)+'/yr']);
-      rows.push(['CPF LIFE payout factor',(A.cpfLife.payoutFactor*100).toFixed(2)+'% of the annuity pot per year']);
+      rows.push(['CPF LIFE payout factor',(A.cpfLife.payoutFactor*100).toFixed(2)+'% of the Retirement Account at 65, per year (calibrated to CPF Board\u2019s published 2026 examples, within about '+Math.round(A.cpfLife.calibrationTolerance*100)+'%)']);
       rows.push(['Full / Enhanced Retirement Sum (2026)','S$'+A.cpfLife.frs.toLocaleString()+' / S$'+A.cpfLife.ers.toLocaleString()+' (these sums are reset each year)']);
       rows.push(['Deferring CPF LIFE to 70','+'+Math.round(A.cpfLife.deferBonus*100)+'% payout, starting '+A.cpfLife.deferYears+' years later']);
       rows.push(['SRS contribution cap','S$'+A.srs.capAnnual.toLocaleString()+'/yr (S$'+A.srs.capMonthly.toLocaleString()+'/mo) per person']);
@@ -6516,7 +6693,7 @@
         var C=ASSUMPTIONS.cpfLife, disc=r.disc;
         var planMult=(o.cpfLifePlan==='escalating')?C.escalatingStart:(o.cpfLifePlan==='basic')?C.basicStart:1;
         var std=r.cpflife/(planMult*(1+(o.cpfLifeDefer?C.deferBonus:0)))/disc;   // standard plan, from 65, today's $/mo
-        var premium=std*12/C.payoutFactor;                                    // CPF pot behind it, today's $
+        var premium=r.raPremium/disc;                                         // Retirement Account at 65 behind it, today's $
         var line=$('lf-line');
         if(!(std>0)){ if(line) line.textContent='Your plan has no CPF LIFE payout to compare yet.'; $('lf-cards').innerHTML=''; return; }
         if(line) line.innerHTML='Your CPF savings behind CPF LIFE at 65: about <b>'+fmtK(premium)+'</b> in today&rsquo;s dollars, paying <b>'+fmt(std)+'/mo</b> on the Standard plan from 65.';
@@ -6541,6 +6718,36 @@
         ];
         $('lf-cards').innerHTML=rows.map(function(x,i){ return '<div class="opt-card'+(i===0?' best':'')+'"><div class="opt-h">'+x.t+(i===0?' <span class="opt-tag">Your plan</span>':'')+'</div><div class="opt-big" style="font-size:'+(x.big.length>14?'20':'26')+'px">'+x.big+'</div>'+(x.meta?'<div class="opt-sub">'+x.meta+'</div>':'')+'<div class="opt-txt">'+x.txt+'</div></div>'; }).join('');
         $('lf-notes').innerHTML='Break-evens count simple cumulative payouts only &mdash; they ignore inflation and any interest you could earn on money received sooner. The Retirement Sums are 2026 figures as coded here and are reset every year; check cpf.gov.sg for the current numbers. A simplified illustration, not CPF advice.';
+      }
+      grp.addEventListener('toggle', function(){ if(grp.open) compute(); });
+      function again(){ if(grp.open) setTimeout(compute,0); }
+      document.addEventListener('input', again); document.addEventListener('change', again);
+    })();
+
+
+    (function(){
+      var grp=$('grp-cparts'); if(!grp) return;
+      function compute(){
+        var o, r; try{ o=readOpts(); r=project(o); }catch(e){ return; }
+        var C=ASSUMPTIONS.cpfLife, disc=r.disc;
+        var ra=r.raPremium/disc, oa=r.oaAtPayout/disc, ma=r.maAtPayout/disc;
+        var life=r.cpflife/disc, oaDraw=r.cpfOtherDraw/disc, outside=(r.potdraw+r.retRent)/disc;
+        $('cp-line').innerHTML='At 65 your CPF is projected at about <b>'+fmtK(ra+oa+ma)+'</b> in total (today&rsquo;s dollars), held in three accounts.';
+        var cards=[
+          {t:'Retirement Account &rarr; CPF LIFE',big:fmtK(ra),sub:'pays <b>'+fmt(life)+'/mo</b> for life',txt:'Formed at 55 from your Special Account, topped up from your Ordinary Account to the Full Retirement Sum, then growing at 4% plus extra interest. This is the only part of your CPF that becomes lifelong income.',best:true},
+          {t:'Ordinary Account',big:fmtK(oa),sub:'counted as <b>'+fmt(oaDraw)+'/mo</b>',txt:'Pays for your flat while you have a mortgage. What is left is not turned into an annuity; this model draws it down at 4% a year like your investments, which is an assumption &mdash; it only earns 2.5%.'},
+          {t:'MediSave',big:fmtK(ma),sub:'not counted as income',txt:'Capped at the Basic Healthcare Sum (S$'+ASSUMPTIONS.cpf.bhs.toLocaleString()+' in 2026, assumed to grow '+(ASSUMPTIONS.cpf.bhsGrowth*100).toFixed(1)+'% a year until you turn 65). Held for healthcare; anything above the cap overflows into your other accounts.'},
+          {t:'Outside CPF',big:fmt(outside)+'/mo',sub:'investments, gold income and rent',txt:'Your investment pot drawn at 4% a year, plus the income from gold sold at retirement and any rental income.'}
+        ];
+        $('cp-cards').innerHTML=cards.map(function(x){ return '<div class="opt-card'+(x.best?' best':'')+'"><div class="opt-h">'+x.t+'</div><div class="opt-big" style="font-size:'+(x.big.length>14?'20':'26')+'px">'+x.big+'</div><div class="opt-sub">'+x.sub+'</div><div class="opt-txt">'+x.txt+'</div></div>'; }).join('');
+        $('cp-total').innerHTML='<b>Total monthly retirement income:</b> '+fmt(r.incomeGross/disc)+' before estimated tax, <b>'+fmt(r.income/disc)+'</b> after (today&rsquo;s dollars).';
+        $('cp-calib-intro').innerHTML='CPF Board publishes what a member who sets aside each Retirement Sum at 55 in 2026 would get from CPF LIFE (Standard plan, male). This model, run on the same sums, gives:';
+        $('cp-calib').innerHTML=C.officialExamples.map(function(ex){
+          var m=cpfLifeCalibration(ex.sum), d65=(m.m65/ex.m65-1)*100, d70=(m.m70/ex.m70-1)*100;
+          function pc(d){ return (d>=0?'+':'')+d.toFixed(1)+'%'; }
+          return '<div style="padding:8px 0;border-bottom:1px solid var(--line);font-size:13px;line-height:1.5"><b>'+ex.label+'</b> (S$'+ex.sum.toLocaleString()+')<br><span style="color:var(--muted)">From 65: CPF Board S$'+ex.m65.toLocaleString()+' &middot; this model '+fmt(m.m65)+' ('+pc(d65)+')<br>From 70: CPF Board S$'+ex.m70.toLocaleString()+' &middot; this model '+fmt(m.m70)+' ('+pc(d70)+')</span></div>';
+        }).join('');
+        $('cp-notes').innerHTML='<b>What this simplifies:</b> one payout factor stands in for CPF Board&rsquo;s actuarial pricing, so it is calibrated to the three examples above rather than derived from them; it assumes a male member on the Standard plan, the Full Retirement Sum (not the Basic Sum with a property pledge, or the Enhanced Sum), and Retirement Sums rising '+(C.retSumGrowth*100).toFixed(1)+'% a year. Escalating and Basic plan payouts are approximate ratios, not calibrated. Check cpf.gov.sg for your own figures. A simplified illustration, not CPF advice.';
       }
       grp.addEventListener('toggle', function(){ if(grp.open) compute(); });
       function again(){ if(grp.open) setTimeout(compute,0); }
@@ -6843,7 +7050,10 @@
       var unalloc=Math.max(0,100-sum);
       var note=$('div-note');
       if(note){
-        if(unalloc>0){
+        if(sum>100){
+          note.innerHTML='\u26a0 <b>These five add up to '+sum+'%, which is more than 100%.</b> The projection scales them all down proportionally to a total of 100%, so each sleeve gets a little less than its slider shows. Lower one or more sliders to set the split you actually intend.';
+          note.style.cssText='margin-top:8px;background:#E2604F1A;border:1px solid #E2604F45;border-radius:6px;padding:10px 12px;color:var(--brick)';
+        } else if(unalloc>0){
           var idleDollar=amt*unalloc/100;
           // Opportunity cost: the SAME scenario, but with the unallocated slice
           // credited to STI instead of sitting idle -- isolating exactly what
@@ -6864,7 +7074,7 @@
 
     // Expose the engine so the cover page's live projection uses THIS engine — never a
     // second copy of the maths that could silently drift out of step with the calculator.
-    window.SGMR_ENGINE={ project:project, recompute:recompute, readOpts:readOpts, fmtK:fmtK, carCalc:carCalc, rankLevers:function(o,r,p){ return sgmrRankLevers(o,r,p); } };
+    window.SGMR_ENGINE={ project:project, recompute:recompute, readOpts:readOpts, fmtK:fmtK, carCalc:carCalc, rankLevers:function(o,r,p){ return sgmrRankLevers(o,r,p); }, sgTax:sgTax, empRate:empRate, totRate:totRate, oaShare:oaShare, cpfInterest:cpfInterest, cpfFormRA:cpfFormRA, cpfLifeCalibration:cpfLifeCalibration };
     // refreshCompare() bailed out safely earlier (SGMR_ENGINE wasn't set yet) -- now
     // that it is, retry once so anyone with a previously-saved A/B comparison actually
     // sees it rendered, rather than the empty placeholder forever.
@@ -8510,7 +8720,7 @@ function drawQuizResultCard(isStory){
           var rYear=window.SGMR_ENGINE.project(opts(yearAge,sal,house,spouseSal));
           var correctedNW = rYear.STI/d + rYear.SRS/d + r.CPF/d;
           var correctedPotdraw = (rYear.STI + rYear.SRS) * 0.04/12;
-          var correctedIncome = r.cpflife/d + correctedPotdraw/d + r.retRent/d;
+          var correctedIncome = r.cpflife/d + correctedPotdraw/d + r.cpfOtherDraw/d + r.retRent/d;
           var nwLoss=Math.max(0,r.nw/d - correctedNW);
           var incLoss=Math.max(0,r.incomeGross/d - correctedIncome);
           scenarios.push({label:c.label,nw:nwLoss,inc:incLoss});
@@ -8521,7 +8731,7 @@ function drawQuizResultCard(isStory){
         var oNever=opts(age,sal,house,spouseSal); oNever.aI=0; oNever.aS=0; oNever.aW+=0.20; oNever.paycheckToPaycheck=true;
         var rNever=window.SGMR_ENGINE.project(oNever);
         var correctedNeverPotdraw = 0; // both STI and SRS are zero in this scenario
-        var correctedNeverIncome = r.cpflife/d + correctedNeverPotdraw/d + r.retRent/d;
+        var correctedNeverIncome = r.cpflife/d + correctedNeverPotdraw/d + r.cpfOtherDraw/d + r.retRent/d;
         var nwNever=Math.max(0,r.nw/d - r.CPF/d);
         var incNever=Math.max(0,r.incomeGross/d - correctedNeverIncome);
         scenarios.push({label:'Never invest',nw:nwNever,inc:incNever});
@@ -8991,6 +9201,231 @@ function drawQuizResultCard(isStory){
         deferredPrompt=null;
       });
     }
+  })();
+</script>
+<script id="model-tests">
+/* ===== Model self-checks (validation suite) =====
+   Runs the REAL engine (project(), the Monte Carlo functions, the tax and CPF
+   helpers) against boundary cases, invariants and published worked examples.
+   Each check returns {group, name, pass, detail}. Nothing here changes the app's
+   state or the reader's inputs: every scenario is a copy of the current options. */
+(function(){
+  "use strict";
+  function run(){
+    var E=window.SGMR_ENGINE, M=window.SGMR_MC, A=window.ASSUMPTIONS, out=[];
+    if(!E||!M||!A) return [{group:'Setup',name:'Engine is available',pass:false,detail:'Engine not loaded yet'}];
+    var base=E.readOpts();
+    function mk(mod){ var o={}, k; for(k in base) o[k]=base[k]; for(k in mod) o[k]=mod[k]; return o; }
+    function proj(mod){ return E.project(mk(mod)); }
+    function S(v){ return 'S$'+Number(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+    function fin(v){ return typeof v==='number' && isFinite(v); }
+    function allFinite(r){ return ['nw','income','POT','CPF','STI','SRS','GETF','SGDIV','GOLD','CASH','cpflife'].every(function(k){ return fin(r[k]); }); }
+    function add(group,name,pass,detail){ out.push({group:group,name:name,pass:!!pass,detail:detail||''}); }
+    function guard(group,name,fn){ try{ var r=fn(); add(group,name,r.pass,r.detail); }catch(e){ add(group,name,false,'Threw: '+(e&&e.message)); } }
+    function flat(rate,n){ var a=[],i; for(i=0;i<n;i++) a.push(rate); return {sti:a.slice(),getf:a.slice(),sgdiv:a.slice(),gold:a.slice(),cash:a.slice()}; }
+    var rBase=E.project(base);
+    var N=base.retire-base.age+3;
+
+    // ---- Boundaries --------------------------------------------------------
+    guard('Boundaries','Default scenario produces finite, positive results',function(){
+      return {pass: allFinite(rBase) && rBase.nw>0 && rBase.income>0, detail:'net worth '+S(rBase.nw)+', income/mo '+S(rBase.income)};
+    });
+    guard('Boundaries','Zero salary and zero starting assets does not break the model',function(){
+      var r=proj({sal0:0,startNW:0,spouseSal:0});
+      return {pass: allFinite(r) && r.income>=0, detail:'no NaN or infinite values'};
+    });
+    guard('Boundaries','Very high salary stays finite and larger than the default',function(){
+      var r=proj({sal0:30000});
+      return {pass: allFinite(r) && r.nw>rBase.nw, detail:'net worth '+S(r.nw)};
+    });
+    guard('Boundaries','Retiring at 55 is finite and yields less wealth than retiring at 65',function(){
+      var r=proj({retire:55,workTill:55});
+      return {pass: allFinite(r) && r.nw<rBase.nw, detail:'at 55: '+S(r.nw)+' vs at 65: '+S(rBase.nw)};
+    });
+    guard('Boundaries','Single and dual-income households both compute and stay finite',function(){
+      var r=proj({single:false,se:true,house:'couple'});
+      return {pass: allFinite(r) && r.nw>0, detail:'dual-income net worth '+S(r.nw)};
+    });
+
+    // ---- Returns -----------------------------------------------------------
+    guard('Returns','Zero investment returns give less wealth than the default',function(){
+      var r=proj({mcReturns:flat(0,N)});
+      return {pass: allFinite(r) && r.nw<rBase.nw, detail:S(r.nw)+' vs '+S(rBase.nw)};
+    });
+    guard('Returns','With zero returns, SRS equals exactly what was contributed',function(){
+      var r=proj({mcReturns:flat(0,N)});
+      return {pass: Math.abs(r.SRS-r.srsContrib)<1, detail:'SRS '+S(r.SRS)+' vs contributed '+S(r.srsContrib)};
+    });
+    guard('Returns','Negative returns give less wealth than zero returns, and stay finite',function(){
+      var z=proj({mcReturns:flat(0,N)}), n=proj({mcReturns:flat(-0.05,N)});
+      return {pass: allFinite(n) && n.nw<z.nw, detail:S(n.nw)+' vs '+S(z.nw)};
+    });
+    guard('Returns','A prolonged 10-year decline (-8%/yr) stays finite and hurts wealth',function(){
+      var a=[],i; for(i=0;i<N;i++) a.push(i<10?-0.08:0.06);
+      var r=proj({mcReturns:{sti:a,getf:a,sgdiv:a,gold:a,cash:flat(0.025,N).cash}});
+      return {pass: allFinite(r) && r.nw<rBase.nw, detail:S(r.nw)+' vs '+S(rBase.nw)};
+    });
+    guard('Returns','A higher STI return assumption gives higher wealth',function(){
+      var lo=proj({stiR:0.04}), hi=proj({stiR:0.08});
+      return {pass: hi.nw>lo.nw, detail:'4%: '+S(lo.nw)+', 8%: '+S(hi.nw)};
+    });
+
+    // ---- Allocation --------------------------------------------------------
+    guard('Allocation','100% in the STI sleeve works and leaves nothing idle',function(){
+      var r=proj({divGetf:0,divSgdiv:0,divGold:0,divCash:0,divStiSlider:1});
+      return {pass: allFinite(r) && r.GETF<1 && r.SGDIV<1 && r.GOLD<1 && r.IDLE<1, detail:'STI '+S(r.STI)};
+    });
+    guard('Allocation','Allocation totalling exactly 100% leaves nothing idle',function(){
+      return {pass: rBase.IDLE<1, detail:'idle '+S(rBase.IDLE)};
+    });
+    guard('Allocation','Allocation under 100% leaves money idle and lowers wealth',function(){
+      var r=proj({divGetf:0.36,divSgdiv:0.16,divGold:0.12,divCash:0.08,divStiSlider:0.08});
+      return {pass: r.IDLE>0 && r.nw<rBase.nw, detail:'idle '+S(r.IDLE)+', wealth '+S(r.nw)+' vs '+S(rBase.nw)};
+    });
+    guard('Allocation','Allocation over 100% cannot create money from nothing',function(){
+      var r=proj({divGetf:0.585,divSgdiv:0.26,divGold:0.195,divCash:0.13,divStiSlider:0.13});
+      return {pass: allFinite(r) && r.nw<=rBase.nw*1.001, detail:'130% allocation gives '+S(r.nw)+' vs 100% '+S(rBase.nw)};
+    });
+
+    // ---- CPF LIFE ----------------------------------------------------------
+    guard('CPF LIFE','Deferral lifts the monthly payout by the documented bonus',function(){
+      var r=proj({cpfLifeDefer:true}), want=1+A.cpfLife.deferBonus;
+      return {pass: Math.abs(r.cpflife/rBase.cpflife-want)<0.002, detail:'ratio '+(r.cpflife/rBase.cpflife).toFixed(3)+' vs expected '+want.toFixed(3)};
+    });
+    guard('CPF LIFE','Escalating plan starts lower, Basic plan starts lower, as documented',function(){
+      var e=proj({cpfLifePlan:'escalating'}), b=proj({cpfLifePlan:'basic'});
+      return {pass: Math.abs(e.cpflife/rBase.cpflife-A.cpfLife.escalatingStart)<0.002 && Math.abs(b.cpflife/rBase.cpflife-A.cpfLife.basicStart)<0.002, detail:'escalating '+(e.cpflife/rBase.cpflife).toFixed(3)+', basic '+(b.cpflife/rBase.cpflife).toFixed(3)};
+    });
+    guard('CPF LIFE','FRS and ERS are consistent (ERS is twice FRS)',function(){
+      return {pass: A.cpfLife.ers===2*A.cpfLife.frs, detail:'FRS '+S(A.cpfLife.frs)+', ERS '+S(A.cpfLife.ers)};
+    });
+
+    // ---- Tax, CPF and SRS (published figures) -----------------------------
+    var taxRows=[[20000,0],[30000,200],[40000,550],[80000,3350],[120000,7950],[160000,13950],[200000,21150],[320000,44550],[500000,84150]];
+    guard('Tax & CPF','Income tax matches the IRAS resident rate table at '+taxRows.length+' chargeable incomes',function(){
+      var bad=taxRows.filter(function(p){ return Math.abs(E.sgTax(p[0])-p[1])>0.5; });
+      return {pass: bad.length===0, detail: bad.length?('Mismatch at '+bad.map(function(p){return S(p[0])+' (got '+S(E.sgTax(p[0]))+', expected '+p[1]+')';}).join('; ')):'checked S$20k to S$500k'};
+    });
+    guard('Tax & CPF','Employee and total CPF rates are sensible at every age band (sanity check only; official table is checked below)',function(){
+      var ages=[30,56,61,66,72], bad=ages.filter(function(a){ return !(E.totRate(a)>E.empRate(a) && E.empRate(a)>0); });
+      return {pass: bad.length===0, detail:'total rate exceeds the employee rate at every age band'};
+    });
+    guard('Tax & CPF','SRS annual and monthly caps agree',function(){
+      return {pass: Math.abs(A.srs.capAnnual-A.srs.capMonthly*12)<=12, detail:S(A.srs.capAnnual)+'/yr vs '+S(A.srs.capMonthly)+'/mo'};
+    });
+    guard('Tax & CPF','After-tax retirement income never exceeds gross',function(){
+      return {pass: rBase.incomeGross>=rBase.income-1e-6 && rBase.retTaxMo>=0, detail:'gross '+S(rBase.incomeGross)+', tax '+S(rBase.retTaxMo)};
+    });
+
+
+    // ---- CPF Board and SRS published figures (1 Jan 2026 tables) ----------
+    var cpfTable=[[30,.20,.37,.23,.06,.08],[50,.20,.37,.23,.06,.08],[56,.18,.34,0,0,0],[61,.125,.25,0,0,0],[66,.075,.165,0,0,0],[72,.05,.125,0,0,0]];
+    guard('CPF Board','Contribution rates match the official table (employee / total) for six age bands',function(){
+      var exp=[[30,.20,.37],[50,.20,.37],[56,.18,.34],[61,.125,.25],[66,.075,.165],[72,.05,.125]];
+      var bad=exp.filter(function(x){ return Math.abs(E.empRate(x[0])-x[1])>1e-9 || Math.abs(E.totRate(x[0])-x[2])>1e-9; });
+      return {pass:bad.length===0, detail:bad.length?('Mismatch at age '+bad.map(function(x){return x[0];}).join(', ')):'20/37, 18/34, 12.5/25, 7.5/16.5, 5/12.5'};
+    });
+    guard('CPF Board','Ordinary Account share of wages matches the official allocation (age 30: 23%, 40: 21%, 52: 15%)',function(){
+      var chk=[[30,.23],[40,.21],[48,.19],[52,.15],[57,.12],[62,.035],[67,.01],[72,.01]];
+      var bad=chk.filter(function(x){ return Math.abs(E.oaShare(x[0])*E.totRate(x[0])-x[1])>0.006; });
+      return {pass:bad.length===0, detail:bad.length?('Off at age '+bad.map(function(x){return x[0]+' (got '+(E.oaShare(x[0])*E.totRate(x[0])*100).toFixed(2)+'%)';}).join(', ')):'OA % of wages within 0.6 points at 8 ages'};
+    });
+    guard('CPF Board','Wage ceiling, Retirement Sums and Basic Healthcare Sum match CPF Board 2026 figures',function(){
+      var ok=A.cpf.wageCeilingMonthly===8000 && A.cpfLife.brs===110200 && A.cpfLife.frs===220400 && A.cpfLife.ers===440800 && A.cpf.bhs===79000;
+      return {pass:ok, detail:'ceiling '+S(A.cpf.wageCeilingMonthly)+', BRS '+S(A.cpfLife.brs)+', FRS '+S(A.cpfLife.frs)+', ERS '+S(A.cpfLife.ers)+', BHS '+S(A.cpf.bhs)};
+    });
+    A.cpfLife.officialExamples.forEach(function(ex){
+      guard('CPF Board','CPF LIFE from 65 reproduces CPF Board\'s '+ex.label+' example within '+Math.round(A.cpfLife.calibrationTolerance*100)+'%',function(){
+        var m=E.cpfLifeCalibration(ex.sum), d=m.m65/ex.m65-1;
+        return {pass:Math.abs(d)<=A.cpfLife.calibrationTolerance, detail:'CPF Board '+S(ex.m65)+'/mo vs model '+S(m.m65)+'/mo ('+(d*100).toFixed(1)+'%)'};
+      });
+      guard('CPF Board','CPF LIFE from 70 reproduces CPF Board\'s '+ex.label+' example within '+Math.round(A.cpfLife.calibrationTolerance*100)+'%',function(){
+        var m=E.cpfLifeCalibration(ex.sum), d=m.m70/ex.m70-1;
+        return {pass:Math.abs(d)<=A.cpfLife.calibrationTolerance, detail:'CPF Board '+S(ex.m70)+'/mo vs model '+S(m.m70)+'/mo ('+(d*100).toFixed(1)+'%)'};
+      });
+    });
+    guard('CPF Board','Extra interest: first S$60,000 across accounts earns 1% more (under 55), 2% on the first S$30,000 more from 55',function(){
+      var a=E.cpfInterest(20000,40000,0,40), b=E.cpfInterest(0,60000,0,40), c=E.cpfInterest(0,60000,0,56);
+      var okA=Math.abs(a.sa-(40000*1.04+0.01*40000+0.01*20000))<2 || a.sa>40000*1.04;
+      return {pass: okA && b.sa>60000*1.04+500 && c.sa>b.sa, detail:'age 40 SA S$40,000 → '+S(a.sa)+'; age 56 on S$60,000 → '+S(c.sa)+' vs age 40 '+S(b.sa)};
+    });
+    guard('CPF Board','Retirement Account is formed at 55 from the Special Account, topped up from the Ordinary Account',function(){
+      var f=E.cpfFormRA(100000,50000,220400);
+      return {pass: Math.abs(f.sa-150000)<1 && f.oa<1, detail:'SA S$50,000 + OA S$100,000 → RA '+S(f.sa)+', OA left '+S(f.oa)};
+    });
+    guard('CPF Board','MediSave stops at the Basic Healthcare Sum and the overflow is not lost',function(){
+      var r=E.project(base); var cap=A.cpf.bhs*Math.pow(1+A.cpf.bhsGrowth,Math.max(0,65-base.age));
+      return {pass: r.maAtPayout<=cap*1.001+1 && r.maAtPayout>0, detail:'MediSave at 65 '+S(r.maAtPayout)+' vs cap '+S(cap)};
+    });
+    guard('CPF Board','The Retirement Account at 65 is what drives the CPF LIFE payout',function(){
+      var r=E.project(base), exp=r.raPremium*A.cpfLife.payoutFactor/12*(base.cpfLifeDefer?(1+A.cpfLife.deferBonus):1)*((base.cpfLifePlan==='escalating')?A.cpfLife.escalatingStart:(base.cpfLifePlan==='basic')?A.cpfLife.basicStart:1);
+      return {pass: Math.abs(r.cpflife-exp)<=exp*0.001+0.5 && r.raPremium>0, detail:'RA at 65 '+S(r.raPremium)+' → '+S(r.cpflife)+'/mo (future dollars)'};
+    });
+    guard('SRS','Annual SRS cap is S$15,300 for citizens and PRs',function(){
+      return {pass:A.srs.capAnnual===15300, detail:S(A.srs.capAnnual)+'/yr'};
+    });
+    guard('SRS','Only 50% of SRS withdrawals at retirement are taxable',function(){
+      return {pass: A.srs.retirementTaxableShare===0.5, detail:'taxable share '+(A.srs.retirementTaxableShare*100)+'%'};
+    });
+
+    // ---- Monte Carlo -------------------------------------------------------
+    var goal=rBase.income/rBase.disc;
+    guard('Monte Carlo','Same seed gives identical results',function(){
+      var a=M.run(base,400,goal,99), b=M.run(base,400,goal,99);
+      return {pass: a.probGoal===b.probGoal && a.probSurvive===b.probSurvive, detail:'probability '+(a.probGoal*100).toFixed(1)+'% both times'};
+    });
+    guard('Monte Carlo','Different seeds give different but similar results',function(){
+      var a=M.run(base,1500,goal,1).probGoal, b=M.run(base,1500,goal,2).probGoal;
+      return {pass: a!==b && Math.abs(a-b)<0.08, detail:(a*100).toFixed(1)+'% vs '+(b*100).toFixed(1)+'%'};
+    });
+    guard('Monte Carlo','No simulated annual return can fall below -100%',function(){
+      var worst=1,i; M.setRng(M.makeRng(5));
+      for(i=0;i<20000;i++){ var p=M.genPath(1,0.06); M.KEYS.forEach(function(k){ if(p[k][0]<worst) worst=p[k][0]; }); }
+      return {pass: worst>-1, detail:'worst single-year return in 20,000 draws: '+(worst*100).toFixed(0)+'%'};
+    });
+    guard('Monte Carlo','Simulated returns reproduce the stated mean and volatility',function(){
+      var n=20000, s=[], i, m, v; M.setRng(M.makeRng(6));
+      for(i=0;i<n;i++) s.push(M.genPath(1,0.06).getf[0]);
+      m=s.reduce(function(a,b){return a+b;},0)/n; v=Math.sqrt(s.reduce(function(a,b){return a+(b-m)*(b-m);},0)/n);
+      return {pass: Math.abs(m-0.08)<0.006 && Math.abs(v-M.VOL.getf)<0.01, detail:'mean '+(m*100).toFixed(1)+'% (8%), volatility '+(v*100).toFixed(1)+'% ('+(M.VOL.getf*100).toFixed(0)+'%)'};
+    });
+    guard('Monte Carlo','Equity sleeves are positively correlated, gold is near zero',function(){
+      var n=20000, a=[], b=[], g=[], i, p; M.setRng(M.makeRng(7));
+      for(i=0;i<n;i++){ p=M.genPath(1,0.06); a.push(p.sti[0]); b.push(p.getf[0]); g.push(p.gold[0]); }
+      function cor(x,y){ var mx=x.reduce(function(s,v){return s+v;},0)/n, my=y.reduce(function(s,v){return s+v;},0)/n, sxy=0,sx=0,sy=0,j; for(j=0;j<n;j++){ sxy+=(x[j]-mx)*(y[j]-my); sx+=(x[j]-mx)*(x[j]-mx); sy+=(y[j]-my)*(y[j]-my);} return sxy/Math.sqrt(sx*sy); }
+      var c1=cor(a,b), c2=cor(a,g);
+      return {pass: c1>0.75 && c1<0.92 && Math.abs(c2)<0.12, detail:'STI vs global equities '+c1.toFixed(2)+', STI vs gold '+c2.toFixed(2)};
+    });
+    guard('Monte Carlo','Probability falls as the income target rises',function(){
+      var lo=M.run(base,1500,goal*0.8,3).probGoal, mid=M.run(base,1500,goal,3).probGoal, hi=M.run(base,1500,goal*1.2,3).probGoal;
+      return {pass: lo>=mid && mid>=hi && lo>hi, detail:'80%: '+(lo*100).toFixed(0)+'%, 100%: '+(mid*100).toFixed(0)+'%, 120%: '+(hi*100).toFixed(0)+'%'};
+    });
+    guard('Monte Carlo','The estimate converges: 2,500 and 10,000 simulations agree within sampling error',function(){
+      var a=M.run(base,2500,goal,11), b=M.run(base,10000,goal,11);
+      return {pass: Math.abs(a.probGoal-b.probGoal)<=a.moeGoal+b.moeGoal, detail:(a.probGoal*100).toFixed(1)+'% (±'+(a.moeGoal*100).toFixed(1)+') vs '+(b.probGoal*100).toFixed(1)+'% (±'+(b.moeGoal*100).toFixed(1)+')'};
+    });
+    M.setRng(M.makeRng(M.SEED));
+    return out;
+  }
+  window.SGMR_TESTS={run:run};
+})();
+
+  (function(){
+    var btn=document.getElementById('btn-selfcheck'); if(!btn) return;
+    function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+    btn.addEventListener('click', function(){
+      var out=document.getElementById('selfcheck-out'); btn.disabled=true; btn.textContent='Running\u2026';
+      setTimeout(function(){
+        var res=[]; try{ res=window.SGMR_TESTS.run(); }catch(e){ res=[{group:'Setup',name:'Self-checks could not run',pass:false,detail:String(e&&e.message)}]; }
+        var ok=res.filter(function(r){return r.pass;}).length, html='', last='';
+        html+='<div style="font-weight:700;font-size:15px;margin-bottom:8px;color:'+(ok===res.length?'#2E9E5B':'var(--brick)')+'">'+ok+' of '+res.length+' checks passed</div>';
+        res.forEach(function(r){
+          if(r.group!==last){ html+='<div style="margin:12px 0 4px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">'+esc(r.group)+'</div>'; last=r.group; }
+          html+='<div style="display:flex;gap:8px;padding:5px 0;border-bottom:1px solid rgba(128,128,128,.18);font-size:13px;line-height:1.4"><span style="flex:0 0 18px;font-weight:700;color:'+(r.pass?'#2E9E5B':'var(--brick)')+'">'+(r.pass?'\u2713':'\u2717')+'</span><span><span>'+esc(r.name)+'</span>'+(r.detail?'<br><span style="color:var(--muted);font-size:12px">'+esc(r.detail)+'</span>':'')+'</span></div>';
+        });
+        out.innerHTML=html; btn.disabled=false; btn.textContent='Run the self-checks again';
+      }, 30);
+    });
   })();
 </script>
 </body>
