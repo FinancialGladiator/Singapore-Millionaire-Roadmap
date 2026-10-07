@@ -7146,7 +7146,7 @@
         var tt=$('trust-tests'); if(tt) tt.textContent='Running the self-checks\u2026';
         setTimeout(function(){
           try{ var res=window.SGMR_TESTS.run(), ok=res.filter(function(x){return x.pass;}).length;
-            tt.innerHTML='<b>'+ok+' of '+res.length+' self-checks pass</b> (run just now on your current inputs, covering boundary cases, IRAS tax, CPF Board tables and CPF LIFE examples, SRS, and the Monte Carlo). Rules last reviewed '+A.lastReviewed+'.';
+            tt.innerHTML='<b>'+ok+' of '+res.length+' self-checks pass</b> (run just now on the app\u2019s standard plan, plus a basic check of your own inputs, covering boundary cases, IRAS tax, CPF Board tables and CPF LIFE examples, SRS, and the Monte Carlo). Rules last reviewed '+A.lastReviewed+'.';
           }catch(e){ tt.textContent='The self-checks could not run here.'; ran=false; }
         },30);
       });
@@ -9936,9 +9936,26 @@ function drawQuizResultCard(isStory){
   function run(){
     var E=window.SGMR_ENGINE, M=window.SGMR_MC, A=window.ASSUMPTIONS, out=[];
     if(!E||!M||!A) return [{group:'Setup',name:'Engine is available',pass:false,detail:'Engine not loaded yet'}];
-    var base=E.readOpts();
+    // The checks run on the app's standard plan (the Classic Saver defaults written into the page), not on whatever the reader has
+    // typed, so a result does not depend on unusual inputs (a very large starting net worth, years of cash shortfall) that
+    // several checks, such as 'saving more of a raise never lowers wealth', are not designed for. The reader's own plan is checked
+    // separately at the end of the list.
+    function pristineOpts(){
+      var els=[].slice.call(document.querySelectorAll('input[id],select[id]')), saved=[];
+      els.forEach(function(el){
+        saved.push({el:el, v:el.value, c:el.checked});
+        if(el.tagName==='SELECT'){ var di=0; for(var i=0;i<el.options.length;i++) if(el.options[i].defaultSelected){ di=i; break; } el.selectedIndex=di; }
+        else if(el.type==='checkbox'||el.type==='radio'){ el.checked=el.defaultChecked; }
+        else if(el.hasAttribute('value')){ el.value=el.defaultValue; }
+      });
+      var o; try{ o=E.readOpts(); } finally { saved.forEach(function(x){ x.el.value=x.v; if(x.el.type==='checkbox'||x.el.type==='radio') x.el.checked=x.c; }); }
+      return o;
+    }
+    var userBase=E.readOpts();
+    var base=pristineOpts();
     // The checks must not depend on which assumption set the reader has selected on screen.
     base.preset='central'; base.srsMode='sti'; base.goldKeep=false; base.spendTarget=0;
+    userBase.preset='central'; userBase.srsMode='sti'; userBase.goldKeep=false; userBase.spendTarget=0;
     function mk(mod){ var o={}, k; for(k in base) o[k]=base[k]; for(k in mod) o[k]=mod[k]; return o; }
     function proj(mod){ return E.project(mk(mod)); }
     function S(v){ return 'S$'+Number(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
@@ -10213,6 +10230,10 @@ function drawQuizResultCard(isStory){
 
     // ---- Retirement cash flow, return sets, SRS and gold choices -----------
     function cf(mod, n){ var o=mk(mod); return M.run(o,n||1500,0,5).cashflow; }
+    guard('Your plan','Your current inputs give finite, sensible results',function(){
+      var r=E.project(userBase);
+      return {pass: allFinite(r), detail:'net worth at 65 '+S(r.nw)+(r.distressYears>0?(', with '+r.distressYears+' year(s) where committed costs exceed take-home pay'):'')};
+    });
     guard('Stress','Each stress test is no better than the un-stressed run, and all three together is the worst',function(){
       var o=mk({spendTarget:4700}), r=E.project(o), st=M.stress(o,r,4700,1200), b=st[0].to95, tol=0.03, all=st[4].to95;
       var ok=st.slice(1).every(function(x){ return x.to95<=b+tol; }) && all<=Math.min(st[1].to95,st[2].to95,st[3].to95)+tol;
