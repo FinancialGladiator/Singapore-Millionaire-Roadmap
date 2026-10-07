@@ -1044,6 +1044,15 @@
   font-family:'Bricolage Grotesque',sans-serif;font-size:var(--fs-title);font-weight:700;color:var(--ink);line-height:1.3}
 
 /* section labels */
+#tab-calc .answer-card{margin:16px 0 4px;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+#tab-calc .ans-label,#tab-calc .ans-k{font-family:'Space Mono',monospace;font-size:var(--fs-label);font-weight:400;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+#tab-calc .ans-verdict{margin:8px 0 14px;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:var(--fs-stat);line-height:1.3;color:var(--ink)}
+#tab-calc .ans-verdict .ans-lead{color:var(--brand)}
+#tab-calc .ans-verdict .ans-lead.bad{color:var(--brick)}
+#tab-calc .ans-row{display:flex;flex-direction:column;gap:3px;padding:10px 0 0;margin-top:10px;border-top:1px solid var(--line)}
+#tab-calc .ans-v{font-size:var(--fs-body);line-height:1.5;color:var(--ink);font-weight:400}
+#tab-calc .ans-v.bad{color:var(--brick)}
+@media (max-width:480px){ #tab-calc .ans-verdict{min-height:78px} #tab-calc .ans-risk-row .ans-v{min-height:63px} #tab-calc .ans-move-row .ans-v{min-height:42px} }
 #tab-calc .sc-title,#tab-calc .sc-q,#tab-calc .preset-scenarios-label,#tab-calc .primary-label,#tab-calc .whatif-label,
 #tab-calc .scard .hl,#tab-calc .impact-block-label{
   font-family:'Space Mono',monospace;font-size:var(--fs-label);font-weight:400;letter-spacing:.06em;text-transform:uppercase}
@@ -1270,7 +1279,13 @@
     <h1>Your salary in,<br>your <em>future</em> out.</h1>
     <p class="standfirst">Move the sliders. The calculator splits your pay into necessities, wants, CPF and tax, tells you what to invest each month across a diversified portfolio, and projects your CPF, investments and net worth at 65. It opens on a real Singapore graduate public-servant career as the baseline. Tap any <b>?</b> for an explanation.</p>
 
-    <div class="sc-head"><span class="sc-title">Your plan at a glance</span><span data-trust-hint></span></div>
+    <section class="answer-card" id="answer" aria-label="Your answer">
+      <div class="ans-label">Your answer</div>
+      <p class="ans-verdict" id="ans-verdict">&mdash;</p>
+      <div class="ans-row ans-risk-row"><span class="ans-k">Biggest risk</span><span class="ans-v" id="ans-risk">&mdash;</span></div>
+      <div class="ans-row ans-move-row"><span class="ans-k">What moves it most</span><span class="ans-v" id="ans-move">&mdash;</span></div>
+    </section>
+    <div class="sc-head"><span class="sc-title">The detail behind it</span><span data-trust-hint></span></div>
     <section class="scorecard" id="three-q" aria-label="Your plan scorecard">
       <button type="button" class="sc-tile" data-open="grp-readiness">
         <span class="sc-q">Am I on track?</span>
@@ -1672,7 +1687,7 @@
           <input type="range" id="i-div-sgdiv" min="0" max="100" step="5" value="20" style="accent-color:#5E6F7E">
         </div>
         <div class="alloc-row">
-          <div class="alloc-head"><span class="l"><i class="dot" style="background:#C79A1E"></i>Gold <span class="hint"><button class="help">?</button><span class="bubble">Modelled at ~7%/yr -- deliberately NOT gold's own historical price return, but the long-run growth rate of the money supply itself (US M2 has compounded at roughly 6.7%/yr over 60+ years). Gold itself doesn't grow; what looks like it gaining value is largely currency losing value as the money supply expands. The insurance satellite -- low correlation with equities, against money-printing and the late stages of the debt cycle. By default sold at your own retirement and reinvested 75% in dividend stocks/S-REITs and 25% in Singapore Savings Bonds, since gold itself pays no income; you can instead keep it as gold under Return &amp; risk assumptions. Gold is a diversifier, not an income asset.</span></span></span><span class="amt"><output id="o-div-gold">15%</output> · <span id="od-div-gold"></span></span></div>
+          <div class="alloc-head"><span class="l"><i class="dot" style="background:#C79A1E"></i>Gold <span class="hint"><button class="help">?</button><span class="bubble">Illustrative assumption of ~7%/yr: a model input, not a forecast of gold's return and not its historical price return. The reasoning behind it is a monetary one (US M2 has compounded at roughly 6.7%/yr over 60+ years, and gold is often argued to track currency debasement), but money-supply growth does not establish what gold will return. The insurance satellite -- low correlation with equities, against money-printing and the late stages of the debt cycle. By default sold at your own retirement and reinvested 75% in dividend stocks/S-REITs and 25% in Singapore Savings Bonds, since gold itself pays no income; you can instead keep it as gold under Return &amp; risk assumptions. Gold is a diversifier, not an income asset.</span></span></span><span class="amt"><output id="o-div-gold">15%</output> · <span id="od-div-gold"></span></span></div>
           <input type="range" id="i-div-gold" min="0" max="100" step="5" value="15" style="accent-color:#C79A1E">
         </div>
         <div class="alloc-row">
@@ -1984,6 +1999,9 @@
       <div class="note" id="f-distress" style="display:none;border-left-color:var(--brick)">
         <p id="o-distress"></p>
       </div>
+      <div class="note" id="f-shortfall" style="display:none;border-left-color:var(--brick)">
+        <p id="o-shortfall"></p>
+      </div>
 
       <button class="preset" id="btn-share" style="margin-top:10px;border-style:solid">🔗 Copy my scenario link</button>
       <div class="milestones flow" id="share-status" style="margin-top:8px"></div>
@@ -2270,8 +2288,8 @@
         </div>
         <div class="scard s3">
           <div class="name" style="font-size:15px">CPF</div>
-          <div class="setup" style="margin-bottom:12px">37% → 26% after 55</div>
-          <p style="font-size:13px;color:var(--muted);line-height:1.6">20% employee + 17% employer. <b>OA (2.5%)</b> pays the flat; <b>SA/MA/RA (4%)</b> build retirement &amp; health. At 55 the Retirement Account forms; from 65 it pays a lifelong <b>CPF LIFE</b> annuity. Two earners = two annuities.</p>
+          <div class="setup" style="margin-bottom:12px">37% at 55 and below, falling with age</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.6">Rates fall by age band (2026: 37%, 34%, 25%, 16.5%, 12.5%); at 55 and below it is 20% employee + 17% employer. <b>OA (2.5%)</b> pays the flat; <b>SA/MA/RA (4%)</b> build retirement &amp; health. At 55 the Retirement Account forms; from 65 it pays a lifelong <b>CPF LIFE</b> annuity. Two earners = two annuities.</p>
         </div>
       </div>
     </section>
@@ -2331,7 +2349,7 @@
         <tbody>
           <tr><td>Working span</td><td data-label="Value">age 20 → 65 (45 yrs)</td></tr>
           <tr><td>Wage per earner</td><td data-label="Value">S$2,400/mo, +2.5%/yr</td></tr>
-          <tr><td>CPF rate</td><td data-label="Value">37% (→26% after 55)</td></tr>
+          <tr><td>CPF rate</td><td data-label="Value">37% at 55 and below; age-banded after that</td></tr>
           <tr><td>CPF interest</td><td data-label="Value">OA 2.5% · SA/MA/RA 4%</td></tr>
           <tr><td>STI total return</td><td data-label="Value">6% (dividends reinvested)</td></tr>
           <tr><td>Retirement drawdown</td><td data-label="Value">4% safe withdrawal</td></tr>
@@ -2782,8 +2800,8 @@
   <div class="dd-body">
       <div class="callout">
         <ul>
-          <li><b>Privacy.</b> There is no server. Nothing you type is sent anywhere, and nothing is saved in your browser either: refresh the page and it resets to the Classic Saver profile. A share link puts your inputs in the link itself, so only share one with someone you want to see them.</li>
-          <li><b>When the rules were last reviewed.</b> Version <span id="legal-ver">&mdash;</span>, last reviewed <span id="legal-rev">&mdash;</span>, against the 1 Jan 2026 CPF and IRAS tables. Rules are not updated automatically.</li>
+          <li><b>Privacy.</b> There is no server. Nothing you type is sent anywhere, and none of your financial inputs are saved in your browser: refresh the page and it resets to the Classic Saver profile. The only thing the browser remembers is a one-time flag that you have seen the privacy notice. A share link puts your inputs in the link itself, so only share one with someone you want to see them.</li>
+          <li><b>When the rules were last reviewed.</b> Version <span id="legal-ver">2026.1</span>, last reviewed <span id="legal-rev">2026-10-06</span>, against the 1 Jan 2026 CPF and IRAS tables. Next scheduled review: January 2027. Rules are not updated automatically.</li>
           <li><b>What it assumes.</b> Investment returns and volatility are illustrative, not forecasts, and not drawn from a named data set. Every figure and its source is listed under <i>Rules &amp; assumptions used</i>.</li>
           <li><b>What it can&rsquo;t do.</b> It does not model healthcare shocks in its main results (long-term care is only an optional stress-test scenario), female CPF LIFE payouts, the Basic or Enhanced Retirement Sums, bonds as a separate asset, your own tax situation beyond the basics, or any change to the rules after the review date. It cannot review your actual portfolio or tell you what to buy.</li>
           <li><b>How it is tested.</b> The built-in self-checks compare it with CPF Board and IRAS tables and check its internal consistency. They are not an independent audit.</li>
@@ -2839,6 +2857,7 @@
   </div>
 
 <footer>
+    <div style="margin-bottom:6px"><b>Model version <span data-model-ver>2026.1</span></b> &middot; CPF, SRS and IRAS rules as at 1 Jan 2026 &middot; last reviewed <span data-model-rev>2026-10-06</span> &middot; next review January 2027</div>
     Built from a month-by-month simulation, age 20–65. Housing prices, EHG grant tiers and CPF parameters from HDB/CPF sources (2025–26); investing diversifies by default across STI, global equities, SG dividend stocks/REITs, gold and cash (6-8%/yr by sleeve, dividends reinvested) rather than STI alone; headline figures discounted to today's dollars at 2.5%/yr. Simplified for illustration; not financial advice.
   </footer>
 
@@ -3442,7 +3461,7 @@
      correct:1, explain:"ABSD is an extra tax charged on top of ordinary stamp duty for a second (or later) residential property \u2014 it can run into six figures."},
     {q:"Money in the Supplementary Retirement Scheme (SRS) is\u2026",
      opts:["Identical to CPF, just a different name","Voluntary savings that cut taxable income now, taxed lightly on withdrawal later","Restricted to self-employed people only","Automatically invested in property"],
-     correct:1, explain:"SRS contributions reduce your chargeable income today; withdrawals in retirement are only 50% taxed, usually at little or no tax."},
+     correct:1, explain:"SRS contributions reduce your chargeable income today; withdrawals in retirement have only 50% counted as taxable income, so the tax you pay depends on your other income."},
     {q:"Sequence-of-returns risk means\u2026",
      opts:["Returns always arrive in the same order","A market crash early in retirement can do more damage than the same crash later","You should never retire during a recession","Dividends are riskier than capital gains"],
      correct:1, explain:"A crash right after you start drawing down does more lasting damage, because you're withdrawing from an already-shrunken pot with less time to recover."},
@@ -4432,7 +4451,7 @@
       // used for the retirement gold drawdown below, so the two stay consistent with
       // each other); ~2.5% for cash, matching CPF-OA's own modelled rate as a
       // reasonable "safe, low-return parking spot" benchmark.
-      // Gold at 7% -- NOT gold's own historical price return, but the long-run growth
+      // Gold at 7% -- an ILLUSTRATIVE assumption, not a forecast and NOT gold's own historical price return; the monetary argument behind it is the long-run growth
       // rate of the money supply itself (US M2 has compounded at roughly 5-7%/yr over
       // the last 60+ years, ~6.7% measured directly off Fed data from 1959 to today).
       // The premise: gold itself doesn't grow -- a fixed quantity of a scarce metal has
@@ -4517,7 +4536,7 @@
       var lifestyleAtRetirement=null, inflAtRetirement=1;
       // partner's pay as a multiple of the user's, so one growth curve serves both
       var spouseRatio = (o.spouseSal!==undefined && o.sal0>0) ? (o.spouseSal/o.sal0) : 1;
-      var nwPath=[],ageAxis=[],stiPath=[],srsPath=[],cpfPath=[],stiContrib=0,srsContrib=0,empCPFcum=0,employerCPFcum=0;
+      var liqPath=[],nwPath=[],ageAxis=[],stiPath=[],srsPath=[],cpfPath=[],stiContrib=0,srsContrib=0,empCPFcum=0,employerCPFcum=0;
       for(var y=0;y<yrs;y++){
         var _OA0=OA, _SA0=SA, _MA0=MA;
         var a=o.age+y, infl=Math.pow(1.025,y);
@@ -4996,7 +5015,7 @@
         var _dO=OA-_OA0, _dS=SA-_SA0, _dM=MA-_MA0;
         var _ci=cpfInterest(OA-_dO/2,SA-_dS/2,MA-_dM/2,a); OA=_ci.oa+_dO/2; SA=_ci.sa+_dS/2; MA=_ci.ma+_dM/2; RET=SA+MA;
         prevTH=th;
-        ageAxis.push(a+1); nwPath.push(STI+SRS+GETF+SGDIV+GOLD+CASH+IDLE+OA+RET);
+        ageAxis.push(a+1); nwPath.push(STI+SRS+GETF+SGDIV+GOLD+CASH+IDLE+OA+RET); liqPath.push(STI+GETF+SGDIV+GOLD+CASH+IDLE);
         // Despite the name (kept to avoid touching every consumer), this is now the
         // FULL open-investing pot -- STI plus all four diversification sleeves plus
         // whatever's sitting idle -- not STI alone. Before diversification was the
@@ -5066,7 +5085,7 @@
       return {yrs:yrs,disc:disc,STI:STI,SRS:SRS,POT:POT,CPF:CPF,cpflife:cpflife,potdraw:potdraw,cpfOtherDraw:cpfOtherDraw,raPremium:raPremium,oaAtPayout:oaAtPayout,maAtPayout:maAtPayout,
         cpfAtRet:{oa:OA,sa:SA,ma:MA},
         nw:POT+CPF,income:incomeGross-retTaxMo,incomeGross:incomeGross,retTaxMo:retTaxMo,taxSaved:taxSaved,spath:spath,
-        nwPath:nwPath,ageAxis:ageAxis,grant:grant,netToday:netToday,mortM:mortM,loan0:loan0,
+        nwPath:nwPath,liqPath:liqPath,ageAxis:ageAxis,grant:grant,netToday:netToday,mortM:mortM,loan0:loan0,
         GETF:GETF,SGDIV:SGDIV,GOLD:GOLD,CASH:CASH,IDLE:IDLE,goldRetireIncome:goldRetireIncome,
         absd:absdPaid,retRent:retRent,earn0:nEarn(o.age),hdbMsr:hdbMsr,condoMsr:condoMsr,ecMsr:ecMsr,
         ecNetNom:ecNetNom,ecMortM0:ecMortM0,distressYears:distressYears,
@@ -6163,6 +6182,23 @@
         $('f-distress').style.display='block';
         $('o-distress').innerHTML='⚠ In <b>'+r.distressYears+' year(s)</b> of this plan, committed costs (housing, car, family) exceeded take-home pay even after cutting Wants to zero — this scenario is not fully sustainable at this income. Consider a smaller flat, a later purchase, delaying the car, or a lower allowance.<br><br><b>This also means the costs shown below are understated.</b> Once a commitment exceeds what you can actually pay, the model can\u2019t subtract the shortfall from savings you don\u2019t have — so an unaffordable car or condo looks only slightly worse than an affordable one. Read those figures as a floor, not the full price.';
       } else { $('f-distress').style.display='none'; }
+      window.__paintShortfall=function(o,r){
+        var box=$('f-shortfall'), p=$('o-shortfall'); if(!box||!p) return;
+        var sr=null; try{ sr=(window.SGMR_MC&&window.SGMR_MC.shortfall)?window.SGMR_MC.shortfall(o,r,o.spendTarget>0?o.spendTarget:0):null; }catch(e){}
+        if(!sr||!sr.any){ box.style.display='none'; return; }
+        var h='<b>\u26a0 Shortfall: your plan runs out of money.</b>', pr=sr.pre, po=sr.post;
+        if(pr){
+          h+='<br>&bull; <b>Before 65.</b> Your savings outside CPF and SRS run out by age <b>'+pr.first+'</b>. '
+            +(pr.clearedBy65?('Between ages <b>'+pr.first+'</b> and <b>'+pr.last+'</b> you would need to borrow or find the money elsewhere, up to about <b>'+fmtK(pr.peak)+'</b> at age '+pr.peakAge+' (today\u2019s dollars); it is repaid by 65.')
+              :('From age <b>'+pr.first+'</b> to 64 you would need to borrow or find the money elsewhere, growing to about <b>'+fmtK(pr.at65)+'</b> owed at 65 (today\u2019s dollars).'));
+        }
+        if(po){
+          h+='<br>&bull; <b>In retirement.</b> At '+fmt(po.spend)+'/mo of spending, the money cannot cover it from age <b>'+po.first+'</b> to '+po.last+' ('+po.years+' years): about <b>'+fmt(po.avgMonthly)+'/mo</b> short on average, <b>'+fmtK(po.totalToday)+'</b> in total (today\u2019s dollars)'+((pr&&!pr.clearedBy65)?', on top of the amount already owed at 65':'')+'.';
+        }
+        h+='<br><span style="color:var(--muted);font-size:12px">This is the average-case projection. CPF and SRS are not counted as available before 65. Property sales, family help and spending less are not assumed. The model carries a shortfall as a negative balance growing at about '+(sr.stiRate*100).toFixed(1)+'% a year, a rough stand-in for borrowing costs; no loan terms are modelled.</span>';
+        p.innerHTML=h; box.style.display='block';
+      };
+      window.__paintShortfall(o,r);
       // "Not viable" for the floating bubble reuses the SAME signals already
       // computed above -- never a separate judgment call: ongoing distress
       // (committed costs exceeding take-home even after cutting Wants to zero),
@@ -6601,11 +6637,11 @@
       var goldPrin=keep?0:Math.max(0,r.GOLD), srs=Math.max(0,r.SRS), srsYrs=A.topUp.srsWithdrawYears;
       var mS=sleeveMean(o,'sti'), mG=sleeveMean(o,'getf'), mD=sleeveMean(o,'sgdiv'), mGo=sleeveMean(o,'gold'), mC=sleeveMean(o,'cash');
       var vm=presetOf(o).volMult*((scn&&scn.volMult)||1), ks=['sti','getf','sgdiv','gold','cash','oa'], i;
-      var hist=(scn&&scn.hist)||null, histCum=1;
+      var hist=(scn&&scn.hist)||null, head=(scn&&scn.inflHead)||1, histCum=head;
       for(var t=0; start+t<endAge; t++){
         var age=start+t, need, infl;
         if(scn&&scn.cpi){ infl=histCum; histCum*=1+(t<scn.cpi.length?scn.cpi[t]:0.025); }
-        else infl=Math.pow(1+((scn&&scn.inflRate)||0.025),t);
+        else infl=head*Math.pow(1+((scn&&scn.inflRate)||0.025),t);
         need=spend0*infl;
         if(scn&&scn.care&&age>=scn.care.start&&age<scn.care.start+scn.care.years) need+=scn.care.cost*12*f0*infl;
         var z=hist?[0,0,0,0,0]:(scn&&scn.chol?mcCorrNormalsWith(scn.chol):mcCorrNormals());
@@ -6621,8 +6657,12 @@
         var short=need+tax-(life+rent+goldInc+w);
         if(short>0){
           var pos=0; for(i=0;i<ks.length;i++) pos+=Math.max(0,pools[ks[i]]);
-          if(pos+0.01<short) return age;
-          var fr=short/pos; for(i=0;i<ks.length;i++) pools[ks[i]]-=Math.max(0,pools[ks[i]])*fr;
+          if(pos+0.01<short){
+            // Normal runs stop at the first unpaid year. A trace run (used for the shortfall flag) records what is unpaid and carries on.
+            if(!(scn&&scn.trace)) return age;
+            scn.trace.push({age:age, unfunded:short-pos, idx:f0*infl});
+            for(i=0;i<ks.length;i++) pools[ks[i]]=Math.min(0,pools[ks[i]]);
+          } else { var fr=short/pos; for(i=0;i<ks.length;i++) pools[ks[i]]-=Math.max(0,pools[ks[i]])*fr; }
         } else pools.cash+=-short;
         var sh=(scn&&scn.shift&&t<(scn.shiftYears||10))?scn.shift:0, rr;
         if(hist){
@@ -6661,9 +6701,44 @@
     ];
     // Retirement-phase stress tests: the same cash-flow simulation as the main result, run on your central projection with
     // harder conditions, and compared with an un-stressed run of the same projection so the comparison is like for like.
+    // A plan that stops work before 65 draws on the portfolio for the years in between, with no CPF LIFE yet. Those
+    // years are inside project(), so a stress that only starts at 65 would miss them. EARLY_BRIDGE returns how many
+    // projected years fall after the stop-work age and before 65 (0 for a normal plan).
+    function earlyBridge(o){ var wt=(o.workTill!==undefined)?o.workTill:65; return Math.max(0, Math.min(64,o.retire-1)-wt); }
+    // One simulated return path for the whole build-up, with a shock regime starting at the first non-working year:
+    // crisis correlations and bigger swings from then on, and an equity return shift for `shiftYears` years.
+    function mcStressPath(o, scn){
+      var yrs=Math.max(1,o.retire-o.age), years=yrs+2, from=((o.workTill!==undefined)?o.workTill:65)+1-o.age;
+      var out={sti:[],getf:[],sgdiv:[],gold:[],cash:[]}, vm0=presetOf(o).volMult;
+      var mS=sleeveMean(o,'sti'), mG=sleeveMean(o,'getf'), mD=sleeveMean(o,'sgdiv'), mGo=sleeveMean(o,'gold'), mC=sleeveMean(o,'cash');
+      for(var y=0;y<years;y++){
+        var on=(scn&&y>=from), sh=(on&&scn.shift&&y<from+(scn.shiftYears||10))?scn.shift:0;
+        var vm=vm0*((on&&scn.volMult)||1);
+        var z=(on&&scn.chol)?mcCorrNormalsWith(scn.chol):mcCorrNormals();
+        out.sti.push(mcLogRet(mS+sh,MC_VOL.sti*vm,z[0]));
+        out.getf.push(mcLogRet(mG+sh,MC_VOL.getf*vm,z[1]));
+        out.sgdiv.push(mcLogRet(mD+sh,MC_VOL.sgdiv*vm,z[2]));
+        out.gold.push(mcLogRet(mGo,MC_VOL.gold*vm,z[3]));
+        out.cash.push(mcLogRet(mC,MC_VOL.cash*vm,z[4]));
+      }
+      return out;
+    }
+    // The part of a stress that is still ahead once the build-up ends at 65, for the retirement cash flow.
+    function scnAfterBridge(scn, bridge){
+      if(!scn) return null;
+      var c={}, k; for(k in scn) c[k]=scn[k];
+      if(scn.shift){ var left=(scn.shiftYears||10)-bridge; if(left>0) c.shiftYears=left; else { delete c.shift; delete c.shiftYears; } }
+      if(scn.inflRate) c.inflHead=Math.pow((1+scn.inflRate)/1.025,bridge);
+      return c;
+    }
+    // Retirement-phase stress tests: the same cash-flow simulation as the main result, run on your central projection with
+    // harder conditions, and compared with an un-stressed run of the same projection so the comparison is like for like.
+    // When the plan stops work before 65, the shocks start at the stop-work age instead and each simulation re-runs the
+    // build-up with its own stressed return path, so the years before CPF LIFE begins are stressed too.
     function runStressTests(o, rDet, spend, nSims, care){
       nSims=nSims||1500;
       if(!MC_CHOL_CRISIS) MC_CHOL_CRISIS=mcCholesky(MC_CORR_CRISIS);
+      var bridge=earlyBridge(o);
       var defs=[
         {id:'base',  label:'No stress (same projection)', scn:null},
         {id:'low',   label:'A low-return decade: equities 5 points a year lower for the first 10 years', scn:{shift:-0.05, shiftYears:10}},
@@ -6679,16 +6754,63 @@
       var saved=mcRng, out=[];
       defs.forEach(function(d){
         mcRng=mcMakeRng(MC_SEED+101);
-        var ages=[]; for(var i=0;i<nSims;i++) ages.push(mcRetirementCashflow(rDet,o,spend,d.scn));
+        var ages=[], i;
+        if(bridge>0){
+          var cs=scnAfterBridge(d.scn,bridge);
+          if(d.scn&&d.scn.care&&cs) cs.care=d.scn.care;
+          for(i=0;i<nSims;i++){
+            var oi=clone(o); oi.mcReturns=mcStressPath(o,d.scn);
+            ages.push(mcRetirementCashflow(project(oi),o,spend,cs));
+          }
+        } else {
+          for(i=0;i<nSims;i++) ages.push(mcRetirementCashflow(rDet,o,spend,d.scn));
+        }
         var c=cfSummary(ages,spend); out.push({id:d.id,label:d.label,to90:c.to90,to95:c.to95,to100:c.to100});
       });
       mcRng=saved; return out;
     }
     // Historical replays are deterministic: one projection, one fixed sequence of returns and prices, no randomness.
+    // The episode starts in the first year after you stop work: from 65 for a normal plan, earlier for an early stopper
+    // (then the first years of the episode hit the build-up's drawdown years, and the rest hit the retirement cash flow).
     function runHistoricalReplays(o, rDet, spend){
-      function run(ep){ return mcRetirementCashflow(rDet,o,spend,{hist:ep?ep.ret.map(function(x){return x/100;}):[], cpi:ep&&ep.cpi?ep.cpi.map(function(x){return x/100;}):null}); }
+      var bridge=earlyBridge(o);
+      function run(ep){
+        var ret=ep?ep.ret.map(function(x){return x/100;}):[], cpi=ep&&ep.cpi?ep.cpi.map(function(x){return x/100;}):null;
+        if(bridge<=0||!ep) return mcRetirementCashflow(rDet,o,spend,{hist:ret, cpi:cpi});
+        var from=((o.workTill!==undefined)?o.workTill:65)+1-o.age, yrs=Math.max(1,o.retire-o.age)+2, p={sti:[],getf:[],sgdiv:[],gold:[],cash:[]}, y;
+        for(y=0;y<yrs;y++){
+          var t=y-from, hr=(t>=0&&t<ret.length)?ret[t]:null;
+          p.sti.push(hr===null?sleeveMean(o,'sti'):hr); p.getf.push(hr===null?sleeveMean(o,'getf'):hr);
+          p.sgdiv.push(hr===null?sleeveMean(o,'sgdiv'):0.75*hr); p.gold.push(sleeveMean(o,'gold')); p.cash.push(sleeveMean(o,'cash'));
+        }
+        var oi=clone(o); oi.mcReturns=p;
+        var head=1; if(cpi){ for(y=0;y<bridge;y++) head*=(1+(y<cpi.length?cpi[y]:0.025))/1.025; }
+        return mcRetirementCashflow(project(oi),o,spend,{hist:ret.slice(bridge), cpi:cpi?cpi.slice(bridge):null, inflHead:head});
+      }
       var base=run(null);
-      return {baseAge:base, rows:HIST_EPISODES.map(function(ep){ return {id:ep.id,label:ep.label,span:ep.span,years:ep.ret.length,hasCpi:!!ep.cpi,age:run(ep)}; })};
+      return {baseAge:base, bridge:bridge, rows:HIST_EPISODES.map(function(ep){ return {id:ep.id,label:ep.label,span:ep.span,years:ep.ret.length,hasCpi:!!ep.cpi,age:run(ep)}; })};
+    }
+    // SHORTFALL FLAG for the central (average-case) projection. Before 65 it reads the liquid savings outside CPF and SRS
+    // (a negative balance means spending was paid by money that does not exist yet: borrowing, in plain words). From 65 it
+    // runs the retirement cash flow once with average returns and records every year spending cannot be fully paid.
+    // All amounts are in today's dollars. No loan terms or interest rate are modelled.
+    function shortfallReport(o, r, spendToday){
+      var ax=r.ageAxis||[], lp=r.liqPath||[], i, pre=null, post=null;
+      var first=null, last=null, peak=0, peakAge=null, at65=0;
+      for(i=0;i<lp.length;i++){
+        var owed=-lp[i]/Math.pow(1.025,i+1);
+        if(lp[i]<-1){ if(first===null) first=ax[i]; last=ax[i]; if(owed>peak){ peak=owed; peakAge=ax[i]; } }
+        if(i===lp.length-1) at65=Math.max(0,owed);
+      }
+      if(first!==null) pre={first:first, last:last, peak:peak, peakAge:peakAge, at65:at65, clearedBy65:(at65<=1)};
+      if(spendToday>0){
+        var tr=[]; mcRetirementCashflow(r,o,spendToday,{hist:[], trace:tr});
+        if(tr.length){
+          var tot=0, mx=0, k; for(k=0;k<tr.length;k++){ var v=tr[k].unfunded/tr[k].idx; tot+=v; if(v>mx) mx=v; }
+          post={first:tr[0].age, last:tr[tr.length-1].age, years:tr.length, totalToday:tot, avgMonthly:tot/12/tr.length, peakAnnual:mx, spend:spendToday};
+        }
+      }
+      return {pre:pre, post:post, any:!!(pre||post), stiRate:sleeveMean(o,'sti')};
     }
     function cfSummary(failAges, spend){
       var n=failAges.length, sorted=failAges.slice().sort(function(a,b){return a-b;});
@@ -6759,7 +6881,7 @@
               convergence: conv, nSims: nSims, seed: (seed===undefined ? MC_SEED : seed)};
     }
     // Exposed for the validation suite (and so tests can exercise the real code).
-    window.SGMR_MC = {stress:runStressTests, replay:runHistoricalReplays, HIST:HIST_EPISODES, run:runMonteCarlo, genPath:mcGeneratePath, logRet:mcLogRet, makeRng:mcMakeRng,
+    window.SGMR_MC = {shortfall:shortfallReport, stress:runStressTests, replay:runHistoricalReplays, HIST:HIST_EPISODES, run:runMonteCarlo, genPath:mcGeneratePath, logRet:mcLogRet, makeRng:mcMakeRng,
                       corrNormals:mcCorrNormals, setRng:function(f){ mcRng=f; },
                       VOL:MC_VOL, KEYS:MC_KEYS, CORR:MC_CORR, SEED:MC_SEED};
 
@@ -6799,14 +6921,15 @@
         var stressEl=document.createElement('div'); stressEl.id='mc-stress'; el.appendChild(stressEl);
         try{
           var careSel=$('mc-care'), careCfg=(careSel&&+careSel.value>0)?{cost:+careSel.value, start:+$('mc-carestart').value, years:10}:null;
-          var spendS=c.spend, st=runStressTests(o, rDet, spendS, 1500, careCfg), hr=runHistoricalReplays(o, rDet, spendS);
+          var spendS=c.spend, st=runStressTests(o, rDet, spendS, 1500, careCfg), hr=runHistoricalReplays(o, rDet, spendS), br=earlyBridge(o), wt0=(o.workTill!==undefined)?o.workTill:65;
+          var earlyNote=br>0?(' <b>Your plan stops work at '+wt0+'</b>, so the shocks start the year after (age '+(wt0+1)+') and also hit the '+br+' years before CPF LIFE begins; each simulation re-runs the build-up with its own stressed returns, so this section takes a moment longer. In the higher-inflation rows, the extra inflation raises what your spending costs from 65 on, but your living costs before 65 stay at 2.5%, so those rows are a little kinder than reality for you.'):'';
           function pc(x){ return '<b style="color:'+col(x)+'">'+Math.round(x*100)+'%</b>'; }
           var h='<div class="mc-ladder-title" style="margin-top:22px">Harder conditions: does it still last?</div>'
-            +'<p class="chart-range-note" style="margin-top:0">The same spending test as above, run on your central projection with one thing made worse. It fixes the build-up to retirement at your average-case projection, so its first row (no stress) can differ from the percentages above, which also vary the build-up. Each row is compared with that first row. Simulated, with a fixed random seed.</p>'
+            +'<p class="chart-range-note" style="margin-top:0">The same spending test as above, run on your central projection with one thing made worse. '+(br>0?'Up to your stop-work age it follows your average-case projection, so its first row (no stress) can differ from the percentages above, which also vary the build-up.':'It fixes the build-up to retirement at your average-case projection, so its first row (no stress) can differ from the percentages above, which also vary the build-up.')+' Each row is compared with that first row. Simulated, with a fixed random seed.'+earlyNote+'</p>'
             +'<div class="chart-card" style="padding:4px 14px"><div style="display:flex;gap:8px;padding:8px 0;border-bottom:2px solid var(--line);font-size:12px;color:var(--muted);font-weight:700"><span style="flex:3">Condition</span><span style="flex:1;text-align:right">To 90</span><span style="flex:1;text-align:right">To 95</span><span style="flex:1;text-align:right">To 100</span></div>'
             +st.map(function(r){ return '<div style="display:flex;gap:8px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px"><span style="flex:3">'+r.label+'</span><span style="flex:1;text-align:right">'+pc(r.to90)+'</span><span style="flex:1;text-align:right">'+pc(r.to95)+'</span><span style="flex:1;text-align:right">'+pc(r.to100)+'</span></div>'; }).join('')+'</div>'
             +'<div class="mc-ladder-title" style="margin-top:22px">What if you retired into a real market crash?</div>'
-            +'<p class="chart-range-note" style="margin-top:0">Replays documented episodes from your first year of retirement, with the same central projection and spending. Real S&amp;P 500 total returns and US inflation are applied to the share sleeves, then every sleeve earns its stated expected return. It is one fixed path per episode, not a probability.</p>'
+            +'<p class="chart-range-note" style="margin-top:0">Replays documented episodes from '+(br>0?'the first year after you stop work (age '+(wt0+1)+'), so it starts inside the '+br+' years before CPF LIFE begins':'your first year of retirement')+', with the same central projection and spending. Real S&amp;P 500 total returns and US inflation are applied to the share sleeves, then every sleeve earns its stated expected return. It is one fixed path per episode, not a probability.</p>'
             +'<div class="chart-card" style="padding:4px 14px">'
             +hr.rows.map(function(r){ var lasts=r.age>=100, ok=r.age>=hr.baseAge;
               return '<div style="padding:9px 0;border-bottom:1px solid var(--line);font-size:13px"><div style="display:flex;justify-content:space-between;gap:12px"><span>'+r.label+' <span style="color:var(--muted)">('+r.span+')</span></span><b style="text-align:right;color:'+(lasts?'var(--brand)':'var(--brick)')+'">'+(lasts?'Lasts to 100':'Runs short at '+r.age)+'</b></div>'
@@ -7020,6 +7143,7 @@
         $('rd-target-out').textContent=fmt(target);
         var o, r;
         try{ o=readOpts(); r=project(o); }catch(e){ return; }
+        if(window.__paintShortfall) window.__paintShortfall(o,r);
         var ni=netIncome(o,r), proj=ni.net, nom=Math.max(0,r.income);
         var ratio=target>0?proj/target:0, gap=target-proj;
         var col,emoji,head;
@@ -7389,6 +7513,7 @@
         el.innerHTML='<button type="button" class="help" aria-label="About these numbers">?</button><span class="bubble" style="text-align:left"><b>About these numbers.</b> Everything is in today&rsquo;s dollars and uses this app&rsquo;s stated assumptions. It is an illustration of your own inputs, not a forecast, and not financial advice.<br><br>Rules last reviewed <b>'+A.lastReviewed+'</b> (v'+A.version+').<br><br><button type="button" class="tq-link" data-trust="assump">Assumptions &rarr;</button><button type="button" class="tq-link" data-trust="limits">What this can&rsquo;t do &rarr;</button><button type="button" class="tq-link" data-trust="checks">Self-checks &rarr;</button><button type="button" class="tq-link" data-trust="privacy">Privacy: nothing is saved &rarr;</button></span>';
       });
       Array.prototype.forEach.call(document.querySelectorAll('[data-review-date]'), function(el){ el.textContent=A.lastReviewed+' (v'+A.version+')'; });
+      Array.prototype.forEach.call(document.querySelectorAll('[data-model-ver]'),function(el){el.textContent=A.version;}); Array.prototype.forEach.call(document.querySelectorAll('[data-model-rev]'),function(el){el.textContent=A.lastReviewed;});
       var lv=$('legal-ver'), lr=$('legal-rev'); if(lv) lv.textContent=A.version; if(lr) lr.textContent=A.lastReviewed;
 
       function col(ch){ return ch>=0.75?'#2E9E5B':(ch>=0.50?'#C79A1E':(ch>=0.25?'#D9772B':'#E2604F')); }
@@ -7410,7 +7535,32 @@
           var res=sgmrRankLevers(o,r,proj).slice(0,3), mx=res.length?res[0].add:1;
           $('tq3-bars').innerHTML=res.length?res.map(function(x){ return '<span class="sc-bar"><span>'+shortLabel(x.label)+'</span><b>+'+fmt(x.add)+'/mo</b><i style="width:'+Math.max(8,Math.round(x.add/mx*100))+'%"></i></span>'; }).join(''):'<span class="sc-val">No single change moves it much.</span>';
         }catch(e){}
+        try{
+          var sr=(window.SGMR_MC&&window.SGMR_MC.shortfall)?window.SGMR_MC.shortfall(o,r,o.spendTarget>0?o.spendTarget:0):null;
+          ansState={o:o,r:r,proj:proj,target:target,ratio:ratio,top:(typeof res!=='undefined'&&res.length)?res[0]:null,sr:sr,res95:ansState?ansState.res95:null};
+          paintAnswer();
+        }catch(e){}
         return {o:o,target:target};
+      }
+      // PLAIN-ENGLISH ANSWER: one verdict, the biggest risk and what moves it most, all read from numbers the page already computes.
+      var ansState=null;
+      function paintAnswer(){
+        var A=ansState; if(!A||!$('ans-verdict')) return;
+        var gap=Math.max(0,A.target-A.proj), lead, bad=false;
+        if(A.ratio>=1) lead='On track.'; else if(A.ratio>=0.8){ lead='Close.'; } else { lead='At risk.'; bad=true; }
+        $('ans-verdict').innerHTML='<span class="ans-lead'+(bad?' bad':'')+'">'+lead+'</span> At 65 your plan pays about '+fmt(A.proj)+' a month'+(A.ratio>=1?', against your '+fmt(A.target)+' goal':', '+fmt(gap)+' short of your '+fmt(A.target)+' goal')+' (today\u2019s dollars).';
+        var risk='', rbad=false, o=A.o, r=A.r, sr=A.sr, f95=A.res95;
+        if(r.distressYears>0){ rbad=true; risk='Between ages '+r.distressFirstAge+' and '+r.distressLastAge+', housing, car and family costs exceed your take-home pay.'; }
+        else if(sr&&sr.pre){ rbad=true; risk='Your savings outside CPF run out at age '+sr.pre.first+', before CPF LIFE starts at 65; about '+fmtK(sr.pre.at65>0?sr.pre.at65:sr.pre.peak)+(sr.pre.at65>0?' would be owed at 65.':' would need borrowing at the peak.'); }
+        else if(sr&&sr.post){ rbad=true; risk='At '+fmt(sr.post.spend)+' a month of spending, the money runs out at age '+sr.post.first+' in the average case.'; }
+        else if(f95!==null&&f95!==undefined){
+          var pc=Math.round(f95*100);
+          if(f95<0.5){ rbad=true; risk='Fragile: only '+pc+'% of simulated markets fund your spending to age 95.'; }
+          else if(f95<0.8){ risk='Some risk: '+pc+'% of simulated markets fund your spending to age 95.'; }
+          else risk='No red flags in the average case, and '+pc+'% of simulated markets fund your spending to age 95.';
+        } else risk='Checking 1,500 simulated markets\u2026';
+        var rEl=$('ans-risk'); rEl.textContent=risk; rEl.className='ans-v'+(rbad?' bad':'');
+        $('ans-move').textContent=A.top?(shortLabel(A.top.label)+', about +'+fmt(A.top.add)+' a month at retirement.'):'No single change moves it much.';
       }
       var timer=null, dirty=true, gen=0, rafId=0, quickMs=10, lastQuick=0;
       // The bar's second row (the two star ratings) opens only once the real scorecard has
@@ -7423,14 +7573,15 @@
       // the numbers are never lost while the stars are half hidden. "Visible" therefore means fully visible between the
       // bottom of the sticky header and the top of the floating bar, and the observer is rebuilt if the window is resized.
       if(fsBar && 'IntersectionObserver' in window){
-        var starVis={}, starIO=null;
+        var starVis={}, starAbove={}, starIO=null;
         function buildStarIO(){
           if(starIO) starIO.disconnect();
           var bc=document.getElementById('breadcrumb'), top=bc?Math.ceil(bc.getBoundingClientRect().bottom):104;
           var bottom=Math.ceil(fsBar.getBoundingClientRect().height)+8;
           starIO=new IntersectionObserver(function(es){
-            es.forEach(function(e){ starVis[e.target.id]=e.intersectionRatio>=0.99; });
-            tilesOut=!(starVis['tq1-stars']||starVis['tq2-stars']); applyFs();
+            es.forEach(function(e){ starVis[e.target.id]=e.intersectionRatio>=0.99; starAbove[e.target.id]=e.boundingClientRect.top<((e.rootBounds?e.rootBounds.top:0)-0.5); });
+            // Open only once a star row has gone UP under the header, never because the rows are still below the screen.
+            tilesOut=!(starVis['tq1-stars']||starVis['tq2-stars']) && !!(starAbove['tq1-stars']||starAbove['tq2-stars']); applyFs();
           },{rootMargin:'-'+top+'px 0px -'+bottom+'px 0px', threshold:[0,0.5,0.99,1]});
           ['tq1-stars','tq2-stars'].forEach(function(id){ var el=$(id); if(el) starIO.observe(el); });
         }
@@ -7440,6 +7591,7 @@
       function paintResilience(cf, approx){
         stars($('tq2-stars'), toStars(cf.to95), col(cf.to95), 'Resilience');
         try{ stars($('fs-st2'), toStars(cf.to95), '', 'Resilience'); $('fs-pc2').textContent=(approx?'\u2248':'')+Math.round(cf.to95*100)+'%'; fsReady=true; applyFs(); }catch(e){}
+        if(ansState && !approx){ ansState.res95=cf.to95; paintAnswer(); }
         $('tq2-val').innerHTML=(approx?'&asymp; ':'')+'<b>'+Math.round(cf.to95*100)+'%</b> of futures fund <b>'+fmt(cf.spend)+'</b>/mo to 95';
       }
       // While a slider is moving: a small run (120 markets, about 20 ms) at most every few
@@ -10258,6 +10410,28 @@ function drawQuizResultCard(isStory){
       function to95(cost){ var st=M.stress(o,r,4700,1000,cost>0?{cost:cost,start:80,years:10}:null); return st[st.length>5?1:0].to95; }
       var none=to95(0), small=to95(2700), big=to95(4900);
       return {pass: small<=none+0.02 && big<=small+0.02 && big<none, detail:'to 95: none '+Math.round(none*100)+'%, S$2,700/mo '+Math.round(small*100)+'%, S$4,900/mo '+Math.round(big*100)+'%'};
+    });
+    guard('Stress','A plan that stops work at 50 is stressed from 50, and is no sturdier than the same plan working to 65',function(){
+      function rows(wt){ var o=mk({age:45,startNW:3700000,workTill:wt,spendTarget:9000}), r=E.project(o); return M.stress(o,r,9000,800,null); }
+      var early=rows(50), late=rows(65), tol=0.04, b=early[0].to95;
+      var ok=early.slice(1).every(function(x){ return x.to95<=b+tol; }) && early[4].to95<=Math.min(early[1].to95,early[2].to95,early[3].to95)+tol && early[0].to95<=late[0].to95+tol && early[4].to95<early[0].to95;
+      return {pass:ok, detail:'to 95, stop at 50: '+early.map(function(x){ return x.id+' '+Math.round(x.to95*100)+'%'; }).join(', ')+'; no stress, work to 65: '+Math.round(late[0].to95*100)+'%'};
+    });
+    guard('Stress','Historical replays for a plan that stops work at 50 are never better than the same plan with no episode',function(){
+      var o=mk({age:45,startNW:3700000,workTill:50,spendTarget:9000}), r=E.project(o), h=M.replay(o,r,9000);
+      return {pass: h.bridge===14 && h.rows.every(function(x){ return x.age<=h.baseAge; }) && h.rows.some(function(x){ return x.age<h.baseAge; }), detail:'bridge '+h.bridge+' years; money lasts to: '+h.rows.map(function(x){ return x.id+' '+x.age; }).join(', ')+' (no episode: '+h.baseAge+')'};
+    });
+    guard('Shortfall','A plan that is comfortably funded raises no shortfall flag',function(){
+      var o=mk({spendTarget:2400}), r=E.project(o), sf=M.shortfall(o,r,2400);
+      return {pass: !sf.any && !sf.pre && !sf.post, detail:'standard plan, S$2,400/mo: no flag'};
+    });
+    guard('Shortfall','A plan with no savings that stops work at 35 is flagged: first age, years and amount owed before 65',function(){
+      var o=mk({age:30,startNW:0,workTill:35,spendTarget:3000}), r=E.project(o), sf=M.shortfall(o,r,3000), p=sf.pre;
+      return {pass: !!p && p.first>=35 && p.first<=64 && p.last>=p.first && p.peak>0 && p.at65>0 && !!sf.post && sf.post.first>=65, detail: p?('runs out at '+p.first+', owed '+Math.round(p.at65).toLocaleString()+' at 65; retirement shortfall from '+(sf.post?sf.post.first:'none')):'no flag'};
+    });
+    guard('Shortfall','Spending more in retirement brings the shortfall earlier and makes it bigger',function(){
+      var o=mk({spendTarget:6000}), r=E.project(o), a=M.shortfall(o,r,6000).post, b=M.shortfall(o,r,9000).post;
+      return {pass: !!b && (!a || (b.first<=a.first && b.totalToday>a.totalToday)) && b.years>=1 && b.last===99, detail:'S$6,000: '+(a?('from '+a.first):'none')+'; S$9,000: from '+(b?b.first:'none')+', total '+(b?Math.round(b.totalToday).toLocaleString():'-')};
     });
     guard('Stress','With the care scenario off, the stress results are exactly the same as before',function(){
       var o=mk({spendTarget:4700}), r=E.project(o), a=M.stress(o,r,4700,400,null), b=M.stress(o,r,4700,400,{cost:0,start:80,years:10});
