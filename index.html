@@ -9660,6 +9660,9 @@ function drawQuizResultCard(isStory){
     if(arrowL) arrowL.addEventListener('click',function(){ stepDelay(-1); });
     if(arrowR) arrowR.addEventListener('click',function(){ stepDelay(1); });
 
+    // A shared link restores the calculator first. Without this line the cover's own defaults (age 20, salary S$2,400,
+    // single) were then pushed over the restored age, salary and household by the first render below.
+    if(RESTORED_FROM_SHARE && window.__syncCoverFromCalc) window.__syncCoverFromCalc();
     render();
   })();
 
