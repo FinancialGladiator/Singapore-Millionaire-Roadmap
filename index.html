@@ -2308,8 +2308,8 @@
     <section>
       <div class="step"><div class="num">1</div><div>
         <h3>Wage → CPF → take-home</h3>
-        <p>Each earner starts at S$2,400/mo, growing 2.5%/yr. CPF takes 37% total; the employee's 20% comes out of pay, the rest is employer-added. What's left is spendable cash.</p>
-        <div class="formula">take_home = wage − (wage × 20%) ; CPF-OA inflow = wage × 23% (age &lt;35)</div>
+        <p>Each earner starts at S$2,400/mo, growing 2.5%/yr. In this early-career age band CPF takes 37% in total; the employee's 20% comes out of pay, the rest is employer-added. What's left is spendable cash. The model applies the age-banded CPF rates for every year, not just this one.</p>
+        <div class="formula">take_home = wage − (wage × 20%) ; CPF-OA inflow = wage × 23% (the OA share for the early-career band, under 35; later ages use their own rates and OA shares)</div>
       </div></div>
 <div class="step"><div class="num">2</div><div>
         <h3>Take-home → tax → living costs → surplus</h3>
@@ -2352,7 +2352,7 @@
           <tr><td>CPF rate</td><td data-label="Value">37% at 55 and below; age-banded after that</td></tr>
           <tr><td>CPF interest</td><td data-label="Value">OA 2.5% · SA/MA/RA 4%</td></tr>
           <tr><td>STI total return</td><td data-label="Value">6% (dividends reinvested)</td></tr>
-          <tr><td>Retirement drawdown</td><td data-label="Value">4% safe withdrawal</td></tr>
+          <tr><td>Retirement drawdown</td><td data-label="Value">4% starting withdrawal assumption</td></tr>
           <tr><td>HDB loan</td><td data-label="Value">25 yrs @ 2.6%, from CPF-OA</td></tr>
           <tr><td>Inflation / discount</td><td data-label="Value">2.5%/yr</td></tr>
           <tr><td>Investment returns &amp; CPF rates</td><td data-label="Value">Nominal (before inflation)</td></tr>
@@ -2698,7 +2698,7 @@
       <div class="gloss-item"><div class="gt">Dividend yield</div><div class="gd">The yearly dividend as a percentage of the share price — a S$100 share paying S$4 a year yields 4%.</div></div>
       <div class="gloss-item"><div class="gt">Compound interest / compounding</div><div class="gd">Earning returns on your past returns, not just your original money — a snowball that grows faster the longer it rolls. It's the engine behind every projection here.</div></div>
       <div class="gloss-item"><div class="gt">Dollar-cost averaging</div><div class="gd">Investing a fixed amount every month whatever the price. You automatically buy more when prices are low and less when high, and never have to guess the "right time."</div></div>
-      <div class="gloss-item"><div class="gt">Safe withdrawal rate <span>the 4% rule</span></div><div class="gd">A rule of thumb that you can draw about 4% of an investment pot each year in retirement without running out over a normal lifespan.</div></div>
+      <div class="gloss-item"><div class="gt">The 4% rule <span>a starting withdrawal assumption</span></div><div class="gd">A rule of thumb: draw about 4% of an investment pot in your first year of retirement, then raise that amount with inflation. It is a starting assumption, not a guarantee. How well it holds depends on returns, inflation and how long you live, which is what the Monte Carlo test checks under this app&rsquo;s assumptions.</div></div>
       <div class="gloss-item"><div class="gt">Behaviour gap</div><div class="gd">The gap between what investments earn and what investors actually earn — because people panic-sell, chase winners and mistime the market. It typically costs around 1% a year.</div></div>
       <div class="gloss-item"><div class="gt">Sequence-of-returns risk</div><div class="gd">The danger that a crash just before or early in retirement does far more damage than the same crash later, because you're drawing down an already-shrunken pot. See the &quot;Sequence-of-returns test&quot; section on the calculator tab.</div></div>
       <div class="gloss-item"><div class="gt">Monte Carlo analysis <span>stress test</span></div><div class="gd">A way of testing a plan against uncertainty: instead of assuming markets grow by the same amount every year, the computer replays your plan through thousands of randomly generated good-and-bad market histories and counts how often you still reach your goal. Named after the Monte Carlo casino &mdash; the randomness is the point. Here it runs 10,000 simulations in the "Monte Carlo stress test" section.</div></div>
@@ -2796,7 +2796,7 @@
 </details>
 
     <details class="dd-card" id="dd-legal-data">
-  <summary><div class="num">&bull;</div><span class="dd-txt"><span class="dd-title">Your data, what&rsquo;s assumed, and what this can&rsquo;t do</span><span class="dd-desc">Privacy, when the rules were last reviewed, and the limits of the model.</span></span></summary>
+  <summary><div class="num">3</div><span class="dd-txt"><span class="dd-title">Your data, what&rsquo;s assumed, and what this can&rsquo;t do</span><span class="dd-desc">Privacy, when the rules were last reviewed, and the limits of the model.</span></span></summary>
   <div class="dd-body">
       <div class="callout">
         <ul>
@@ -2812,7 +2812,7 @@
 </details>
 
     <details class="dd-card">
-  <summary><div class="num">3</div><span class="dd-txt"><span class="dd-title">Help make this better for young Singaporeans</span><span class="dd-desc">Spotted an error or have an idea? Your feedback genuinely shapes this.</span></span></summary>
+  <summary><div class="num">4</div><span class="dd-txt"><span class="dd-title">Help make this better for young Singaporeans</span><span class="dd-desc">Spotted an error or have an idea? Your feedback genuinely shapes this.</span></span></summary>
   <div class="dd-body">
       <div class="insight">
 
@@ -2822,7 +2822,7 @@
 </details>
 
     <details class="dd-card">
-  <summary><div class="num">4</div><span class="dd-txt"><span class="dd-title">Add this to your home screen</span><span class="dd-desc">Install it like a native app — works offline, no app store needed.</span></span></summary>
+  <summary><div class="num">5</div><span class="dd-txt"><span class="dd-title">Add this to your home screen</span><span class="dd-desc">Install it like a native app — works offline, no app store needed.</span></span></summary>
   <div class="dd-body">
       <div class="insight">
         <h3>Add it to your home screen</h3>
@@ -3450,9 +3450,9 @@
     {q:"The Enhanced CPF Housing Grant (EHG) is\u2026",
      opts:["A loan you repay with interest","A cash payout you can spend on anything","A grant paid into CPF that reduces what you borrow","Only available to permanent residents"],
      correct:2, explain:"EHG goes straight into your CPF-OA and offsets the flat price directly \u2014 you never see it as spendable cash."},
-    {q:"The \"4% rule\" (safe withdrawal rate) suggests\u2026",
-     opts:["Save 4% of your income every year","Withdraw about 4% of your portfolio yearly in retirement without running out","Inflation runs at 4% a year","CPF pays a guaranteed 4% return"],
-     correct:1, explain:"It's a rule of thumb for how much you can draw down each year in retirement over a normal lifespan without depleting the pot too early."},
+    {q:"The \"4% rule\" is best described as\u2026",
+     opts:["Save 4% of your income every year","A starting assumption: draw about 4% of your portfolio a year in retirement","Inflation runs at 4% a year","CPF pays a guaranteed 4% return"],
+     correct:1, explain:"It is a rule of thumb for how much to draw each year, not a guarantee that the pot lasts. How well it holds depends on returns, inflation and how long you live."},
     {q:"\"Chargeable income\" is\u2026",
      opts:["Your total salary before any deductions","The portion of income actually taxed, after CPF and reliefs","Only income earned overseas","The GST charged on your purchases"],
      correct:1, explain:"Tax brackets apply to chargeable income \u2014 what's left after CPF contributions and other reliefs are subtracted from your gross pay."},
@@ -5057,9 +5057,9 @@
       // Singapore S-REIT sector average of roughly 6-6.5%) and 25% Singapore Savings
       // Bonds (~2.5%/yr, matching recent SSB 10-year average yields). A blended
       // ~5.125%/yr on the gold specifically, generating real, explicit income rather
-      // than folding it into the generic 4% safe-withdrawal-rate assumption the rest
+      // than folding it into the generic 4% starting-withdrawal assumption the rest
       // of the pot uses -- gold itself pays no dividend or coupon, so treating it like
-      // the rest of the pot under a 4% SWR would overstate what it can actually
+      // the rest of the pot under a 4% starting withdrawal would overstate what it can actually
       // generate as retirement income, even though its accumulated VALUE is still
       // fully counted in net worth above.
       var _gr=ASSUMPTIONS.returns.goldRetire, goldDivYield=_gr.divYield, goldSsbYield=_gr.ssbYield, goldDivShare=_gr.divShare, goldSsbShare=_gr.ssbShare;
