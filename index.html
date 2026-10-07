@@ -521,7 +521,8 @@
   .sc-q{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
   .sc-stars{display:flex;gap:2px;font-size:26px;line-height:1}
   .sc-stars .st{background:linear-gradient(90deg,var(--c,#7F877E) calc(var(--f)*100%),#F3F5F022 calc(var(--f)*100%));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
-  .sc-val{font-size:13px;color:var(--ink);line-height:1.35}
+  .sc-val{font-size:13px;color:var(--ink);line-height:1.35;min-height:1.35em}
+  @media (max-width:380px){ .sc-val{min-height:43px} }
   .sc-val b{font-weight:700}
   .sc-bars{display:flex;flex-direction:column;gap:7px;margin-top:2px}
   .sc-bar{display:grid;grid-template-columns:1fr auto;gap:2px 8px;font-size:12px;line-height:1.3;color:var(--ink)}
@@ -7429,7 +7430,7 @@
       function paintResilience(cf, approx){
         stars($('tq2-stars'), toStars(cf.to95), col(cf.to95), 'Resilience');
         try{ stars($('fs-st2'), toStars(cf.to95), '', 'Resilience'); $('fs-pc2').textContent=(approx?'\u2248':'')+Math.round(cf.to95*100)+'%'; fsReady=true; applyFs(); }catch(e){}
-        $('tq2-val').innerHTML=(approx?'&asymp; ':'')+'<b>'+Math.round(cf.to95*100)+'%</b> of simulated futures fund <b>'+fmt(cf.spend)+'</b>/mo to 95';
+        $('tq2-val').innerHTML=(approx?'&asymp; ':'')+'<b>'+Math.round(cf.to95*100)+'%</b> of futures fund <b>'+fmt(cf.spend)+'</b>/mo to 95';
       }
       // While a slider is moving: a small run (120 markets, about 20 ms) at most every few
       // frames, throttled to how fast this device actually managed the last one, so dragging
