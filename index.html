@@ -1073,6 +1073,7 @@
 #tab-calc #cp-calib *{font-size:var(--fs-body) !important}
 #tab-calc #cp-calib span{font-size:var(--fs-fine) !important}
 #tab-calc .opt-tag,#tab-calc .rdl-tag{font-family:'Inter',system-ui,sans-serif}
+#tab-calc .fine-inline{display:block;margin-top:4px;font-size:var(--fs-fine);color:var(--muted);font-weight:400}
 </style>
 </head>
 <body>
@@ -1579,7 +1580,7 @@
         <input type="range" id="i-raise" min="0" max="8" step="0.5" value="3.5">
       </div>
 <div class="field">
-        <label>STI return <span class="hint"><button class="help">?</button><span class="bubble">The Straits Times Index — Singapore's 30 largest listed companies. ~6% is its rough long-run <b>total return with dividends reinvested</b>. It's a long-run average, never a guarantee.</span></span> — <output id="o-sti">6%</output></label>
+        <label>STI return (nominal) <span class="hint"><button class="help">?</button><span class="bubble">The Straits Times Index — Singapore's 30 largest listed companies. ~6% is its rough long-run <b>total return with dividends reinvested</b>. It's a long-run average, never a guarantee. <b>Nominal</b> means before inflation: with inflation at 2.5%/yr, a 6% nominal return is worth about 3.4% a year in today's dollars (the headline figures are shown in today's dollars).</span></span> — <output id="o-sti">6%</output></label>
         <input type="range" id="i-sti" min="3" max="8" step="0.5" value="6">
       </div>
 <input type="hidden" id="i-raisefloor-pct" value="">
@@ -1655,7 +1656,7 @@
       <div class="milestones flow" id="alloc-gap-note" style="display:none;margin-top:10px;background:#B8C2441A;border:1px solid #B8C24455;border-radius:6px;padding:10px 12px;color:var(--family)"></div>
 
       <div class="pro-only">
-      <p class="sec-sub" style="margin-top:18px">How that Invest % splits across five sleeves — drag any one and the rest make room, same as the sliders above. Dollar figures below are what to actually set up each month.</p>
+      <p class="sec-sub" style="margin-top:18px">How that Invest % splits across five sleeves (returns are nominal, i.e. before inflation) — drag any one and the rest make room, same as the sliders above. Dollar figures below are what to actually set up each month.</p>
       <div class="alloc">
         <div class="alloc-row">
           <div class="alloc-head"><span class="l"><i class="dot" style="background:#FF7A33"></i>Global equities <span class="hint"><button class="help">?</button><span class="bubble">A fund tracking a broad world index like MSCI World -- hundreds of growth and value companies across the US, Europe and Japan in one holding. Modelled at ~8%/yr, its long-run nominal average -- genuinely higher than the STI's own ~6%, since the STI has historically lagged global and US indices. This is the core growth engine of the mix, not a satellite.</span></span></span><span class="amt"><output id="o-div-getf">45%</output> · <span id="od-div-getf"></span></span></div>
@@ -1688,7 +1689,7 @@
     <details class="ctl-group pro-only" id="grp-risk">
       <summary><span class="cg-title">Return &amp; risk assumptions</span></summary>
       <div class="cg-body">
-      <div class="note" style="margin-top:6px"><p><b>Two numbers per asset, not one.</b> The <i>expected return</i> is the long-run average the projection uses. The <i>volatility</i> is how widely single years swing around it, which the Monte Carlo uses. Both are assumptions, not forecasts, and a different investor might reasonably choose different ones. Pick a set below to see how much the answer depends on them.</p></div>
+      <div class="note" style="margin-top:6px"><p><b>Two numbers per asset, not one.</b> The <i>expected return</i> is the long-run average the projection uses, <b>nominal</b> (before inflation, which the model takes as 2.5%/yr; subtract it to get the approximate real return). The <i>volatility</i> is how widely single years swing around it, which the Monte Carlo uses. Both are assumptions, not forecasts, and a different investor might reasonably choose different ones. Pick a set below to see how much the answer depends on them.</p></div>
       <div class="field" style="margin-top:12px">
         <label>Return assumption set <span class="hint"><button class="help">?</button><span class="bubble"><b>Cautious</b> lowers every expected return (2 points for shares and gold, 1 point for cash) and raises volatility 15%. <b>Optimistic</b> adds 1 point and trims volatility 5%. <b>Central</b> is the app&rsquo;s default. Your own STI slider is shifted by the same amount, so the sets stay comparable. It changes the projection, the Monte Carlo and the retirement cash-flow test together.</span></span></label>
         <select id="i-preset">
@@ -1806,7 +1807,7 @@
         <span class="verdict-emoji" id="rd-emoji">🟢</span>
         <span class="verdict-text" id="rd-text"></span>
       </div>
-      <div class="rd-bar-wrap"><div class="rd-bar"><div class="rd-bar-fill" id="rd-bar-fill"></div></div><div class="rd-bar-lab"><span id="rd-funded"></span><span>100% = your target</span></div></div>
+      <div class="rd-bar-wrap"><div class="rd-bar"><div class="rd-bar-fill" id="rd-bar-fill"></div></div><div class="rd-bar-lab"><span id="rd-funded"></span><span>100% = your target at retirement</span></div></div>
       <div class="cards" style="margin-top:14px">
         <div class="scard s2">
           <div class="name" style="font-size:15px">Your plan projects <span class="hint"><button class="help">?</button><span class="bubble">Total monthly retirement income at your retirement age, in today&rsquo;s dollars, <b>after</b> the estimated income tax shown below. In Singapore most retirement income is tax-free, so the difference is usually small.</span></span></div>
@@ -1839,20 +1840,35 @@
       <p class="chart-range-note" id="mc-target-line" style="margin-top:6px"></p>
       <div class="note" id="mc-explain" style="margin-top:8px">
         <p><b>What this means in plain English.</b> The projection above assumes the market grows by exactly the same amount every single year. Real life doesn&rsquo;t &mdash; there are boom years, crashes and long flat stretches. This stress test &mdash; known in finance as a <b>Monte Carlo analysis</b> &mdash; replays <i>your exact plan</i> through <b>10,000 different made-up futures</b> &mdash; some kind, some brutal &mdash; and counts how often you still end up with at least the monthly retirement income <i>you said you want</i>.</p>
+        <p style="margin-top:8px"><b>Two different questions.</b> (1) <i>Do you reach your target income when you retire?</i> That is the headline percentage and the ladder just below. (2) <i>Does your money keep paying for that lifestyle to 90, 95 and 100?</i> That is the &ldquo;funded to&rdquo; result further down. A plan can pass the first and still run short later, so read them separately.</p>
         <p style="margin-top:8px"><b>How to read it:</b> &ldquo;80%&rdquo; would mean that in about 8 of 10 possible futures you reach your projected income, and in 2 of 10 you fall short. It is a measure of how fragile or robust the plan is &mdash; not a prediction. Because your projection is the <i>average</i> case, expect roughly half of futures to land a little under it &mdash; the colour-coded ladder below shows how much income you can count on at each level of confidence.</p>
       </div>
       <p class="chart-range-note" id="mc-stale-note" style="display:none;color:var(--brick)">Your inputs have changed since the last run &mdash; run it again to refresh these results.</p>
+      <div class="field" style="margin-top:12px">
+        <label>Long-term care scenario (optional) <span class="hint"><button class="help">?</button><span class="bubble">Adds a long spell of care costs late in retirement to the stress tests below. <b>Off by default</b>, and it never changes your main results. Costs are in today&rsquo;s dollars, paid for 10 years (the average claim lasts about 10 years, and roughly half run longer). <b>Home &amp; community care</b> is about S$2,700 a month and <b>nursing home</b> about S$4,900 (Ministry of Health examples before subsidies); <b>typical spend</b> is about S$3,000 (Singlife&rsquo;s 2024 survey average). CareShield Life pays about S$689 a month in 2026 and subsidies may cut your share, so treat the cost you choose as what you would pay yourself. Not a forecast.</span></span></label>
+        <select id="mc-care">
+          <option value="0">Off (default)</option>
+          <option value="2700">Home &amp; community care, about S$2,700/mo</option>
+          <option value="3000">Typical spend, about S$3,000/mo</option>
+          <option value="4900">Nursing home, about S$4,900/mo</option>
+        </select>
+        <select id="mc-carestart" style="margin-top:8px">
+          <option value="75">Starting at 75</option>
+          <option value="80" selected>Starting at 80</option>
+          <option value="85">Starting at 85</option>
+        </select>
+      </div>
       <button type="button" class="hero-cta" id="btn-run-mc" style="margin-top:4px">Run Monte Carlo analysis (10,000 markets)</button>
       <p class="chart-range-note" id="mc-running-note" style="display:none">Running 10,000 simulations, plus a few scenario comparisons — a couple of seconds…</p>
       <div id="mc-results" style="display:none">
         <div class="mc-headline">
-          <div class="mc-hl-lab">Share of simulated futures reaching your target income <span class="hint"><button class="help">?</button><span class="bubble" style="text-align:left"><b>How to read this number.</b> It is the share of 10,000 simulated futures in which your plan reaches the monthly income you said you want, <i>given the return, volatility and correlation assumptions listed in this app</i>. It is not an objective probability of retirement success and not a forecast: change the assumptions and the number changes. Change your desired income and the number changes with it. The ladder below shows the full range of outcomes.</span></span></div>
+          <div class="mc-hl-lab">Share of simulated futures reaching your target income at retirement <span class="hint"><button class="help">?</button><span class="bubble" style="text-align:left"><b>How to read this number.</b> It is the share of 10,000 simulated futures in which your plan reaches the monthly income you said you want, <i>given the return, volatility and correlation assumptions listed in this app</i>. It is not an objective probability of retirement success and not a forecast: change the assumptions and the number changes. Change your desired income and the number changes with it. The ladder below shows the full range of outcomes.</span></span></div>
           <div class="mc-hl-big" id="mc-goal-pct"></div>
           <div class="mc-hl-sub" id="mc-goal-sub"></div>
         </div>
-        <div class="mc-ladder-title">How much you could expect, from best case to worst</div>
+        <div class="mc-ladder-title">How much income you could expect at retirement, from best case to worst</div>
         <div class="mc-ladder" id="mc-ladder"></div>
-        <p class="chart-range-note" id="mc-ladder-note">Read each row as: &ldquo;in this share of the 10,000 simulated futures, your monthly retirement income at 65 is at least this much&rdquo; (today&rsquo;s dollars). Simulated with random year-by-year returns per asset class. Equities are modelled as tending to fall together (correlated), gold and cash move mostly on their own, and no asset can lose more than 100% in a year. A fixed random seed means the same plan always gives the same answer. Real correlations tend to rise in a crisis, which this fixed set of assumptions does not capture, so treat the result as an illustration under stated assumptions, not a forecast.</p>
+        <p class="chart-range-note" id="mc-ladder-note">Read each row as: &ldquo;in this share of the 10,000 simulated futures, your monthly retirement income at 65 is at least this much&rdquo; (today&rsquo;s dollars). Simulated with random year-by-year <b>nominal</b> returns per asset class (before inflation), with the results then converted to today&rsquo;s dollars at 2.5%/yr. Equities are modelled as tending to fall together (correlated), gold and cash move mostly on their own, and no asset can lose more than 100% in a year. A fixed random seed means the same plan always gives the same answer. Real correlations tend to rise in a crisis, which this fixed set of assumptions does not capture, so treat the result as an illustration under stated assumptions, not a forecast.</p>
         <div id="mc-cf" style="margin-top:18px"></div>
       </div>
       </div>
@@ -1902,7 +1918,7 @@
           </div>
         </div>
         <p class="chart-range-note" id="seq-takeaway" style="margin-top:12px"></p>
-        <p class="chart-range-note">A simplified illustration, in today&rsquo;s dollars. Each sleeve is hit differently: equities fall by the full amount, SG dividend stocks/REITs about three-quarters as much, gold edges up and cash is unchanged. Balancing stronger years keep each sleeve&rsquo;s total growth equal to the no-crash case. Withdrawals are the 4% rule, rising with inflation, taken proportionally from the pot. Not a forecast.</p>
+        <p class="chart-range-note">A simplified illustration, in today&rsquo;s dollars, with nominal (before-inflation) returns. Each sleeve is hit differently: equities fall by the full amount, SG dividend stocks/REITs about three-quarters as much, gold edges up and cash is unchanged. Balancing stronger years keep each sleeve&rsquo;s total growth equal to the no-crash case. Withdrawals are the 4% rule, rising with inflation, taken proportionally from the pot. Not a forecast.</p>
       </div>
       </div>
     </details>
@@ -2031,7 +2047,7 @@
         </div>
       </div>
       <div class="note">
-        <p><b>Model assumptions, at a glance:</b> STI (and SRS) return <span id="as-sti"></span>/yr with dividends reinvested, the satellite rate now rather than the whole portfolio's — open investing diversifies by default into global equities (~8%/yr), SG dividend stocks/REITs (~6%/yr) and gold (~7%/yr) too, set in Investing, diversification &amp; tax; inflation/discount rate 2.5%/yr; CPF OA 2.5%/yr, SA/RA/MA 4%/yr; SRS capped at S$1,275/person/mo and deducted before tax, same as CPF; income tax uses current IRAS resident brackets; salary follows your chosen career-growth curve. Whatever the SRS slider asks for beyond that per-person cap flows straight into open investing instead, so a maxed-out SRS never silently loses money. Future raises normally split in the same proportions as your four sliders — <b>unless "save at least half of every raise" is switched on</b> (the default), in which case every further raise sends at least 50% into investing regardless of your sliders' own ratio, though this floor only ever raises what you'd get, never adds on top of it if your sliders already exceed 50%.</p>
+        <p><b>Model assumptions, at a glance:</b> <b>all returns and CPF interest rates are nominal (before inflation)</b>; STI (and SRS) return <span id="as-sti"></span>/yr with dividends reinvested, the satellite rate now rather than the whole portfolio's — open investing diversifies by default into global equities (~8%/yr), SG dividend stocks/REITs (~6%/yr) and gold (~7%/yr) too, set in Investing, diversification &amp; tax; inflation/discount rate 2.5%/yr (figures shown in today&rsquo;s dollars are the nominal projection divided by this); CPF OA 2.5%/yr, SA/RA/MA 4%/yr (both nominal); SRS capped at S$1,275/person/mo and deducted before tax, same as CPF; income tax uses current IRAS resident brackets; salary follows your chosen career-growth curve. Whatever the SRS slider asks for beyond that per-person cap flows straight into open investing instead, so a maxed-out SRS never silently loses money. Future raises normally split in the same proportions as your four sliders — <b>unless "save at least half of every raise" is switched on</b> (the default), in which case every further raise sends at least 50% into investing regardless of your sliders' own ratio, though this floor only ever raises what you'd get, never adds on top of it if your sliders already exceed 50%.</p>
       </div>
     </section>
         </div>
@@ -2320,6 +2336,7 @@
           <tr><td>Retirement drawdown</td><td data-label="Value">4% safe withdrawal</td></tr>
           <tr><td>HDB loan</td><td data-label="Value">25 yrs @ 2.6%, from CPF-OA</td></tr>
           <tr><td>Inflation / discount</td><td data-label="Value">2.5%/yr</td></tr>
+          <tr><td>Investment returns &amp; CPF rates</td><td data-label="Value">Nominal (before inflation)</td></tr>
           <tr><td>Child cost (family)</td><td data-label="Value">~S$750/mo, age 31–53</td></tr>
         </tbody>
       </table></div>
@@ -2704,7 +2721,7 @@
       <div class="gloss-item"><div class="gt">CPF relief</div><div class="gd">Specifically the slice of income tax relief that comes from your own CPF contributions — the more you (or SRS) contribute, the smaller your chargeable income, and the less tax you owe.</div></div>
       <div class="gloss-item"><div class="gt">MSR <span>Mortgage Servicing Ratio</span></div><div class="gd">Caps HDB (and EC) loan repayments at 30% of gross monthly household income. It's the tighter of the two loan limits for public housing — TDSR usually isn't the binding one.</div></div>
       <div class="gloss-item"><div class="gt">TDSR <span>Total Debt Servicing Ratio</span></div><div class="gd">Caps <em>all</em> your monthly debt repayments — mortgage plus car loans, credit cards and anything else — at 55% of gross income. Applies to every property loan in Singapore, HDB or private.</div></div>
-      <div class="gloss-item"><div class="gt">Nominal vs. "today's dollars" <span>real</span></div><div class="gd">Nominal is the face-value number in some future year; "today's dollars" strips out inflation so you can see what it's actually worth in current buying power.</div></div>
+      <div class="gloss-item"><div class="gt">Nominal vs. "today's dollars" <span>real</span></div><div class="gd">Nominal is the face-value number in some future year; "today's dollars" strips out inflation so you can see what it's actually worth in current buying power. Investment returns in this app are nominal: a 6% nominal return with 2.5% inflation is roughly 3.4% real.</div></div>
       <div class="gloss-item"><div class="gt">Inflation</div><div class="gd">The gradual rise in prices over time, which erodes what each dollar buys. About 2.5% a year is assumed here.</div></div>
       <div class="gloss-item"><div class="gt">Present value / discounting</div><div class="gd">Working out what a future sum is worth today by removing inflation (or interest). It's how S$2.05m in 2071 becomes ~S$676k in today's money.</div></div>
       <div class="gloss-item"><div class="gt">COE <span>Certificate of Entitlement</span></div><div class="gd">A permit you must buy at auction just for the right to own a car for 10 years — a big reason cars in Singapore are so expensive.</div></div>
@@ -2767,7 +2784,7 @@
           <li><b>Privacy.</b> There is no server. Nothing you type is sent anywhere, and nothing is saved in your browser either: refresh the page and it resets to the Classic Saver profile. A share link puts your inputs in the link itself, so only share one with someone you want to see them.</li>
           <li><b>When the rules were last reviewed.</b> Version <span id="legal-ver">&mdash;</span>, last reviewed <span id="legal-rev">&mdash;</span>, against the 1 Jan 2026 CPF and IRAS tables. Rules are not updated automatically.</li>
           <li><b>What it assumes.</b> Investment returns and volatility are illustrative, not forecasts, and not drawn from a named data set. Every figure and its source is listed under <i>Rules &amp; assumptions used</i>.</li>
-          <li><b>What it can&rsquo;t do.</b> It does not model healthcare or long-term-care shocks, female CPF LIFE payouts, the Basic or Enhanced Retirement Sums, bonds as a separate asset, your own tax situation beyond the basics, or any change to the rules after the review date. It cannot review your actual portfolio or tell you what to buy.</li>
+          <li><b>What it can&rsquo;t do.</b> It does not model healthcare shocks in its main results (long-term care is only an optional stress-test scenario), female CPF LIFE payouts, the Basic or Enhanced Retirement Sums, bonds as a separate asset, your own tax situation beyond the basics, or any change to the rules after the review date. It cannot review your actual portfolio or tell you what to buy.</li>
           <li><b>How it is tested.</b> The built-in self-checks compare it with CPF Board and IRAS tables and check its internal consistency. They are not an independent audit.</li>
         </ul>
         <p style="margin:10px 0 0;font-size:13px"><button type="button" class="tq-link" data-trust="assump">See the rules &amp; assumptions &rarr;</button> &nbsp; <button type="button" class="tq-link" data-trust="checks">Run the self-checks &rarr;</button></p>
@@ -2881,7 +2898,7 @@
       ],
       goldRetire:{ divYield:0.06, ssbYield:0.025, divShare:0.75, ssbShare:0.25, divShockSens:0.25, ssbSd:0.005 }
     },
-    srs:{ capAnnual:15300, capMonthly:1275, retirementTaxableShare:0.5 },
+    srs:{ capAnnual:15300, capMonthly:1275, retirementTaxableShare:0.5, statutoryRetirementAge:64 },
     tax:{ // resident brackets: [band width, marginal rate], read top to bottom
       brackets:[[20000,0],[10000,.02],[10000,.035],[40000,.07],[40000,.115],[40000,.15],[40000,.18],[40000,.19],[40000,.195],[40000,.20],[180000,.22],[500000,.23],[Infinity,.24]]
     },
@@ -2890,7 +2907,7 @@
     pending:[
       {year:2027, what:'CPF contribution rates for workers above 55 up to 65 are reported to step up again.', status:'Placeholder \u2014 not modelled. Verify the official rates on cpf.gov.sg, then update the rates table above.'},
       {year:'Every year', what:'CPF Board resets the Retirement Sums, the Basic Healthcare Sum and the wage ceiling each year. This app uses the 2026 figures and grows them by placeholder rates (Retirement Sums 3.5%/yr, MediSave cap 4.5%/yr, wage ceiling 2%/yr).', status:'Placeholder growth rates, not CPF Board forecasts. Check cpf.gov.sg for current figures.'},
-      {year:'Not modelled', what:'Female CPF LIFE payouts, the Basic Retirement Sum with a property pledge, the Enhanced Retirement Sum, bonds as a separate asset, healthcare and long-term-care costs, and changes to tax rules.', status:'Simplifications, stated rather than hidden. See the list above.'},
+      {year:'Not modelled', what:'Female CPF LIFE payouts, the Basic Retirement Sum with a property pledge, the Enhanced Retirement Sum, bonds as a separate asset, healthcare costs (long-term care is only an optional stress-test scenario), and changes to tax rules.', status:'Simplifications, stated rather than hidden. See the list above.'},
       {year:2028, what:'A new simplified, low-cost default CPF lifecycle investment scheme has been announced.', status:'Placeholder \u2014 not modelled. Revisit once the scheme\u2019s design is published.'}
     ]
   };
@@ -6573,7 +6590,8 @@
     //   4. pays whatever is left over from the investment pots and the leftover Ordinary Account, in proportion,
     //   5. applies that year's simulated market returns to what remains.
     // Returns the AGE at which a year's spending can no longer be fully paid (100 if it never happens).
-    function mcRetirementCashflow(r, o, spendToday){
+    function mcRetirementCashflow(r, o, spendToday, scn){
+      scn=scn||null;
       var A=ASSUMPTIONS, GR=A.returns.goldRetire, endAge=100, start=o.retire, f0=r.disc;
       var spend0=spendToday*12*f0, people=o.single?1:2;
       var lifeStart=Math.max(start, o.cpfLifeDefer?70:65), life0=r.cpflife*12, esc=(o.cpfLifePlan==='escalating');
@@ -6581,12 +6599,18 @@
       var pools={sti:Math.max(0,r.STI), getf:Math.max(0,r.GETF), sgdiv:Math.max(0,r.SGDIV), gold:keep?Math.max(0,r.GOLD):0, cash:Math.max(0,r.CASH+r.IDLE), oa:Math.max(0,r.oaAtPayout)};
       var goldPrin=keep?0:Math.max(0,r.GOLD), srs=Math.max(0,r.SRS), srsYrs=A.topUp.srsWithdrawYears;
       var mS=sleeveMean(o,'sti'), mG=sleeveMean(o,'getf'), mD=sleeveMean(o,'sgdiv'), mGo=sleeveMean(o,'gold'), mC=sleeveMean(o,'cash');
-      var vm=presetOf(o).volMult, ks=['sti','getf','sgdiv','gold','cash','oa'], i;
+      var vm=presetOf(o).volMult*((scn&&scn.volMult)||1), ks=['sti','getf','sgdiv','gold','cash','oa'], i;
+      var hist=(scn&&scn.hist)||null, histCum=1;
       for(var t=0; start+t<endAge; t++){
-        var age=start+t, infl=Math.pow(1.025,t), need=spend0*infl;
-        var z=mcCorrNormals();
+        var age=start+t, need, infl;
+        if(scn&&scn.cpi){ infl=histCum; histCum*=1+(t<scn.cpi.length?scn.cpi[t]:0.025); }
+        else infl=Math.pow(1+((scn&&scn.inflRate)||0.025),t);
+        need=spend0*infl;
+        if(scn&&scn.care&&age>=scn.care.start&&age<scn.care.start+scn.care.years) need+=scn.care.cost*12*f0*infl;
+        var z=hist?[0,0,0,0,0]:(scn&&scn.chol?mcCorrNormalsWith(scn.chol):mcCorrNormals());
+        if(hist && t<hist.length){ z[2]=(0.75*hist[t]-mD)/MC_VOL.sgdiv; }
         var divMult=Math.min(1.5,Math.max(0.5,1+GR.divShockSens*z[2]));
-        var ssbY=Math.max(0.01,GR.ssbYield+GR.ssbSd*mcRandNormal());
+        var ssbY=Math.max(0.01,GR.ssbYield+GR.ssbSd*(hist?0:mcRandNormal()));
         var goldInc=goldPrin*(GR.divShare*GR.divYield*divMult+GR.ssbShare*ssbY);
         var life=age>=lifeStart ? life0*(esc?Math.pow(1.02,age-lifeStart):1) : 0;
         var rent=rent0*infl;
@@ -6599,11 +6623,71 @@
           if(pos+0.01<short) return age;
           var fr=short/pos; for(i=0;i<ks.length;i++) pools[ks[i]]-=Math.max(0,pools[ks[i]])*fr;
         } else pools.cash+=-short;
-        var rr={sti:mcLogRet(mS,MC_VOL.sti*vm,z[0]), getf:mcLogRet(mG,MC_VOL.getf*vm,z[1]), sgdiv:mcLogRet(mD,MC_VOL.sgdiv*vm,z[2]), gold:mcLogRet(mGo,MC_VOL.gold*vm,z[3]), cash:mcLogRet(mC,MC_VOL.cash*vm,z[4])};
+        var sh=(scn&&scn.shift&&t<(scn.shiftYears||10))?scn.shift:0, rr;
+        if(hist){
+          var hr=t<hist.length?hist[t]:null;
+          rr=hr===null?{sti:mS,getf:mG,sgdiv:mD,gold:mGo,cash:mC}:{sti:hr,getf:hr,sgdiv:0.75*hr,gold:mGo,cash:mC};
+        } else rr={sti:mcLogRet(mS+sh,MC_VOL.sti*vm,z[0]), getf:mcLogRet(mG+sh,MC_VOL.getf*vm,z[1]), sgdiv:mcLogRet(mD+sh,MC_VOL.sgdiv*vm,z[2]), gold:mcLogRet(mGo,MC_VOL.gold*vm,z[3]), cash:mcLogRet(mC,MC_VOL.cash*vm,z[4])};
         pools.sti*=1+rr.sti; pools.getf*=1+rr.getf; pools.sgdiv*=1+rr.sgdiv; pools.gold*=1+rr.gold; pools.cash*=1+rr.cash; pools.oa*=1.025;
         srs*=1+srsRate(o,rr);
       }
       return endAge;
+    }
+    // Same shock generator as mcCorrNormals, with a caller-supplied Cholesky factor (used by the crisis-correlation stress test).
+    function mcCorrNormalsWith(L){
+      var n=MC_KEYS.length, z=[], out=[], i, j, s;
+      for(i=0;i<n;i++) z.push(mcRandNormal());
+      for(i=0;i<n;i++){ s=0; for(j=0;j<=i;j++) s+=L[i][j]*z[j]; out.push(s); }
+      return out;
+    }
+    var MC_CORR_CRISIS = [
+      [1.00, 0.95, 0.95, 0.40, 0.00],
+      [0.95, 1.00, 0.95, 0.40, 0.00],
+      [0.95, 0.95, 1.00, 0.40, 0.00],
+      [0.40, 0.40, 0.40, 1.00, 0.00],
+      [0.00, 0.00, 0.00, 0.00, 1.00]
+    ];
+    var MC_CHOL_CRISIS = null;
+    // Historical episodes replayed against the retirement cash flow. Returns are S&P 500 total returns (Damodaran, NYU Stern)
+    // and inflation is US CPI annual average change (Federal Reserve Bank of Minneapolis), both in percent, as a proxy for
+    // world equities and prices. They are applied to the equity sleeves from the first year of retirement; after the episode
+    // every sleeve earns its stated expected return.
+    var HIST_EPISODES = [
+      {id:'gd',   label:'Great Depression', span:'1929\u201332',  ret:[-8.30,-25.12,-43.84,-8.64], cpi:null},
+      {id:'stag', label:'1970s stagflation', span:'1973\u201382', ret:[-14.31,-25.90,37.00,23.83,-6.98,6.51,18.52,31.74,-4.70,20.42], cpi:[6.2,11.1,9.1,5.7,6.5,7.6,11.3,13.5,10.3,6.1]},
+      {id:'dot',  label:'Dot-com bust',      span:'2000\u201303', ret:[-9.03,-11.85,-21.97,28.36], cpi:[3.4,2.8,1.6,2.3]},
+      {id:'gfc',  label:'Global financial crisis', span:'2007\u201310', ret:[5.48,-36.55,25.94,14.82], cpi:[2.9,3.8,-0.4,1.6]}
+    ];
+    // Retirement-phase stress tests: the same cash-flow simulation as the main result, run on your central projection with
+    // harder conditions, and compared with an un-stressed run of the same projection so the comparison is like for like.
+    function runStressTests(o, rDet, spend, nSims, care){
+      nSims=nSims||1500;
+      if(!MC_CHOL_CRISIS) MC_CHOL_CRISIS=mcCholesky(MC_CORR_CRISIS);
+      var defs=[
+        {id:'base',  label:'No stress (same projection)', scn:null},
+        {id:'low',   label:'A low-return decade: equities 5 points a year lower for the first 10 years', scn:{shift:-0.05, shiftYears:10}},
+        {id:'infl',  label:'Higher inflation: 4% a year instead of 2.5%', scn:{inflRate:0.04}},
+        {id:'crisis',label:'Crisis correlations: shares and gold fall together, with 25% bigger swings', scn:{chol:MC_CHOL_CRISIS, volMult:1.25}},
+        {id:'all',   label:'All three together', scn:{shift:-0.05, shiftYears:10, inflRate:0.04, chol:MC_CHOL_CRISIS, volMult:1.25}}
+      ];
+      if(care && care.cost>0){
+        var cl='Long-term care: S$'+care.cost.toLocaleString()+'/mo for '+care.years+' years from age '+care.start;
+        defs.splice(1,0,{id:'care', label:cl, scn:{care:care}});
+        defs.push({id:'allcare', label:'All three, plus long-term care', scn:{shift:-0.05, shiftYears:10, inflRate:0.04, chol:MC_CHOL_CRISIS, volMult:1.25, care:care}});
+      }
+      var saved=mcRng, out=[];
+      defs.forEach(function(d){
+        mcRng=mcMakeRng(MC_SEED+101);
+        var ages=[]; for(var i=0;i<nSims;i++) ages.push(mcRetirementCashflow(rDet,o,spend,d.scn));
+        var c=cfSummary(ages,spend); out.push({id:d.id,label:d.label,to90:c.to90,to95:c.to95,to100:c.to100});
+      });
+      mcRng=saved; return out;
+    }
+    // Historical replays are deterministic: one projection, one fixed sequence of returns and prices, no randomness.
+    function runHistoricalReplays(o, rDet, spend){
+      function run(ep){ return mcRetirementCashflow(rDet,o,spend,{hist:ep?ep.ret.map(function(x){return x/100;}):[], cpi:ep&&ep.cpi?ep.cpi.map(function(x){return x/100;}):null}); }
+      var base=run(null);
+      return {baseAge:base, rows:HIST_EPISODES.map(function(ep){ return {id:ep.id,label:ep.label,span:ep.span,years:ep.ret.length,hasCpi:!!ep.cpi,age:run(ep)}; })};
     }
     function cfSummary(failAges, spend){
       var n=failAges.length, sorted=failAges.slice().sort(function(a,b){return a-b;});
@@ -6674,7 +6758,7 @@
               convergence: conv, nSims: nSims, seed: (seed===undefined ? MC_SEED : seed)};
     }
     // Exposed for the validation suite (and so tests can exercise the real code).
-    window.SGMR_MC = {run:runMonteCarlo, genPath:mcGeneratePath, logRet:mcLogRet, makeRng:mcMakeRng,
+    window.SGMR_MC = {stress:runStressTests, replay:runHistoricalReplays, HIST:HIST_EPISODES, run:runMonteCarlo, genPath:mcGeneratePath, logRet:mcLogRet, makeRng:mcMakeRng,
                       corrNormals:mcCorrNormals, setRng:function(f){ mcRng=f; },
                       VOL:MC_VOL, KEYS:MC_KEYS, CORR:MC_CORR, SEED:MC_SEED};
 
@@ -6693,6 +6777,7 @@
     (function(){
       var btn=$('btn-run-mc');
       if(!btn) return;
+      ['mc-care','mc-carestart'].forEach(function(id){ var e=$(id); if(e) e.addEventListener('change', function(){ var r=$('mc-results'); if(r && r.style.display!=='none') btn.click(); }); });
       var lastRunGoal=null;
       function ageLine(c){
         var end=c.medianEnd>=100?'In the typical simulation your money lasts past 100.':('In the typical simulation, spending can no longer be fully paid from about age '+Math.round(c.medianEnd)+'.');
@@ -6705,11 +6790,30 @@
         function card(age,pv){ return '<div class="opt-card"><div class="opt-h">Funded to age '+age+'</div><div class="opt-big" style="color:'+col(pv)+'">'+Math.round(pv*100)+'%</div><div class="opt-sub">of simulated futures</div></div>'; }
         var rowsHtml='<div class="opt-grid">'+card(90,c.to90)+card(95,c.to95)+card(100,c.to100)+'</div>';
         var gold=o.goldKeep?'gold kept (drawn with the rest)':'gold sold at retirement and reinvested for income, with uncertain dividends';
-        el.innerHTML='<div class="mc-ladder-title">Can you fund the lifestyle you want, to 90, 95 and 100?</div>'
-          +'<p class="chart-range-note" style="margin-top:0">Spending of <b>'+fmt(c.spend)+'/mo</b> (today&rsquo;s dollars, your &ldquo;monthly income I want&rdquo; figure above), rising with inflation. Each year the simulation adds that spending and any income tax, subtracts CPF LIFE, rent, SRS withdrawals and any gold income, and pays the rest from your investments and leftover Ordinary Account, with a fresh set of simulated market returns every year. '+ (o.cpfLifeDefer?'CPF LIFE starts at 70 and your investments cover 65&ndash;70. ':'')+'Here: '+gold+'.</p>'
+        el.innerHTML='<div class="mc-ladder-title">Does it last? Funding your lifestyle to 90, 95 and 100</div>'
+          +'<p class="chart-range-note" style="margin-top:0">Unlike the result above, which asks whether you reach your target income <i>when you retire</i>, this asks whether the money <i>keeps paying for it</i> year after year. Spending of <b>'+fmt(c.spend)+'/mo</b> (today&rsquo;s dollars, your &ldquo;monthly income I want&rdquo; figure above), rising with inflation. Each year the simulation adds that spending and any income tax, subtracts CPF LIFE, rent, SRS withdrawals and any gold income, and pays the rest from your investments and leftover Ordinary Account, with a fresh set of simulated market returns every year. '+ (o.cpfLifeDefer?'CPF LIFE starts at 70 and your investments cover 65&ndash;70. ':'')+'Here: '+gold+'.</p>'
           +rowsHtml
-          +'<p class="chart-range-note">'+ageLine(c)+' This is a result under this app&rsquo;s stated assumptions, not a forecast; it does not include healthcare shocks, long-term care, or any change to CPF rules.</p>'
+          +'<p class="chart-range-note">'+ageLine(c)+' This is a result under this app&rsquo;s stated assumptions, not a forecast; it does not include healthcare shocks or long-term care in the result above (you can add a care scenario below), or any change to CPF rules.</p>'
           +'<div class="note" style="margin-top:10px"><p><b>A simpler second measure:</b> the investment pot alone lasts 25 years (to 90) in <b>'+Math.round(mc.probSurvive*100)+'%</b> of simulations if you withdraw 4% of it in the first year, then the same amount plus inflation each year, with no CPF LIFE or other income helping. It ignores everything the cash-flow result above counts, so treat the cash-flow result as the main answer.</p></div>';
+        var stressEl=document.createElement('div'); stressEl.id='mc-stress'; el.appendChild(stressEl);
+        try{
+          var careSel=$('mc-care'), careCfg=(careSel&&+careSel.value>0)?{cost:+careSel.value, start:+$('mc-carestart').value, years:10}:null;
+          var spendS=c.spend, st=runStressTests(o, rDet, spendS, 1500, careCfg), hr=runHistoricalReplays(o, rDet, spendS);
+          function pc(x){ return '<b style="color:'+col(x)+'">'+Math.round(x*100)+'%</b>'; }
+          var h='<div class="mc-ladder-title" style="margin-top:22px">Harder conditions: does it still last?</div>'
+            +'<p class="chart-range-note" style="margin-top:0">The same spending test as above, run on your central projection with one thing made worse. It fixes the build-up to retirement at your average-case projection, so its first row (no stress) can differ from the percentages above, which also vary the build-up. Each row is compared with that first row. Simulated, with a fixed random seed.</p>'
+            +'<div class="chart-card" style="padding:4px 14px"><div style="display:flex;gap:8px;padding:8px 0;border-bottom:2px solid var(--line);font-size:12px;color:var(--muted);font-weight:700"><span style="flex:3">Condition</span><span style="flex:1;text-align:right">To 90</span><span style="flex:1;text-align:right">To 95</span><span style="flex:1;text-align:right">To 100</span></div>'
+            +st.map(function(r){ return '<div style="display:flex;gap:8px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px"><span style="flex:3">'+r.label+'</span><span style="flex:1;text-align:right">'+pc(r.to90)+'</span><span style="flex:1;text-align:right">'+pc(r.to95)+'</span><span style="flex:1;text-align:right">'+pc(r.to100)+'</span></div>'; }).join('')+'</div>'
+            +'<div class="mc-ladder-title" style="margin-top:22px">What if you retired into a real market crash?</div>'
+            +'<p class="chart-range-note" style="margin-top:0">Replays documented episodes from your first year of retirement, with the same central projection and spending. Real S&amp;P 500 total returns and US inflation are applied to the share sleeves, then every sleeve earns its stated expected return. It is one fixed path per episode, not a probability.</p>'
+            +'<div class="chart-card" style="padding:4px 14px">'
+            +hr.rows.map(function(r){ var lasts=r.age>=100, ok=r.age>=hr.baseAge;
+              return '<div style="padding:9px 0;border-bottom:1px solid var(--line);font-size:13px"><div style="display:flex;justify-content:space-between;gap:12px"><span>'+r.label+' <span style="color:var(--muted)">('+r.span+')</span></span><b style="text-align:right;color:'+(lasts?'var(--brand)':'var(--brick)')+'">'+(lasts?'Lasts to 100':'Runs short at '+r.age)+'</b></div>'
+                +'<div style="color:var(--muted);font-size:12px;margin-top:3px">'+r.years+' years of the episode'+(r.hasCpi?', with that period&rsquo;s inflation':', returns only (inflation not replayed)')+'</div></div>'; }).join('')
+            +'</div>'
+            +'<p class="chart-range-note">Without any episode, the same projection '+(hr.baseAge>=100?'lasts to 100':'runs short at '+hr.baseAge)+'. Sources: S&amp;P 500 total returns, Aswath Damodaran (NYU Stern); US CPI, Federal Reserve Bank of Minneapolis. US large-cap shares stand in for world equities, SG dividend shares take three-quarters of the move, and gold and cash keep their assumed returns, so this is an illustration, not a forecast.</p>';
+          stressEl.innerHTML=h;
+        }catch(e){ stressEl.innerHTML='<p class="chart-range-note">The stress tests could not run here.</p>'; }
       }
       function currentGoal(){ var el=$('rd-target'); var g=el?parseFloat(el.value):NaN; return g>0?g:NaN; }
       function refreshTarget(){
@@ -6750,7 +6854,7 @@
             function col(ch){ return ch>=0.75?'#2E9E5B':(ch>=0.50?'#C79A1E':(ch>=0.25?'#D9772B':'var(--brick)')); }
             var pct=Math.round(mc.probGoal*100);
             var big=$('mc-goal-pct'); big.textContent=pct+'%'; big.style.color=col(mc.probGoal);
-            $('mc-goal-sub').textContent='of 10,000 simulated markets reach at least '+fmt(goal)+'/mo (the income you want, today\u2019s $), under this app\u2019s stated assumptions. Simulation margin of error: about \u00b1'+(mc.moeGoal*100).toFixed(1)+' points.';
+            $('mc-goal-sub').textContent='of 10,000 simulated markets reach at least '+fmt(goal)+'/mo at retirement (the income you want, today\u2019s $). This is about the day you retire, not whether it lasts; that is the funded-to-90/95/100 result below. Under this app\u2019s stated assumptions. Simulation margin of error: about \u00b1'+(mc.moeGoal*100).toFixed(1)+' points.';
             // income at p(100-X)% = amount you reach or beat in X% of futures
             var rows=[
               {ch:0.10, inc:mc.incomeAt65.p90},
@@ -6923,7 +7027,7 @@
         else { col='#D9472B'; emoji='🔴'; head='At risk'; }
         var vb=$('rd-verdict'); vb.style.borderLeftColor=col;
         $('rd-emoji').textContent=emoji;
-        $('rd-text').innerHTML='<b>'+head+'.</b> Your plan projects <b>'+fmt(proj)+'/mo</b> against the <b>'+fmt(target)+'/mo</b> you want &mdash; '+Math.round(ratio*100)+'% of your target.';
+        $('rd-text').innerHTML='<b>'+head+'.</b> Your plan projects <b>'+fmt(proj)+'/mo at retirement</b> against the <b>'+fmt(target)+'/mo</b> you want &mdash; '+Math.round(ratio*100)+'% of your target. <span class="fine-inline">This checks the income on the day you retire; whether it lasts to 90, 95 or 100 is a separate test (Monte Carlo, below).</span>';
         var fill=$('rd-bar-fill'); fill.style.width=Math.min(100,Math.round(ratio*100))+'%'; fill.style.background=col;
         $('rd-funded').textContent=Math.round(ratio*100)+'% funded';
         $('rd-proj').textContent=fmt(proj)+'/mo';
@@ -7009,9 +7113,31 @@
         +['One steady CPF LIFE payout factor stands in for CPF Board\u2019s actuarial pricing (calibrated within about '+Math.round(A.cpfLife.calibrationTolerance*100)+'%); Escalating and Basic plans use approximate ratios.',
           'The Full Retirement Sum is assumed at 55; the Basic Sum with a property pledge and the Enhanced Sum are not modelled.',
           'Asset returns are drawn from a lognormal model with a fixed correlation matrix; real crises can break correlations and produce worse outcomes.',
-          'Retirement cash-flow runs to age 100 with spending rising at 2.5% inflation; healthcare shocks, long-term care and legacy goals are not included.',
-          'Income tax in retirement counts only rent and 50% of SRS withdrawals.']
+          'Retirement cash-flow runs to age 100 with spending rising at 2.5% inflation; healthcare shocks and legacy goals are not in the default results, and long-term care appears only in the optional stress-test scenario.',
+          'Income tax in retirement counts only rent and 50% of SRS withdrawals. Rent is taxed in full, with none of the expense deductions IRAS allows, so this may slightly overstate tax.',
+          'SRS withdrawals are assumed to start at 65, after the prescribed retirement age (the statutory age when you first contributed: 64 from 1 July 2026, lower before). Withdrawing earlier, which IRAS taxes in full with a 5% penalty, is not modelled.',
+          'SRS tax is modelled for a Singapore citizen in the year of withdrawal. Foreigners and permanent residents (withholding tax), the one-year lag before tax is assessed, and the terminal-illness, death and bankruptcy rules are not modelled.',
+          'The retirement income shown takes 4% of the SRS pot a year for tax, while the cash-flow test withdraws it evenly over 10 years; both tax only 50% of what is withdrawn.']
         .map(function(s){ return '<li>'+s+'</li>'; }).join('')+'</ul>';
+      var C2=A.cpfLife;
+      h+='<h3 class="chart-title" style="margin-top:18px;font-size:16px">Simplifications that cannot be calibrated precisely</h3>';
+      h+='<p style="margin:6px 0 8px;color:var(--muted);font-size:12px">Each of these is a stand-in for something that is not published as a single exact figure, or that nobody can know in advance. They are listed here so they are easy to find.</p>';
+      h+='<div class="chart-card" style="padding:4px 14px">'+[
+        ['Escalating CPF LIFE plan','Starts at '+Math.round(C2.escalatingStart*100)+'% of the Standard payout and rises '+Math.round(C2.escalatingRise*100)+'% a year','Approximate ratios; CPF Board prices each plan actuarially and does not publish one ratio'],
+        ['Basic CPF LIFE plan','Starts at '+Math.round(C2.basicStart*100)+'% of the Standard payout','Approximate ratio, same reason'],
+        ['CPF LIFE payout factor',(C2.payoutFactor*100).toFixed(2)+'% of the Retirement Account a year','One steady factor fitted to three published examples (within about '+Math.round(C2.calibrationTolerance*100)+'%); not CPF Board\u2019s own formula'],
+        ['Deferring CPF LIFE to 70','+'+Math.round(C2.deferBonus*100)+'% payout after '+C2.deferYears+' years','Rounded from published illustrations; the exact uplift depends on your balance'],
+        ['Retirement Sums growth',pct(C2.retSumGrowth)+' a year','Placeholder; CPF Board resets the sums each year'],
+        ['Basic Healthcare Sum growth',pct(A.cpf.bhsGrowth)+' a year','Placeholder; set annually by the Ministry of Health'],
+        ['CPF wage ceiling growth',pct(A.cpf.wageCeilingGrowth)+' a year','Placeholder; legislated step by step'],
+        ['Inflation and discount rate','2.5% a year, every year','One long-run assumption; real inflation varies and so does the cost of your own basket'],
+        ['Return, volatility and correlation','See the Return &amp; risk assumptions table','Illustrative values, not measured from a named data set; real crises can break the correlations'],
+        ['Simple withdrawal measure',pct(A.topUp.swr)+' of the pot in year one, then rising with inflation','Rule of thumb, not a guarantee'],
+        ['SRS withdrawal period',A.topUp.srsWithdrawYears+' years','The 10-year window is a planning choice, not a rule you must follow'],
+        ['Contribution timing','Mid-year convention (half a year of growth on each year\u2019s saving)','Monthly saving is approximated by one annual figure'],
+        ['Long-term care scenario (optional)','S$2,700, S$3,000 or S$4,900 a month for 10 years, from 75, 80 or 85','Figures from MOH examples and Singlife\u2019s 2024 survey before subsidies and CareShield Life; real costs, duration and timing vary widely'],
+        ['Grants, prices and family costs','Grants from income tiers; flat, car and child costs from fixed schedules','Estimates; actual grants, prices and costs vary by project, home and family']
+      ].map(function(r){ return '<div class="r" style="padding:9px 0;border-bottom:1px solid var(--line)"><div style="display:flex;justify-content:space-between;gap:12px"><span>'+r[0]+'</span><b style="text-align:right">'+r[1]+'</b></div><div style="color:var(--muted);font-size:12px;margin-top:3px">'+r[2]+'</div></div>'; }).join('')+'</div>';
       h+='<h3 class="chart-title" style="margin-top:18px;font-size:16px">Validation tests</h3><div class="note" style="margin-top:8px"><p id="trust-tests">Open this section to run the model self-checks.</p><p style="margin-top:6px;color:var(--muted)">The full list, with the numbers behind each check, is under &ldquo;Model self-checks&rdquo;. Passing them shows the model behaves consistently with the published tables it is tested against; it is not an independent audit.</p></div>';
       el.innerHTML=h;
       var card=$('dd-assumptions'), ran=false;
@@ -7162,7 +7288,7 @@
       function compute(){
         var o, A=ASSUMPTIONS.returns; try{ o=readOpts(); }catch(e){ return; }
         var keys=['sti','getf','sgdiv','gold','cash'];
-        var h='<div class="chart-card" style="padding:4px 14px"><div style="display:flex;gap:8px;padding:8px 0;border-bottom:2px solid var(--line);font-size:12px;color:var(--muted);font-weight:700"><span style="flex:2">Asset</span><span style="flex:1;text-align:right">Expected return</span><span style="flex:1;text-align:right">Volatility</span><span style="flex:2;text-align:right">A typical year</span></div>';
+        var h='<div class="chart-card" style="padding:4px 14px"><div style="display:flex;gap:8px;padding:8px 0;border-bottom:2px solid var(--line);font-size:12px;color:var(--muted);font-weight:700"><span style="flex:2">Asset</span><span style="flex:1;text-align:right">Return</span><span style="flex:1;text-align:right">Volatility</span><span style="flex:2;text-align:right">A typical year</span></div>';
         keys.forEach(function(k){
           var m=sleeveMean(o,k), v=sleeveVol(o,k), s=A.sleeves[k];
           h+='<div style="padding:9px 0;border-bottom:1px solid var(--line);font-size:13px"><div style="display:flex;gap:8px"><b style="flex:2">'+s.label+'</b><span style="flex:1;text-align:right">'+pc(m)+'</span><span style="flex:1;text-align:right">'+pc(v)+'</span><span style="flex:2;text-align:right">'+pc(m-v,0)+' to +'+pc(m+v,0)+'</span></div><div style="color:var(--muted);font-size:12px;margin-top:2px">'+s.role+'</div></div>';
@@ -7171,7 +7297,7 @@
           h+='<div style="padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;opacity:.85"><div style="display:flex;gap:8px"><span style="flex:2">'+s.label+' <i style="font-size:11px">(reference)</i></span><span style="flex:1;text-align:right">'+pc(s.mean)+'</span><span style="flex:1;text-align:right">'+pc(s.vol)+'</span><span style="flex:2;text-align:right">'+pc(s.mean-s.vol,0)+' to +'+pc(s.mean+s.vol,0)+'</span></div><div style="color:var(--muted);font-size:12px;margin-top:2px">'+s.note+'</div></div>';
         });
         $('risk-table').innerHTML=h+'</div>';
-        $('risk-corr').innerHTML='<b>How they move together (Monte Carlo):</b> the three equity sleeves are strongly correlated (0.70 to 0.85, so they tend to fall together), gold is close to independent (0.05), and cash is independent (0). &ldquo;A typical year&rdquo; is the expected return plus or minus one volatility, which happens about two years in three; worse and better years do occur. These are illustrative assumptions, not measured from a specific data set.';
+        $('risk-corr').innerHTML='<b>Returns above are nominal (before inflation, taken as 2.5%/yr), and the &ldquo;typical year&rdquo; range is nominal too.</b> <b>How they move together (Monte Carlo):</b> the three equity sleeves are strongly correlated (0.70 to 0.85, so they tend to fall together), gold is close to independent (0.05), and cash is independent (0). &ldquo;A typical year&rdquo; is the expected return plus or minus one volatility, which happens about two years in three; worse and better years do occur. These are illustrative assumptions, not measured from a specific data set.';
         var srsExp={sti:'the STI return',blend:'the weighted return of your sleeve mix',cash:'the cash return'}[o.srsMode]||'the STI return';
         $('risk-srs-note').textContent='SRS is currently assumed to earn '+srsExp+'. Switching this changes your projected SRS balance and retirement income.';
         try{
@@ -7278,7 +7404,7 @@
         var target=parseFloat($('rd-target').value)||2400, proj=Math.max(0,r.income/r.disc), ratio=target>0?proj/target:0;
         stars($('tq1-stars'), toStars(Math.min(1,ratio)), col(Math.min(1,ratio)), 'On track');
         try{ stars($('fs-st1'), toStars(Math.min(1,ratio)), '', 'On track'); $('fs-pc1').textContent=Math.round(ratio*100)+'%'; }catch(e){}
-        $('tq1-val').innerHTML='<b>'+fmt(proj)+'</b> of <b>'+fmt(target)+'</b>/mo ('+Math.round(ratio*100)+'%)';
+        $('tq1-val').innerHTML='<b>'+fmt(proj)+'</b> of <b>'+fmt(target)+'</b>/mo at retirement ('+Math.round(ratio*100)+'%)';
         try{
           var res=sgmrRankLevers(o,r,proj).slice(0,3), mx=res.length?res[0].add:1;
           $('tq3-bars').innerHTML=res.length?res.map(function(x){ return '<span class="sc-bar"><span>'+shortLabel(x.label)+'</span><b>+'+fmt(x.add)+'/mo</b><i style="width:'+Math.max(8,Math.round(x.add/mx*100))+'%"></i></span>'; }).join(''):'<span class="sc-val">No single change moves it much.</span>';
@@ -9962,6 +10088,53 @@ function drawQuizResultCard(isStory){
     guard('SRS','Annual SRS cap is S$15,300 for citizens and PRs',function(){
       return {pass:A.srs.capAnnual===15300, detail:S(A.srs.capAnnual)+'/yr'};
     });
+    // ---- SRS withdrawal tax (mod-16) -------------------------------------------------------------------------------
+    // Checked against IRAS's page "Tax on SRS withdrawals" (read 7 Oct 2026). It states that after the prescribed retirement age only
+    // 50% of a withdrawal is taxable, that withdrawals before it are 100% taxable plus a 5% penalty, that S$40,000 a year
+    // (taxable S$20,000, tax nil) can be withdrawn tax-free over 10 years if there is no other taxable income or relief, and that
+    // spreading withdrawals generally saves tax. The other cases are worked by hand from those rules and the IRAS resident rate table.
+    // The page's own numeric examples sit in collapsed sections that were not available, so they are not included here.
+    function srsTaxCase(w, rent, people){
+      var each=(A.srs.retirementTaxableShare*w+rent)/people;
+      return people*E.sgTax(each);
+    }
+    var srsCases=[
+      ['IRAS: S$40,000 withdrawn, no other income (taxable 20,000, tax nil)', 40000,0,1,0],
+      ['Single, S$60,000 withdrawn (taxable 30,000)',                          60000,0,1,200],
+      ['Single, S$80,000 withdrawn (taxable 40,000)',                          80000,0,1,550],
+      ['Single, S$160,000 withdrawn (taxable 80,000)',                         160000,0,1,3350],
+      ['Single, S$400,000 lump sum (taxable 200,000)',                         400000,0,1,21150],
+      ['Couple, S$160,000 withdrawn, split evenly (each taxable 40,000)',      160000,0,2,1100],
+      ['Single, S$40,000 withdrawn plus S$20,000 rent (chargeable 40,000)',    40000,20000,1,550],
+      ['Couple, S$160,000 withdrawn plus S$80,000 rent (each chargeable 80,000)',160000,80000,2,6700]
+    ];
+    srsCases.forEach(function(c){
+      guard('SRS tax',c[0],function(){
+        var got=srsTaxCase(c[1],c[2],c[3]);
+        return {pass:Math.abs(got-c[4])<0.5, detail:'tax '+S(got)+' vs hand-worked '+S(c[4])};
+      });
+    });
+    guard('SRS tax','IRAS: S$400,000 taken as S$40,000 a year over 10 years is tax-free, and costs less than a lump sum',function(){
+      var spread=10*srsTaxCase(40000,0,1), lump=srsTaxCase(400000,0,1);
+      return {pass:spread<lump && spread===0, detail:'10-year spread '+S(spread)+' vs lump sum '+S(lump)};
+    });
+    guard('SRS tax','A couple pays no more tax than a single person on the same SRS withdrawal and rent',function(){
+      var ok=[[60000,0],[160000,0],[160000,40000],[400000,60000]].every(function(c){ return srsTaxCase(c[0],c[1],2)<=srsTaxCase(c[0],c[1],1)+1e-9; });
+      return {pass:ok, detail:'checked four withdrawal and rent combinations'};
+    });
+    guard('SRS tax','The retirement income shown after tax uses the same rule for a single person and a couple',function(){
+      var res=[true,false].map(function(single){
+        var r=proj({single:single}), people=single?1:2;
+        var each=(A.srs.retirementTaxableShare*0.04*Math.max(0,r.SRS)/r.disc + r.retRent*12/r.disc)/people;
+        var expect=people*E.sgTax(each)*r.disc/12;
+        return {ok:Math.abs(r.retTaxMo-expect)<0.01, got:r.retTaxMo, exp:expect};
+      });
+      return {pass:res.every(function(x){return x.ok;}), detail:'single '+S(res[0].got)+'/mo (expected '+S(res[0].exp)+'), couple '+S(res[1].got)+'/mo (expected '+S(res[1].exp)+')'};
+    });
+    guard('SRS','SRS withdrawals are modelled from age 65, which is after the statutory retirement age, so the 50% concession applies',function(){
+      var r=proj({}), start=base.retire;
+      return {pass: start>=A.srs.statutoryRetirementAge, detail:'withdrawals start at '+start+'; statutory retirement age '+A.srs.statutoryRetirementAge};
+    });
     guard('SRS','Only 50% of SRS withdrawals at retirement are taxable',function(){
       return {pass: A.srs.retirementTaxableShare===0.5, detail:'taxable share '+(A.srs.retirementTaxableShare*100)+'%'};
     });
@@ -10040,6 +10213,33 @@ function drawQuizResultCard(isStory){
 
     // ---- Retirement cash flow, return sets, SRS and gold choices -----------
     function cf(mod, n){ var o=mk(mod); return M.run(o,n||1500,0,5).cashflow; }
+    guard('Stress','Each stress test is no better than the un-stressed run, and all three together is the worst',function(){
+      var o=mk({spendTarget:4700}), r=E.project(o), st=M.stress(o,r,4700,1200), b=st[0].to95, tol=0.03, all=st[4].to95;
+      var ok=st.slice(1).every(function(x){ return x.to95<=b+tol; }) && all<=Math.min(st[1].to95,st[2].to95,st[3].to95)+tol;
+      return {pass:ok, detail:'to 95: '+st.map(function(x){ return x.id+' '+Math.round(x.to95*100)+'%'; }).join(', ')};
+    });
+    guard('Stress','A long-term care scenario can only make funding worse, and a bigger cost is worse than a smaller one',function(){
+      var o=mk({spendTarget:4700}), r=E.project(o);
+      function to95(cost){ var st=M.stress(o,r,4700,1000,cost>0?{cost:cost,start:80,years:10}:null); return st[st.length>5?1:0].to95; }
+      var none=to95(0), small=to95(2700), big=to95(4900);
+      return {pass: small<=none+0.02 && big<=small+0.02 && big<none, detail:'to 95: none '+Math.round(none*100)+'%, S$2,700/mo '+Math.round(small*100)+'%, S$4,900/mo '+Math.round(big*100)+'%'};
+    });
+    guard('Stress','With the care scenario off, the stress results are exactly the same as before',function(){
+      var o=mk({spendTarget:4700}), r=E.project(o), a=M.stress(o,r,4700,400,null), b=M.stress(o,r,4700,400,{cost:0,start:80,years:10});
+      return {pass: a.length===5 && b.length===5 && a.every(function(x,i){ return x.to95===b[i].to95; }), detail:'five rows, identical'};
+    });
+    guard('Stress','Stress tests are reproducible (same seed, same answer)',function(){
+      var o=mk({spendTarget:4700}), r=E.project(o), a=M.stress(o,r,4700,400), b=M.stress(o,r,4700,400);
+      return {pass: a.every(function(x,i){ return x.to95===b[i].to95 && x.to100===b[i].to100; }), detail:'two runs of 400 paths agree'};
+    });
+    guard('Stress','Historical replays use the published data and are deterministic',function(){
+      var o=mk({spendTarget:4700}), r=E.project(o), a=M.replay(o,r,4700), b=M.replay(o,r,4700), H=M.HIST;
+      var gfc=H.filter(function(e){return e.id==='gfc';})[0], stag=H.filter(function(e){return e.id==='stag';})[0];
+      var same=a.rows.every(function(x,i){ return x.age===b.rows[i].age; });
+      var data=gfc.ret[1]===-36.55 && stag.ret.length===10 && stag.cpi.length===10 && H.length===4;
+      var worse=a.rows.every(function(x){ return x.age<=a.baseAge; });
+      return {pass:same&&data&&worse, detail:'baseline '+a.baseAge+'; '+a.rows.map(function(x){return x.id+' '+x.age;}).join(', ')};
+    });
     guard('Cash flow','Spending of zero is funded to 100; a very high spending target is not',function(){
       var lo=cf({spendTarget:1}), hi=cf({spendTarget:30000});
       return {pass: lo.to100>0.99 && hi.to100<0.05, detail:'S$1/mo: '+(lo.to100*100).toFixed(0)+'% funded to 100; S$30,000/mo: '+(hi.to100*100).toFixed(0)+'%'};
