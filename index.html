@@ -7419,13 +7419,23 @@
       function applyFs(){ if(fsBar) fsBar.classList.toggle('fs-expanded', tilesOut && fsReady); }
       // Watches the two star rows themselves (not the whole card block, which is much taller,
       // especially on a phone), so the bar picks them up the moment they scroll out of sight.
+      // The bar opens the moment a star row starts to slide under the sticky header (not once it is fully gone), so
+      // the numbers are never lost while the stars are half hidden. "Visible" therefore means fully visible between the
+      // bottom of the sticky header and the top of the floating bar, and the observer is rebuilt if the window is resized.
       if(fsBar && 'IntersectionObserver' in window){
-        var starVis={};
-        var starIO=new IntersectionObserver(function(es){
-          es.forEach(function(e){ starVis[e.target.id]=e.isIntersecting; });
-          tilesOut=!(starVis['tq1-stars']||starVis['tq2-stars']); applyFs();
-        },{rootMargin:'-112px 0px 0px 0px'});
-        ['tq1-stars','tq2-stars'].forEach(function(id){ var el=$(id); if(el) starIO.observe(el); });
+        var starVis={}, starIO=null;
+        function buildStarIO(){
+          if(starIO) starIO.disconnect();
+          var bc=document.getElementById('breadcrumb'), top=bc?Math.ceil(bc.getBoundingClientRect().bottom):104;
+          var bottom=Math.ceil(fsBar.getBoundingClientRect().height)+8;
+          starIO=new IntersectionObserver(function(es){
+            es.forEach(function(e){ starVis[e.target.id]=e.intersectionRatio>=0.99; });
+            tilesOut=!(starVis['tq1-stars']||starVis['tq2-stars']); applyFs();
+          },{rootMargin:'-'+top+'px 0px -'+bottom+'px 0px', threshold:[0,0.5,0.99,1]});
+          ['tq1-stars','tq2-stars'].forEach(function(id){ var el=$(id); if(el) starIO.observe(el); });
+        }
+        buildStarIO();
+        var rsT=null; window.addEventListener('resize', function(){ clearTimeout(rsT); rsT=setTimeout(buildStarIO,200); });
       }
       function paintResilience(cf, approx){
         stars($('tq2-stars'), toStars(cf.to95), col(cf.to95), 'Resilience');
