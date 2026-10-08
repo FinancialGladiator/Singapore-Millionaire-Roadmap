@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Millionaire Roadmap">
-<meta name="description" content="A month-by-month projection of what compounding, CPF and disciplined investing can build in Singapore.">
+<meta name="description" content="Educational modelling tool: explore how Singapore CPF, tax, housing, saving and investment assumptions could affect your retirement. Not financial advice.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=Sacramento&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -952,6 +952,17 @@
   .glossary-empty{font-size:14px;color:var(--muted);text-align:center;padding:24px 0}
   .glossary-source-note{font-size:11.5px;color:var(--muted);line-height:1.5;
     padding:10px 0 4px;margin:0;flex:0 0 auto;border-top:1px solid var(--line)}
+  .edu-note{font-size:12px;line-height:1.5;color:var(--muted);margin:12px 0 14px;padding:10px 12px;border-left:3px solid var(--line)}
+  .edu-note b{color:var(--ink)}
+  .edu-note .tq-link{display:inline;background:none;border:0;padding:0;color:var(--brand);font:inherit;font-weight:700;cursor:pointer}
+  .hero-dark .edu-note{color:rgba(255,255,255,.72);border-left-color:rgba(255,255,255,.3);max-width:560px}
+  .hero-dark .edu-note b{color:#fff}
+  .hero-dark .edu-note .tq-link{color:#fff;text-decoration:underline}
+  .privacy-modal-inner{max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .privacy-list{margin:0 0 12px;padding-left:18px;text-align:left;font-size:14px;line-height:1.55;color:var(--ink)}
+  .privacy-list li{margin-bottom:7px}
+  .privacy-links{font-size:13px;text-align:left;margin:0 0 12px}
+  .privacy-links .tq-link{display:inline;background:none;border:0;padding:0;color:var(--brand);font:inherit;font-weight:700;cursor:pointer}
   .privacy-icon{font-size:34px;margin-bottom:10px}
   .privacy-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:20px;
     color:var(--ink);margin-bottom:12px}
@@ -1163,11 +1174,12 @@
       <canvas id="share-canvas" width="1080" height="1600" style="display:none"></canvas>
       <img id="share-image" alt="Your results card" draggable="true">
       <div class="share-format-toggle" role="group" aria-label="Image format">
-        <button type="button" class="sf-btn active" id="sf-square" data-format="square">Scorecard</button>
+        <button type="button" class="sf-btn active" id="sf-square" data-format="square">Summary</button>
         <button type="button" class="sf-btn" id="sf-story" data-format="story">Story</button>
       </div>
       <button id="share-native" class="hero-cta" style="margin-top:14px;display:none">Share →</button>
       <button id="share-download" class="preset" style="margin-top:10px;border-style:solid">⬇ Download image</button>
+      <p class="edu-note" style="margin:8px 0 0;text-align:center;border-left:0">Illustration under your chosen assumptions. Not a forecast, not financial advice. The image shows your numbers, so share it only with people you want to see them.</p>
       <div class="milestones flow" id="share-card-note" style="margin-top:8px;text-align:center;justify-content:center"></div>
     </div>
   </div>
@@ -1190,14 +1202,18 @@
     </div>
   </div>
 
-  <div id="privacy-modal" class="share-modal">
+  <div id="privacy-modal" class="share-modal" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
     <div class="share-modal-inner privacy-modal-inner">
-      <button id="privacy-modal-close" class="share-modal-close" aria-label="Close">✕</button>
-      <div class="privacy-icon">🔒</div>
-      <h3 class="privacy-title">Just so you know</h3>
-      <p class="privacy-body">This app doesn't have a server of its own, and nothing you enter is ever sent anywhere. The only thing counted is that the page was opened, by a privacy-friendly visit counter (GoatCounter) that sets no cookies and never receives your numbers or the contents of a share link. The app doesn't save your numbers either: everything you type &mdash; your age, salary, savings &mdash; lives only on this page while it's open. Refresh or close the tab and it starts fresh from the Classic Saver profile. (Your browser only remembers that you've seen this notice.)</p>
-      <p class="privacy-body privacy-body-sub">Play with your real numbers freely &mdash; that's the whole point.</p>
-      <button type="button" class="hero-cta" id="privacy-modal-ok" style="margin-top:6px">Got it, thanks</button>
+      <div class="privacy-icon">ℹ️</div>
+      <h3 class="privacy-title" id="privacy-title">Before you start</h3>
+      <ul class="privacy-list">
+        <li><b>Educational modelling only.</b> This app shows what could happen under the assumptions you choose. It does not recommend any investment, product, portfolio or transaction, and does not assess whether anything is suitable for you.</li>
+        <li><b>Not a forecast.</b> Returns and other inputs are illustrative. Real outcomes will differ.</li>
+        <li><b>Not regulated advice.</b> Nothing here is financial, tax or legal advice. Speak to a licensed financial adviser before you buy, sell or hold any investment.</li>
+        <li><b>Your privacy.</b> Nothing you enter is sent or saved. Only anonymous page-visit counts are collected (GoatCounter, no cookies).</li>
+      </ul>
+      <p class="privacy-links"><button type="button" class="tq-link" data-trust="disclaimer">Read the full disclaimer &rarr;</button> &nbsp; <button type="button" class="tq-link" data-trust="limits">Privacy &amp; data &rarr;</button></p>
+      <button type="button" class="hero-cta" id="privacy-modal-ok" style="margin-top:6px">I understand</button>
     </div>
   </div>
 
@@ -1232,7 +1248,7 @@
             <div class="hr-value" id="hero-nw">—</div>
             <span class="hint hr-hint"><button type="button" class="help" aria-label="About this number">?</button><span class="bubble hr-bubble" style="text-align:left">
               <b>About this number.</b>
-              <span class="hr-sub">in today's dollars (<span id="hero-nom">—</span> in future dollars at 65) &middot; <span id="hero-inc">—</span> a month, for life</span>
+              <span class="hr-sub">in today's dollars (<span id="hero-nom">—</span> in future dollars at 65) &middot; <span id="hero-inc">—</span> a month in retirement, under these assumptions</span>
               <span class="hr-foot" id="hero-foot"></span>
               <span class="hr-legal">An illustration of your own inputs under this app&rsquo;s stated assumptions &mdash; not a forecast, and not financial advice. Rules last reviewed <span data-review-date></span>.</span>
               <button type="button" class="tq-link" data-trust="assump">Assumptions &rarr;</button><button type="button" class="tq-link" data-trust="limits">What this can&rsquo;t do &rarr;</button><button type="button" class="tq-link" data-trust="checks">Self-checks &rarr;</button><button type="button" class="tq-link" data-trust="privacy">Privacy: nothing is saved &rarr;</button>
@@ -1240,10 +1256,11 @@
           </div>
           <div class="hero-spark" id="hero-spark" aria-hidden="true"></div>
         </div>
+        <div class="edu-note" role="note"><b>Educational modelling only.</b> This calculator shows what could happen under the assumptions you choose. It does not recommend any investment, product, portfolio or transaction, and it does not assess whether any investment is suitable for you. <button type="button" class="tq-link" data-trust="disclaimer">Full disclaimer &rarr;</button></div>
 
         
         <div class="delay-cost" id="delay-cost">
-          <div class="delay-cost-label">Waiting to start costs you, in today's dollars <span class="delay-cost-live">●</span></div>
+          <div class="delay-cost-label">What starting later changes, in today's dollars <span class="delay-cost-live">●</span></div>
           <div class="delay-carousel" id="delay-carousel">
             <button type="button" class="delay-arrow delay-arrow-l" id="delay-arrow-l" aria-label="Previous scenario">‹</button>
             <div class="delay-slide" id="delay-slide">
@@ -1255,7 +1272,7 @@
                 </div>
                 <div class="delay-cost-item">
                   <div class="delay-cost-value" id="delay-inc">—</div>
-                  <div class="delay-cost-sub">less retirement income /mo, for life</div>
+                  <div class="delay-cost-sub">less retirement income a month</div>
                 </div>
               </div>
             </div>
@@ -1278,13 +1295,14 @@
 
     <div class="eyebrow">Interactive · your own numbers</div>
     <h1>Your salary in,<br>your <em>future</em> out.</h1>
-    <p class="standfirst">Move the sliders. The calculator splits your pay into necessities, wants, CPF and tax, tells you what to invest each month across a diversified portfolio, and projects your CPF, investments and net worth at 65. It opens on a real Singapore graduate public-servant career as the baseline. Tap any <b>?</b> for an explanation.</p>
+    <p class="standfirst">Move the sliders. The calculator splits your pay into necessities, wants, CPF and tax, shows how an illustrative investing amount and portfolio could be modelled each month, and projects your CPF, investments and net worth at 65. It opens on a real Singapore graduate public-servant career as the baseline. Tap any <b>?</b> for an explanation.</p>
 
+    <div class="edu-note" role="note"><b>Educational modelling only.</b> This calculator shows what could happen under the assumptions you choose. It does not recommend any investment, product, portfolio or transaction, and it does not assess whether any investment is suitable for you. <button type="button" class="tq-link" data-trust="disclaimer">Full disclaimer &rarr;</button></div>
     <section class="answer-card" id="answer" aria-label="Your answer">
       <div class="ans-label">Your answer</div>
       <p class="ans-verdict" id="ans-verdict">&mdash;</p>
-      <div class="ans-row ans-risk-row"><span class="ans-k">Biggest risk</span><span class="ans-v" id="ans-risk">&mdash;</span></div>
-      <div class="ans-row ans-move-row"><span class="ans-k">What moves it most</span><span class="ans-v" id="ans-move">&mdash;</span></div>
+      <div class="ans-row ans-risk-row"><span class="ans-k">Biggest risk in this model</span><span class="ans-v" id="ans-risk">&mdash;</span></div>
+      <div class="ans-row ans-move-row"><span class="ans-k">What moves it most in the model</span><span class="ans-v" id="ans-move">&mdash;</span></div>
     </section>
     <div class="sc-head"><span class="sc-title">The detail behind it</span><span data-trust-hint></span></div>
     <section class="scorecard" id="three-q" aria-label="Your plan scorecard">
@@ -1300,11 +1318,12 @@
       </button>
       <button type="button" class="sc-tile" data-open="grp-readiness">
         <span class="sc-q">What moves it most?</span>
-        <span class="sc-sub">Extra income per month</span>
+        <span class="sc-sub">What-if changes, not suggestions</span>
         <span class="sc-bars" id="tq3-bars"></span>
       </button>
     </section>
 
+    <p class="edu-note" style="margin-top:10px">Scores compare the model&rsquo;s result with the goal you typed in. They are not a rating of any investment.</p>
     <div id="pro-note" role="status"></div>
     <div class="preset-scenarios">
       <div class="preset-scenarios-label">Select a persona</div>
@@ -1673,7 +1692,7 @@
       <div class="milestones flow" id="alloc-gap-note" style="display:none;margin-top:10px;background:#B8C2441A;border:1px solid #B8C24455;border-radius:6px;padding:10px 12px;color:var(--family)"></div>
 
       <div class="pro-only">
-      <p class="sec-sub" style="margin-top:18px">How that Invest % splits across five sleeves (returns are nominal, i.e. before inflation) — drag any one and the rest make room, same as the sliders above. Dollar figures below are what to actually set up each month.</p>
+      <p class="sec-sub" style="margin-top:18px"><b>Illustrative portfolio for modelling.</b> This is a modelling assumption, not a recommendation of what you should own. It shows how the Invest % could split across five asset types (returns are nominal, i.e. before inflation); drag any one and the rest make room, same as the sliders above. The dollar figures below show what those percentages mean each month inside this projection. They are not instructions to buy anything.</p>
       <div class="alloc">
         <div class="alloc-row">
           <div class="alloc-head"><span class="l"><i class="dot" style="background:#FF7A33"></i>Global equities <span class="hint"><button class="help">?</button><span class="bubble">A fund tracking a broad world index like MSCI World -- hundreds of growth and value companies across the US, Europe and Japan in one holding. Modelled at ~8%/yr, its long-run nominal average -- genuinely higher than the STI's own ~6%, since the STI has historically lagged global and US indices. This is the core growth engine of the mix, not a satellite.</span></span></span><span class="amt"><output id="o-div-getf">45%</output> · <span id="od-div-getf"></span></span></div>
@@ -1957,7 +1976,7 @@
     <details class="ctl-group pro-only" id="grp-cx">
       <summary><span class="cg-title">CPF top-up vs SRS vs investing</span></summary>
       <div class="cg-body">
-      <div class="note" style="margin-top:6px"><p><b>Where should your next dollar go?</b> The same amount, three homes: topped up into your CPF, put into SRS, or invested outside with no tax relief. Compared on your own tax rate and your own portfolio&rsquo;s return.</p></div>
+      <div class="note" style="margin-top:6px"><p><b>How the same dollar compares across three homes.</b> The same amount, three homes: topped up into your CPF, put into SRS, or invested outside with no tax relief. Compared on your own tax rate and your own portfolio&rsquo;s return.</p></div>
       <div class="field" style="margin-top:12px">
         <label>Amount per year <span class="hint"><button class="help">?</button><span class="bubble">One year&rsquo;s contribution, compared across all three. Tax relief is capped at S$8,000/yr for a CPF top-up for yourself and S$15,300/yr for SRS; anything above a cap gets no relief.</span></span> — <output id="cx-amt-out">S$8,000</output></label>
         <input type="range" id="cx-amt" min="1000" max="15300" step="500" value="8000">
@@ -1985,18 +2004,18 @@
       <div class="whatif-wrap">
         <div class="whatif-label">What if you changed one thing?</div>
         <div class="whatif-grid">
-          <div class="whatif" id="wi-earlier"><input type="checkbox" class="wi-check" id="wi-earlier-chk" aria-label="Apply: Start 5 years earlier"><button type="button" class="wi-body"><span class="wi-t">Start 5 years earlier</span><span class="wi-d" id="wi-earlier-d">—</span></button></div>
-          <div class="whatif" id="wi-save"><input type="checkbox" class="wi-check" id="wi-save-chk" aria-label="Apply: Save 5% more each month"><button type="button" class="wi-body"><span class="wi-t">Save 5% more each month</span><span class="wi-d" id="wi-save-d">—</span></button></div>
-          <div class="whatif" id="wi-car"><input type="checkbox" class="wi-check" id="wi-car-chk" aria-label="Apply this car change"><button type="button" class="wi-body"><span class="wi-t" id="wi-car-t">Buy a car at 30</span><span class="wi-d" id="wi-car-d">—</span></button></div>
-          <div class="whatif" id="wi-flat"><input type="checkbox" class="wi-check" id="wi-flat-chk" aria-label="Apply this flat upgrade"><button type="button" class="wi-body"><span class="wi-t" id="wi-flat-t">Buy a bigger flat</span><span class="wi-d" id="wi-flat-d">—</span></button></div>
-          <div class="whatif" id="wi-halfraise"><input type="checkbox" class="wi-check" id="wi-halfraise-chk" aria-label="Apply: Save 75% of every raise instead"><button type="button" class="wi-body"><span class="wi-t" id="wi-halfraise-t">Save 75% of every raise instead</span><span class="wi-d" id="wi-halfraise-d">—</span></button></div>
+          <div class="whatif" id="wi-earlier"><input type="checkbox" class="wi-check" id="wi-earlier-chk" aria-label="Model: starting 5 years earlier"><button type="button" class="wi-body"><span class="wi-t">Starting 5 years earlier</span><span class="wi-d" id="wi-earlier-d">—</span></button></div>
+          <div class="whatif" id="wi-save"><input type="checkbox" class="wi-check" id="wi-save-chk" aria-label="Model: saving 5% more each month"><button type="button" class="wi-body"><span class="wi-t">Saving 5% more each month</span><span class="wi-d" id="wi-save-d">—</span></button></div>
+          <div class="whatif" id="wi-car"><input type="checkbox" class="wi-check" id="wi-car-chk" aria-label="Model this car change"><button type="button" class="wi-body"><span class="wi-t" id="wi-car-t">With a car at 30</span><span class="wi-d" id="wi-car-d">—</span></button></div>
+          <div class="whatif" id="wi-flat"><input type="checkbox" class="wi-check" id="wi-flat-chk" aria-label="Model this flat change"><button type="button" class="wi-body"><span class="wi-t" id="wi-flat-t">With a bigger flat</span><span class="wi-d" id="wi-flat-d">—</span></button></div>
+          <div class="whatif" id="wi-halfraise"><input type="checkbox" class="wi-check" id="wi-halfraise-chk" aria-label="Model: saving 75% of every raise"><button type="button" class="wi-body"><span class="wi-t" id="wi-halfraise-t">Saving 75% of every raise</span><span class="wi-d" id="wi-halfraise-d">—</span></button></div>
         </div>
         <div class="milestones flow" style="margin-top:8px;color:var(--muted)">Each figure is the change to your net worth at 65, in today’s dollars. Tap a card, or its checkbox, to apply it right away -- check several to apply them one after another and see them compound.</div>
       </div>
       </div>
     </details>
 
-      <button class="hero-cta" id="btn-share-card" style="margin-top:10px">My Financial Scorecard</button>
+      <button class="hero-cta" id="btn-share-card" style="margin-top:10px">Share my plan illustration</button>
       <div class="note" id="f-distress" style="display:none;border-left-color:var(--brick)">
         <p id="o-distress"></p>
       </div>
@@ -2013,7 +2032,7 @@
       <div class="sec-label">Go deeper</div>
       <p class="sec-sub">Everything below is optional detail. Open whichever you’re curious about.</p>
       <details class="dd-card" id="dd-0">
-        <summary><span class="dd-txt"><span class="dd-title">What each choice costs you</span><span class="dd-desc">Wedding, car, condo, parental support — priced individually, in today’s dollars.</span></span></summary>
+        <summary><span class="dd-txt"><span class="dd-title">What each choice changes in the projection</span><span class="dd-desc">Wedding, car, condo, parental support — priced individually, in today’s dollars.</span></span></summary>
         <div class="dd-body">
 <section id="impact-section">
       <div class="sec-label">The holistic picture · what each choice costs by 65</div>
@@ -2400,10 +2419,10 @@
         <p>The projection depends on the surplus flowing into the STI for 45 years. But spending rises to meet income — hedonic adaptation makes each upgrade the new baseline, so the reward wears off and you reach for the next one. "Frugal for life" is the first assumption real life dissolves.</p>
         <div class="formula">Absorb half of each raise into lifestyle → the single's ~S$676k pot roughly halves.</div>
       
-        <div class="trap-cost"><span class="tc-label">Absorbing half of every future raise into lifestyle costs you</span><span class="tc-value" id="trap-cost-0">—</span></div>
+        <div class="trap-cost"><span class="tc-label">Absorbing half of every future raise into lifestyle lowers the projection by</span><span class="tc-value" id="trap-cost-0">—</span></div>
         <div class="fix-block"><div class="fix-tag">A common approach</div><h3 class="fix-h">Holding spending flat when pay rises</h3>
         <p>One approach is to direct pay rises to saving and investing rather than raising your lifestyle: income climbs while spending stays flat, and the widening gap compounds. Not deprivation — just not letting each raise become the new baseline.</p>
-        <div class="formula">Beats trap #1 (lifestyle inflation). Holding the line vs spending half your raises ≈ S$676k vs ~S$340k.</div></div>
+        <div class="formula">Model comparison for trap #1 (lifestyle inflation). Holding the line vs spending half your raises ≈ S$676k vs ~S$340k.</div></div>
         </div>
 </details>
       <details class="dd-card">
@@ -2413,10 +2432,10 @@
         <p>Singapore deliberately makes cars a luxury, and financing one is the single largest wealth-destroying choice most households make — not just the price, but the price <em>instead of</em> investing that money, decade after decade.</p>
         <div class="formula">Cat A <span class="hint">COE <button class="help">?</button><span class="bubble">Certificate of Entitlement -- a bidding-based permit that must be won before a car can even be registered in Singapore, on top of the car's own price. Category A covers smaller/less powerful cars.</span></span> alone ≈ S$126k in 2026 (~ a year's median household income). 10-year ownership ≈ S$200k–300k; depreciation alone ≈ S$15k–25k/yr. Invested instead of financed, that recurring cost compounds past your entire investment pot by 65 — often several times over, the earlier you start.</div>
       
-        <div class="trap-cost"><span class="tc-label">Owning a car (replaced every ~10 yrs, to 65) costs you</span><span class="tc-value" id="trap-cost-1">—</span></div>
+        <div class="trap-cost"><span class="tc-label">Owning a car (replaced every ~10 yrs, to 65) lowers the projection by</span><span class="tc-value" id="trap-cost-1">—</span></div>
         <div class="fix-block"><div class="fix-tag">A common approach</div><h3 class="fix-h">Delaying or skipping the car</h3>
         <p>Singapore's public transport is world-class, which makes a car a deliberate luxury. Many households manage with trains, buses and occasional ride-hail; for those who need one, buying used late in the COE cycle lowers the cost. Every car-free year frees roughly S$15k–25k a year for saving or investing. Whether this suits you depends on family needs, health and work.</p>
-        <div class="formula">Beats trap #2 (the car). Skip it and you can end up with dramatically more than the entire investment pot you're trying to build — the younger you are when you skip it, the bigger that gap gets.</div></div>
+        <div class="formula">Model comparison for trap #2 (the car). In the model, skipping it ends with dramatically more than the entire investment pot being built — the younger you are when you skip it, the bigger that gap gets.</div></div>
         </div>
 </details>
       <details class="dd-card">
@@ -2426,10 +2445,10 @@
         <p>The magic depends on <em>staying</em> in the cheap subsidised flat and letting the freed cash compound. Most people trade up to a bigger HDB, then chase a condo. Each move resets the mortgage, drains the CPF-OA that was compounding, and adds decades of fresh interest. Asset-rich, cash-poor.</p>
         <div class="formula">Trading up to a ~S$1.5m condo converts liquid, dividend-paying, compoundable wealth into an illiquid, lease-decaying asset. The mortgage interest alone can add S$300k+ over 30 yrs — and priced against what that cash and CPF-OA would have grown to instead, the total opportunity cost typically runs well into seven figures.</div>
       
-        <div class="trap-cost"><span class="tc-label">Upgrading to a condo costs you</span><span class="tc-value" id="trap-cost-2">—</span></div>
+        <div class="trap-cost"><span class="tc-label">Upgrading to a condo lowers the projection by</span><span class="tc-value" id="trap-cost-2">—</span></div>
         <div class="fix-block"><div class="fix-tag">A common approach</div><h3 class="fix-h">Staying in the first flat rather than upgrading</h3>
         <p>The model's path is a 2-room Flexi (single) or 3-room BTO (couple), claiming the grant, moving in and staying. Every year without an upgrade is a year the freed cash and CPF-OA keep compounding instead of paying fresh interest. Real decisions also turn on family size, health, ageing parents and what a home means to you, none of which the model captures.</p>
-        <div class="formula">Beats trap #3 (upgrade treadmill). Staying can keep well over a million dollars of interest and lost compounding in your pocket by 65 — the earlier you resist the upgrade, the bigger that stays.</div></div>
+        <div class="formula">Model comparison for trap #3 (upgrade treadmill). In the model, staying keeps well over a million dollars of interest and lost compounding by 65 — the earlier you resist the upgrade, the bigger that stays.</div></div>
         </div>
 </details>
       <details class="dd-card">
@@ -2439,10 +2458,10 @@
         <p>The 6% engine only runs if the surplus goes into equities and <em>stays</em>. In reality most sits in bank savings below inflation, or is never saved. And even those who invest sabotage returns — panic-selling in downturns, chasing what just went up, trying to time the market.</p>
         <div class="formula">20 yrs to 2024: average equity investor 9.24%/yr vs market 10.35% — behaviour cost ~1.1%/yr, ~22% less wealth. Investors call direction right only ~25% of the time. Cash at ~1% vs STI 6% over 45 yrs ≈ S$300k vs ~S$2m.</div>
       
-        <div class="trap-cost"><span class="tc-label">Never investing — leaving it all as cash costs you</span><span class="tc-value" id="trap-cost-3">—</span></div>
+        <div class="trap-cost"><span class="tc-label">Never investing — leaving it all as cash lowers the projection by</span><span class="tc-value" id="trap-cost-3">—</span></div>
         <div class="fix-block"><div class="fix-tag">A common approach</div><h3 class="fix-h">Staying invested through the ups and downs</h3>
         <p>A common approach among long-term investors is a broad, low-cost, diversified fund, a fixed amount invested every month, dividends reinvested, and — the hard part — not selling in a crash or chasing what just went up. Downturns are where a plan is made or broken, and time <em>in</em> the market has historically mattered more than timing it. This is general information, not a recommendation for you.</p>
-        <div class="formula">Beats trap #4 (behaviour gap). Panic &amp; timing cost the average investor ~1.1%/yr → ~22% less wealth over 20 yrs.</div></div>
+        <div class="formula">Model comparison for trap #4 (behaviour gap). Panic &amp; timing cost the average investor ~1.1%/yr → ~22% less wealth over 20 yrs.</div></div>
         </div>
 </details>
       <details class="dd-card">
@@ -2452,10 +2471,10 @@
         <p>Compounding is front-loaded: at 6%, a dollar invested at 20 becomes ~S$14 by 65; the same at 40 becomes only ~S$3.20. The first decade does most of the lifting. But present bias makes the future self a stranger, so people spend their twenties and start "next year."</p>
         <div class="formula">Delay 20 → 30 (same contributions, same 6%) ≈ 40–50% smaller final pot. The frugal twenties aren't the hardest years to give up — they're the most expensive.</div>
       
-        <div class="trap-cost"><span class="tc-label">Starting 5 years later costs you</span><span class="tc-value" id="trap-cost-4">—</span></div>
+        <div class="trap-cost"><span class="tc-label">Starting 5 years later lowers the projection by</span><span class="tc-value" id="trap-cost-4">—</span></div>
         <div class="fix-block"><div class="fix-tag">A common approach</div><h3 class="fix-h">Automating saving from the first paycheck</h3>
         <p>Many people set up a standing monthly transfer into their savings or investments as soon as the first paycheck lands — <em>before</em> budgeting anything else. Automation removes the monthly decision and works against present bias: you can't spend money you never see.</p>
-        <div class="formula">Beats trap #5 (starting late). Start at 20 not 30, same money → ~2× the final pot.</div></div>
+        <div class="formula">Model comparison for trap #5 (starting late). Start at 20 not 30, same money → ~2× the final pot.</div></div>
         </div>
 </details>
       <details class="dd-card">
@@ -2541,7 +2560,7 @@
 
     <div class="eyebrow">Why your default mix looks like this</div>
     <h1>Built to survive<br><em>every</em> season.</h1>
-    <p class="standfirst">A single STI index fund still works — and setting every satellite sleeve below back to 0% gets you exactly that. But the Calculator's own default is this instead: a time-tested, diversified structure — multi-currency, hard assets, growth and value, income streams that don't move together — designed to compound through booms, busts, inflation and currency debasement, while paying almost nothing in fees and as little as legally possible in tax. Here's the reasoning behind it.</p>
+    <p class="standfirst">The calculator can model a single STI-tracking allocation: set every satellite sleeve below to 0% and that is what it shows. Its default modelling assumption is a diversified mix instead: multi-currency, hard assets, growth and value, income streams that don't move together. This page explains the reasoning behind that illustrative default. It describes how the model is built, not what you should own, and no allocation is guaranteed to hold up in any particular market.</p>
 
     <section>
       <div class="sec-label">The all-weather Singapore allocation · illustrative</div>
@@ -2562,70 +2581,70 @@
         <div class="row"><span class="l"><i class="dot" style="background:#C79A1E"></i><b>Gold — the anti-currency</b></span><span class="amt">15%</span></div>
         <div class="row" style="font-size:12.5px;color:#4a544a"><span>Pays nothing, promises nothing — and that's the point. It's insurance against money-printing and the late stages of the long-term debt cycle.</span></div>
         <div class="row"><span class="l"><i class="dot" style="background:#8a918a"></i><b>Short bonds / T-bills / SSBs — dry powder</b></span><span class="amt">10%</span></div>
-        <div class="row" style="font-size:12.5px;color:#4a544a"><span>Deliberately minimal — CPF is already your big bond. This sleeve exists to buy the dip, not to earn.</span></div>
+        <div class="row" style="font-size:12.5px;color:#4a544a"><span>Deliberately minimal — CPF is already your big bond. In this illustration the sleeve is there as a buffer to deploy in a downturn, not to earn.</span></div>
         <div class="row"><span class="l"><i class="dot" style="background:#B23A2D"></i><b>Volatility &amp; insurance sleeve</b></span><span class="amt">10%</span></div>
-        <div class="row" style="font-size:12.5px;color:#4a544a"><span>A 6-month cash emergency fund plus protection cover (such as term life or disability) — so no crisis ever forces you to sell the rest at the bottom.</span></div>
+        <div class="row" style="font-size:12.5px;color:#4a544a"><span>A 6-month cash emergency fund plus protection cover (such as term life or disability), shown as a buffer so a crisis is less likely to force selling at a bad time. A common rule of thumb, not advice for you.</span></div>
       </div>
     </section>
 
     <section>
-      <div class="sec-label">Why this shape — six principles</div>
+      <div class="sec-label">The ideas behind the illustrative default mix</div>
       <details class="dd-card">
-  <summary><div class="num">1</div><span class="dd-txt"><span class="dd-title">Diversify across asset classes, not just stocks</span><span class="dd-desc">Uncorrelated assets, so something is always working -- and rebalancing pays you.</span></span></summary>
+  <summary><div class="num">1</div><span class="dd-txt"><span class="dd-title">Why the model spreads across asset classes</span><span class="dd-desc">Different assets can respond differently to growth, recession, inflation and deflation.</span></span></summary>
   <div class="dd-body">
 
-        <p>Owning 30 Singapore companies is one bet on one asset class in one country. Equities, property, gold, bills and income each respond <em>differently</em> to growth, recession, inflation and deflation — so in any given season, something in the portfolio is working. Uncorrelated assets don't just smooth the ride; they let you rebalance from winners into losers, which is where extra return quietly comes from.</p>
-        <div class="formula">Your income streams end up uncorrelated too: salary + SG dividends + REIT distributions + CPF interest + coupon income — five taps that rarely run dry at once.</div>
-        <p class="sec-sub">This is now the <b>default</b> mix for every dollar you invest, not an optional add-on — set it directly in the Calculator's <b>Investing, diversification &amp; tax</b> section on the Your Number tab (switch on PRO to see the mix), where it already reflects the all-weather weights above (global equities as the core, SG dividends/REITs, gold and cash as explicit satellite sleeves), applied from day one rather than waiting for any balance threshold. Gold specifically is sold at your own retirement and reallocated into 75% dividend stocks/S-REITs and 25% Singapore Savings Bonds, since it pays no income of its own to draw down — already reflected in your net worth and retirement income figures.</p>
+        <p>Owning 30 Singapore companies is one bet on one asset class in one country. Equities, property, gold, bills and income each respond <em>differently</em> to growth, recession, inflation and deflation — so in a given season, some holdings may be doing better than others. The idea is that assets which don't move together can smooth the ride, though correlations change and diversification does not remove the risk of loss.</p>
+        <div class="formula">Your income streams end up uncorrelated too: salary + SG dividends + REIT distributions + CPF interest + coupon income — five sources that are unlikely, though not guaranteed, to all dry up at once.</div>
+        <p class="sec-sub">This is the calculator's <b>default modelling assumption</b> for the money in the model, and you can change it in the calculator's <b>Investing, diversification &amp; tax</b> section on the Your Number tab (switch on PRO to see the mix). The default reflects the all-weather weights above (global equities as the core, SG dividends/REITs, gold and cash as explicit satellite sleeves). In the model, gold is sold at retirement and reallocated into 75% dividend stocks/S-REITs and 25% Singapore Savings Bonds, since it pays no income of its own to draw down. That is already reflected in the net worth and retirement income figures.</p>
         <div id="div-sim-end-anchor"></div>
   </div>
 </details>
       <details class="dd-card">
-  <summary><div class="num">2</div><span class="dd-txt"><span class="dd-title">Growth and value, across currencies</span><span class="dd-desc">Growth and value, spread across currencies -- not one bet on one style.</span></span></summary>
+  <summary><div class="num">2</div><span class="dd-txt"><span class="dd-title">Growth and value, across currencies</span><span class="dd-desc">The model spreads across styles and currencies rather than one style.</span></span></summary>
   <div class="dd-body">
 
-        <p>Growth stocks compound earnings; value and dividend stocks pay you to wait — over long stretches each takes turns leading, so hold both and stop guessing. Spreading the portfolio across SGD income, USD/EUR/JPY-earning global companies and gold means no single central bank's decisions control your future — multi-currency dividends are a natural hedge nobody charges you for.</p>
-        <div class="formula">One world index ETF already spans ~50 currencies and both styles. Simplicity is the feature.</div>
+        <p>Growth stocks compound earnings; value and dividend stocks pay you to wait — over long stretches each has taken turns leading, and the model includes both rather than assuming which will lead. Spreading across SGD income, USD/EUR/JPY-earning global companies and gold means no single central bank's decisions drive every holding, although currency and market risk remain.</p>
+        <div class="formula">A broad world index fund of the kind described above spans many currencies and both styles. Simpler structures can be modelled too.</div>
         </div>
 </details>
       <details class="dd-card">
-  <summary><div class="num">3</div><span class="dd-txt"><span class="dd-title">Hard assets against debasement and the debt cycle</span><span class="dd-desc">Hard assets that survive when governments quietly debase the currency.</span></span></summary>
+  <summary><div class="num">3</div><span class="dd-txt"><span class="dd-title">Why the model includes hard assets</span><span class="dd-desc">A view some investors hold about currency debasement and the debt cycle.</span></span></summary>
   <div class="dd-body">
 
-        <p>Over the short business cycle (~5–8 years) economies expand and contract; over the long-term debt cycle (decades) debt piles up until governments quietly inflate it away — which is currency debasement. Cash and long bonds are the casualties; property, gold and productive companies are the survivors. Your flat, your gold sleeve and your equities are the debasement protection; that's also why long bonds stay minimal.</p>
-        <div class="formula">Gold's job isn't return — it's to be the asset that can't be printed.</div>
+        <p>Over the short business cycle (~5–8 years) economies expand and contract; over the long-term debt cycle (decades) debt piles up until governments quietly inflate it away — which is currency debasement. On this view, cash and long bonds lose purchasing power, while property, gold and productive companies tend to hold theirs better. That is a viewpoint, not a certainty, and it can be wrong for long periods. It is why the model's default keeps long bonds minimal and includes a flat, gold and equities.</p>
+        <div class="formula">In this framing, gold is modelled for what it is (a non-printable asset that pays no income), not for return.</div>
         </div>
 </details>
       <details class="dd-card">
-  <summary><div class="num">4</div><span class="dd-txt"><span class="dd-title">Kill the fees before they kill the compounding</span><span class="dd-desc">A 1.5% fee can quietly eat a third of the final pot over 40 years.</span></span></summary>
+  <summary><div class="num">4</div><span class="dd-txt"><span class="dd-title">How much fees matter in the model</span><span class="dd-desc">A 1.5% fee can quietly eat a third of the final pot over 40 years.</span></span></summary>
   <div class="dd-body">
 
-        <p>Fees compound exactly like returns — against you. A "small" 1.5% annual management fee on a fund or ILP consumes roughly <b>a third of your final pot</b> over 40 years; 2%+ takes closer to 40%. The fix costs nothing: self-directed, low-cost index ETFs at 0.07–0.22%/yr, bought through a cheap brokerage, with no adviser trail fees, no wrap fees, no insurance-linked investment products.</p>
+        <p>Fees compound exactly like returns — against you. A "small" 1.5% annual management fee on a fund or ILP consumes roughly <b>a third of your final pot</b> over 40 years; 2%+ takes closer to 40%. This is why the model assumes low ongoing costs. Costs vary widely between products and providers, so compare the fees, features and risks of anything you consider, and ask a licensed financial adviser if unsure.</p>
         <div class="formula">S$1,000/mo × 40 yrs: 6% → ~S$1.86m · 6% minus 1.5% fees → ~S$1.28m. The fee "only" cost you S$580k.</div>
         </div>
 </details>
       <details class="dd-card">
-  <summary><div class="num">5</div><span class="dd-txt"><span class="dd-title">Squeeze every Singapore tax advantage</span><span class="dd-desc">No capital gains tax, tax-free dividends, and the right wrapper.</span></span></summary>
+  <summary><div class="num">5</div><span class="dd-txt"><span class="dd-title">Singapore tax features the model reflects</span><span class="dd-desc">No capital gains tax, tax-free dividends, and why fund domicile can matter.</span></span></summary>
   <div class="dd-body">
 
-        <p>Singapore is one of the best places on Earth to be an investor: <b>no capital gains tax</b>, and <b>SG dividends are tax-free</b> in your hands. For global stocks, <b>the fund's domicile matters</b>: Irish-domiciled funds are commonly cited for a lower US dividend withholding rate (15% vs 30%) and for avoiding the US estate-tax exposure that US-listed funds carry above US$60k. Check the current rules for your own situation. Add <b>SRS</b> once you're meaningfully taxed (see the calculator), and CPF top-ups only when the relief actually bites.</p>
-        <div class="formula">Same world portfolio, wrong wrapper ≈ 0.3–0.5%/yr lost to withholding — another silent fee.</div>
+        <p>Singapore has <b>no capital gains tax</b>, and <b>SG dividends are tax-free</b> in your hands. For global stocks, <b>the fund's domicile matters</b>: Irish-domiciled funds are commonly cited for a lower US dividend withholding rate (15% vs 30%) and for avoiding the US estate-tax exposure that US-listed funds carry above US$60k. Rules change and your own situation may differ, so check current rules with IRAS or a qualified adviser. SRS and CPF top-ups give tax relief only to people who pay enough income tax; the calculator shows how that plays out on your inputs.</p>
+        <div class="formula">Withholding tax differences are commonly estimated at roughly 0.3–0.5%/yr, a cost that works like a fee.</div>
         </div>
 </details>
       <details class="dd-card">
-  <summary><div class="num">6</div><span class="dd-txt"><span class="dd-title">Rebalance every six months — mechanically</span><span class="dd-desc">Twice a year, on fixed dates -- the calendar does the discipline.</span></span></summary>
+  <summary><div class="num">6</div><span class="dd-txt"><span class="dd-title">Rebalancing, as one common approach</span><span class="dd-desc">The model's projection assumes the mix is kept at its stated weights.</span></span></summary>
   <div class="dd-body">
 
-        <p>Twice a year, on fixed dates, sell whatever has grown past its target weight and top up whatever has fallen below. That's it. The calendar — not your feelings — makes you trim euphoria and buy fear, harvesting the swings of the business cycle automatically. In Singapore there's no capital gains tax to punish the trades, so rebalancing here is unusually cheap.</p>
-        <div class="formula">Six-monthly is frequent enough to capture cycles, rare enough to let winners run and keep costs near zero.</div>
-        <button type="button" class="hero-cta" id="btn-add-rebalance-cal" style="width:100%;margin-top:14px">📅 Add rebalance reminder to your calendar</button>
+        <p>One common approach is to rebalance on fixed dates, say twice a year: bring holdings that have grown past their target weight back down and those that have fallen back up. A calendar rule can reduce the pull to act on emotion. Rebalancing does not guarantee better returns, and trading costs and your own tax position still matter. The model simply assumes the stated mix is maintained.</p>
+        <div class="formula">Six-monthly is just one example of a schedule; there is no single correct frequency.</div>
+        <button type="button" class="hero-cta" id="btn-add-rebalance-cal" style="width:100%;margin-top:14px">📅 Optional: add a six-monthly reminder to my calendar</button>
         </div>
 </details>
       <details class="dd-card">
-  <summary><div class="num">7</div><span class="dd-txt"><span class="dd-title">Maximise net income over time — not the biggest number on a screen</span><span class="dd-desc">The end state is a set of reliable, growing, lightly-taxed income streams.</span></span></summary>
+  <summary><div class="num">7</div><span class="dd-txt"><span class="dd-title">Income, not just a pot</span><span class="dd-desc">The model looks at the income streams a plan could produce, not only the biggest number.</span></span></summary>
   <div class="dd-body">
 
-        <p>The end state isn't a pot; it's a set of reliable, growing, lightly-taxed income streams: tax-free SG dividends and REIT distributions, global dividends compounding inside low-cost funds, CPF LIFE for life, interest on the dry powder — with gold and insurance standing guard so a bad year never forces a fire sale. Diversification keeps the streams flowing in every season; zero fees and Singapore's tax code make sure you keep what they produce; the six-month rebalance keeps the machine tuned. Boring, repeatable, and very hard to kill.</p>
+        <p>The model treats retirement as a set of income streams rather than a single pot: SG dividends and REIT distributions (tax-free in Singapore for individuals), global dividends, CPF LIFE payouts, and interest on cash and bonds. Gold and insurance appear in the illustration as buffers against forced selling. None of these streams is guaranteed except as CPF LIFE's own rules provide, dividends can be cut, and the model shows illustrations, not outcomes you can count on.</p>
         </div>
 </details>
     </section>
@@ -2774,14 +2793,14 @@
       <div class="callout">
 
         <p style="font-size:13.5px;color:#E8D4D0;line-height:1.65;margin:0">I built this app to show how well thought out Singapore's housing, tax, CPF, SRS, grants, and transport policies are — well enough integrated that even a fast-food worker can become a homeowner and a millionaire here. Having lived in ten countries, I've never come across a system that pulls together this well.</p>
-        <p style="font-size:13.5px;color:#E8D4D0;line-height:1.65;margin:12px 0 0">But making full use of everything Singapore offers is genuinely complex, and most young people don't have the exposure to see how the pieces fit together — so they start late. This app exists to kickstart that: to make the levers visible, so more Singaporeans can minimise tax, maximise returns through consistent, rather boring, safe investing, and reach homeownership and millionaire status well before retirement age.</p>
+        <p style="font-size:13.5px;color:#E8D4D0;line-height:1.65;margin:12px 0 0">But making full use of everything Singapore offers is genuinely complex, and most young people don't have the exposure to see how the pieces fit together — so they start late. This app exists to help with that: to make the levers visible, so more Singaporeans can understand the system, make informed saving and investing decisions, and see how different choices could affect their path toward homeownership and retirement.</p>
         <p style="font-size:13.5px;color:#E8D4D0;line-height:1.65;margin:12px 0 0">Built over the course of a couple of weeks, iterating conversationally with Claude — every formula checked against official CPF, IRAS, and HDB sources along the way, refined step by step rather than written once and left alone.</p>
         <p style="font-size:13.5px;color:#E8D4D0;line-height:1.65;margin:12px 0 0">The wage examples used throughout — "Fast Food Restaurant worker," "Taxi Driver," and others — are generic, illustrative occupational categories, not references to any specific real company or brand. They're chosen to represent realistic entry-level and everyday Singapore wages, so the numbers feel grounded rather than abstract.</p>
       </div>
   </div>
 </details>
 
-    <details class="dd-card">
+    <details class="dd-card" id="dd-legal-disclaimer">
   <summary><div class="num">2</div><span class="dd-txt"><span class="dd-title">Please read before acting on anything here</span><span class="dd-desc">An illustration, not advice -- and why that distinction matters.</span></span></summary>
   <div class="dd-body">
       <div class="callout">
@@ -2789,6 +2808,10 @@
         <ul>
           <li>This entire app is an <b>illustration</b> — a "millionaire roadmap" showing what disciplined saving and investing inside Singapore's system could look like over a career. It is <b>not financial, tax, legal, or investment advice</b>, and nothing here should be treated as a personal recommendation.</li>
           <li><b>Every investor is responsible for their own investment decisions.</b> The general information and asset-allocation examples here are <b>not regulated financial advice under the Financial Advisers Act</b>, and you may wish to approach a licensed financial adviser before relying on them to make any decision to buy, sell or hold any investment product. Please evaluate any investment, product, or strategy independently before acting on it. Past or projected returns (including the STI's assumed 6%/yr, and the ~6-8%/yr assumed for the global equities, SG dividend stocks/REITs and gold sleeves) are not guaranteed and real outcomes will differ.</li>
+          <li><b>No product recommendations.</b> This app does not name or recommend any specific fund, ETF, share, insurance or other product. The portfolio split shown is a <b>user-adjustable modelling assumption</b>, not a suggested allocation, and the dollar figures beside it are modelling outputs, not instructions to buy anything.</li>
+          <li><b>Scores, verdicts and &ldquo;what-ifs&rdquo;.</b> Stars, &ldquo;on track&rdquo; labels and ranked what-if changes only compare the model&rsquo;s result with the goal you typed in. They are not a rating of any investment and not a suggestion of what you should do. A &ldquo;modelled requirement&rdquo; is a mathematical result under your chosen assumptions. The app does not assess whether anything is suitable for you.</li>
+          <li><b>Share links and images contain your numbers.</b> A scenario link or a downloaded image shows the figures you entered or the results they produced. Share them only with people you want to see them. They are illustrations under your chosen assumptions, not forecasts or advice.</li>
+          <li><b>Independence.</b> The app is free, carries no ads, and receives no commission, referral fee or payment from any financial product provider.</li>
           <li>This app was <b>built with Claude (Anthropic) in a single day</b>. It is a genuinely large, fast build, and it is <b>likely that some errors, rounding quirks, or outdated assumptions remain</b> in the calculations, tax brackets, CPF rules, or grant figures. Please double-check anything that matters to you against official sources (IRAS, CPF Board, HDB, MAS) before relying on it.</li>
           <li>Figures reference Singapore rules and rates believed accurate as of construction (2025–26) — CPF rates, tax brackets, grant amounts, COE prices and similar figures change over time and should be reverified.</li>
         </ul>
@@ -2944,7 +2967,7 @@
     ['cover','The Claim','The argument, in one screen'],
     ['calc','Your Number','Housing, career and allocation sliders -- your own live projection'],
     ['buy','How It Works','The playbook and the maths, step by step'],
-    ['why','What Breaks It','Ten traps that derail the plan -- and the fixes'],
+    ['why','What Breaks It','Ten traps that derail the plan -- and common approaches to them'],
     ['portfolio','Go Further','Six principles, a diversification simulator, and the glossary'],
     ['legal','Legal & Contact','Disclaimer, privacy, and why this was built']
   ];
@@ -3724,8 +3747,8 @@
         'PRODID:-//Financial Gladiator//Singapore Millionaire Roadmap//EN',
         'CALSCALE:GREGORIAN','BEGIN:VEVENT','UID:'+uid,'DTSTAMP:'+fmtStamp(now),
         'DTSTART;VALUE=DATE:'+fmtDate(first),'RRULE:FREQ=MONTHLY;INTERVAL=6',
-        'SUMMARY:Rebalance your portfolio',
-        'DESCRIPTION:Sell whatever has grown past its target weight\\, top up whatever has fallen below. The calendar does the discipline\\, not your feelings.',
+        'SUMMARY:Review my portfolio (reminder from an educational app)',
+        'DESCRIPTION:A reminder you chose to set. One common approach is to compare holdings with your own target weights on fixed dates. This is not financial advice\\; speak to a licensed adviser about your own decisions.',
         'END:VEVENT','END:VCALENDAR'
       ].join('\r\n');
       try{
@@ -3740,7 +3763,8 @@
 
   /* ===== PRIVACY NOTICE: shown once, on first visit, cover tab only ===== */
   (function(){
-    var STORAGE_KEY='sgmr_privacy_seen';
+    var STORAGE_KEY='sgmr_notice_v2';
+    try{ localStorage.removeItem('sgmr_privacy_seen'); }catch(e){}
     var pModal=document.getElementById('privacy-modal');
     if(!pModal) return;
     function closePrivacyModal(){
@@ -3751,9 +3775,10 @@
     try{ seen=localStorage.getItem(STORAGE_KEY)==='1'; }catch(e){}
     if(!seen) pModal.classList.add('open');
     var pClose=document.getElementById('privacy-modal-close'), pOk=document.getElementById('privacy-modal-ok');
+    window.__closeNotice=closePrivacyModal;
     if(pClose) pClose.addEventListener('click', closePrivacyModal);
     if(pOk) pOk.addEventListener('click', closePrivacyModal);
-    pModal.addEventListener('click', function(e){ if(e.target===pModal) closePrivacyModal(); });
+    // Deliberately no backdrop-click dismissal: the notice needs an explicit button press.
   })();
 
   // Global glossary, reachable from every tab via the "?" button in the header --
@@ -7505,8 +7530,9 @@
         var k=tr.getAttribute('data-trust');
         if(k==='assump') goTab('calc','dd-assumptions');
         else if(k==='checks') goTab('calc','dd-selfcheck');
-        else if(k==='limits') goTab('legal','dd-legal-data');
+        else if(k==='limits'){ if(window.__closeNotice&&$('privacy-modal')&&$('privacy-modal').classList.contains('open')) window.__closeNotice(); goTab('legal','dd-legal-data'); }
         else if(k==='privacy'){ var m=$('privacy-modal'); if(m) m.classList.add('open'); }
+        else if(k==='disclaimer'){ var pm=$('privacy-modal'); if(pm&&pm.classList.contains('open')&&window.__closeNotice) window.__closeNotice(); goTab('legal','dd-legal-disclaimer'); }
       });
       var A=ASSUMPTIONS;
       Array.prototype.forEach.call(document.querySelectorAll('[data-trust-hint]'), function(el){
@@ -7525,7 +7551,7 @@
         el.innerHTML=h; el.setAttribute('aria-label',label+': '+score+' out of 5 stars');
       }
       function toStars(x){ return Math.max(0,Math.min(5,Math.floor(x*10)/2)); }
-      function shortLabel(s){ return s.replace(/\s*\(.*$/,'').replace(/^Save at least /,'Save ').replace(' of your take-home',''); }
+      function shortLabel(s){ return s.replace(/\s*\(.*$/,'').replace(/^Save at least /,'Saving ').replace(' of your take-home',''); }
       function renderFast(){
         var o, r; try{ o=readOpts(); r=project(o); }catch(e){ return null; }
         var target=parseFloat($('rd-target').value)||2400, proj=Math.max(0,r.income/r.disc), ratio=target>0?proj/target:0;
@@ -7548,8 +7574,8 @@
       function paintAnswer(){
         var A=ansState; if(!A||!$('ans-verdict')) return;
         var gap=Math.max(0,A.target-A.proj), lead, bad=false;
-        if(A.ratio>=1) lead='On track.'; else if(A.ratio>=0.8){ lead='Close.'; } else { lead='At risk.'; bad=true; }
-        $('ans-verdict').innerHTML='<span class="ans-lead'+(bad?' bad':'')+'">'+lead+'</span> At 65 your plan pays about '+fmt(A.proj)+' a month'+(A.ratio>=1?', against your '+fmt(A.target)+' goal':', '+fmt(gap)+' short of your '+fmt(A.target)+' goal')+' (today\u2019s dollars).';
+        if(A.ratio>=1) lead='Model: on track.'; else if(A.ratio>=0.8){ lead='Model: close.'; } else { lead='Model: short of goal.'; bad=true; }
+        $('ans-verdict').innerHTML='<span class="ans-lead'+(bad?' bad':'')+'">'+lead+'</span> Under your assumptions, the plan pays about '+fmt(A.proj)+' a month at 65'+(A.ratio>=1?', against your '+fmt(A.target)+' goal':', '+fmt(gap)+' short of your '+fmt(A.target)+' goal')+' (today\u2019s dollars).';
         var risk='', rbad=false, o=A.o, r=A.r, sr=A.sr, f95=A.res95;
         if(r.distressYears>0){ rbad=true; risk='Between ages '+r.distressFirstAge+' and '+r.distressLastAge+', housing, car and family costs exceed your take-home pay.'; }
         else if(sr&&sr.pre){ rbad=true; risk='Your savings outside CPF run out at age '+sr.pre.first+', before CPF LIFE starts at 65; about '+fmtK(sr.pre.at65>0?sr.pre.at65:sr.pre.peak)+(sr.pre.at65>0?' would be owed at 65.':' would need borrowing at the peak.'); }
@@ -7561,7 +7587,7 @@
           else risk='No red flags in the average case, and '+pc+'% of simulated markets fund your spending to age 95.';
         } else risk='Checking 1,500 simulated markets\u2026';
         var rEl=$('ans-risk'); rEl.textContent=risk; rEl.className='ans-v'+(rbad?' bad':'');
-        $('ans-move').textContent=A.top?(shortLabel(A.top.label)+', about +'+fmt(A.top.add)+' a month at retirement.'):'No single change moves it much.';
+        $('ans-move').textContent=A.top?('In the model, \u201c'+shortLabel(A.top.label)+'\u201d adds about '+fmt(A.top.add)+' a month at retirement.'):'No single change moves it much.';
       }
       var timer=null, dirty=true, gen=0, rafId=0, quickMs=10, lastQuick=0;
       // The bar's second row (the two star ratings) opens only once the real scorecard has
@@ -7642,30 +7668,30 @@
 
     // Ranked levers shared by the readiness section and the cover's plain-English card.
     var LEVER_INFO=[
-      ['Save 5% more',{why:'More money is invested every month, so it has more years to compound and a bigger pot is drawn down in retirement.',cost:'Lower spending today: the model takes the extra 5% out of take-home pay, so lifestyle spending falls.',assume:'Markets return your chosen rates; the extra saving goes into your own investment mix and is not spent elsewhere.',limit:'Needs room in your budget. The model does not check whether the lower spending is realistic for you.'}],
-      ['Earn 10% more',{why:'A higher salary raises take-home pay, CPF contributions and the amount available to invest, all of which compound.',cost:'Often more hours, risk or effort; extra income is also taxed, and CPF contributions stop at the wage ceiling.',assume:'The whole 10% persists for your whole career and your spending habits stay the same.',limit:'A raise is not in your direct control, and not every employer or role can deliver it.'}],
-      ['Work 3 more',{why:'Three more working years add contributions and compounding, and shorten the time the pot must last.',cost:'Three fewer years of retirement, and health or job availability may not allow it.',assume:'You keep earning your projected salary until the new age and CPF keeps being paid in.',limit:'CPF LIFE still starts at 65 or later, whatever your work age.'}],
-      ['Skip the car',{why:'A car in Singapore is a large recurring cost; removing it frees that money for investing.',cost:'Convenience and time, depending on where you live and work.',assume:'You use public transport or other options at their current cost, not counted here.',limit:'Transport costs without a car are not modelled, so the benefit may be overstated.'}],
-      ['Skip the condo',{why:'A condo upgrade means a bigger mortgage and costs; skipping it keeps that cash and CPF working elsewhere.',cost:'You stay in the smaller or older home, and home price growth you might have gained is not counted.',assume:'The condo is bought with the loan and costs set in this app.',limit:'Property appreciation and rental income vary a lot and are only simply modelled.'}],
-      ['Have a smaller wedding',{why:'A one-off cost is avoided, so that money is invested instead and compounds.',cost:'A different wedding from the one you may want; this is personal and not a financial judgement.',assume:'The saved amount is invested from that age.',limit:'The effect is usually small compared with ongoing savings.'}],
-      ['Stop the parental',{why:'The monthly allowance stops, so that money is invested instead.',cost:'Family support is a personal and cultural choice; this shows a cost, not a recommendation.',assume:'You would have paid it until 65 and it rises with inflation.',limit:'Also removes the small Parent Relief tax saving the model applies.'}],
-      ['Save 75% of every raise',{why:'Raises are saved rather than absorbed into lifestyle, so saving grows with income.',cost:'Your lifestyle rises more slowly than your pay.',assume:'You have raises each year as per your growth setting.',limit:'Depends on how much your pay actually rises.'}],
+      ['Saving 5% more',{why:'More money is invested every month, so it has more years to compound and a bigger pot is drawn down in retirement.',cost:'Lower spending today: the model takes the extra 5% out of take-home pay, so lifestyle spending falls.',assume:'Markets return your chosen rates; the extra saving goes into your own investment mix and is not spent elsewhere.',limit:'Needs room in your budget. The model does not check whether the lower spending is realistic for you.'}],
+      ['Earning 10% more',{why:'A higher salary raises take-home pay, CPF contributions and the amount available to invest, all of which compound.',cost:'Often more hours, risk or effort; extra income is also taxed, and CPF contributions stop at the wage ceiling.',assume:'The whole 10% persists for your whole career and your spending habits stay the same.',limit:'A raise is not in your direct control, and not every employer or role can deliver it.'}],
+      ['Working 3 more',{why:'Three more working years add contributions and compounding, and shorten the time the pot must last.',cost:'Three fewer years of retirement, and health or job availability may not allow it.',assume:'You keep earning your projected salary until the new age and CPF keeps being paid in.',limit:'CPF LIFE still starts at 65 or later, whatever your work age.'}],
+      ['Without the car',{why:'A car in Singapore is a large recurring cost; removing it frees that money for investing.',cost:'Convenience and time, depending on where you live and work.',assume:'You use public transport or other options at their current cost, not counted here.',limit:'Transport costs without a car are not modelled, so the benefit may be overstated.'}],
+      ['Without the condo',{why:'A condo upgrade means a bigger mortgage and costs; skipping it keeps that cash and CPF working elsewhere.',cost:'You stay in the smaller or older home, and home price growth you might have gained is not counted.',assume:'The condo is bought with the loan and costs set in this app.',limit:'Property appreciation and rental income vary a lot and are only simply modelled.'}],
+      ['A smaller wedding',{why:'A one-off cost is avoided, so that money is invested instead and compounds.',cost:'A different wedding from the one you may want; this is personal and not a financial judgement.',assume:'The saved amount is invested from that age.',limit:'The effect is usually small compared with ongoing savings.'}],
+      ['Without the parental',{why:'The monthly allowance stops, so that money is invested instead.',cost:'Family support is a personal and cultural choice; this shows a cost, not a recommendation.',assume:'You would have paid it until 65 and it rises with inflation.',limit:'Also removes the small Parent Relief tax saving the model applies.'}],
+      ['Saving 75% of every raise',{why:'Raises are saved rather than absorbed into lifestyle, so saving grows with income.',cost:'Your lifestyle rises more slowly than your pay.',assume:'You have raises each year as per your growth setting.',limit:'Depends on how much your pay actually rises.'}],
       ['Hold',{why:'Global equities have a higher expected return than cash in this model, so more money compounds faster.',cost:'More ups and downs: a bad stretch can leave you with less than before, and the Monte Carlo shows how wide the range is.',assume:'The expected returns in Return &amp; risk assumptions hold on average over decades.',limit:'Expected return is not a promise. Whether more risk suits someone depends on their own situation, which this tool cannot assess.'}]
     ];
     function leverInfoFor(label){ for(var i=0;i<LEVER_INFO.length;i++){ if(label.indexOf(LEVER_INFO[i][0])===0) return LEVER_INFO[i][1]; } return null; }
     function sgmrRankLevers(o, r, proj){
         var disc=r.disc, L=[];
-        L.push({label:'Save 5% more of your take-home', fn:function(a){ return nudgeSaveRate(a,5); }});
-        L.push({label:'Earn 10% more (raise, promotion or side income)', fn:function(a){ var b=clone(a); b.sal0=a.sal0*1.1; return b; }});
+        L.push({label:'Saving 5% more of your take-home', fn:function(a){ return nudgeSaveRate(a,5); }});
+        L.push({label:'Earning 10% more (raise, promotion or side income)', fn:function(a){ var b=clone(a); b.sal0=a.sal0*1.1; return b; }});
         var wt=(o.workTill!==undefined)?o.workTill:65;
-        if(wt<65){ var nw=Math.min(65,wt+3); L.push({label:'Work 3 more years (until '+nw+')', fn:function(a){ var b=clone(a); b.workTill=Math.min(65,((a.workTill!==undefined)?a.workTill:65)+3); return b; }}); }
-        if(o.car) L.push({label:'Skip the car', fn:function(a){ var b=clone(a); b.car=false; return b; }});
-        if(o.condo) L.push({label:'Skip the condo upgrade', fn:function(a){ var b=clone(a); b.condo=false; return b; }});
-        if(!o.single && o.wedding>0 && o.marryAge>o.age) L.push({label:'Have a smaller wedding', fn:function(a){ var b=clone(a); b.wedding=0; return b; }});
-        if(o.pa>0) L.push({label:'Stop the parental allowance', fn:function(a){ var b=clone(a); b.pa=0; return b; }});
-        if(o.raiseFloorPct!==0.75) L.push({label:'Save 75% of every raise', fn:function(a){ var b=clone(a); b.raiseFloorPct=0.75; return b; }});
+        if(wt<65){ var nw=Math.min(65,wt+3); L.push({label:'Working 3 more years (until '+nw+')', fn:function(a){ var b=clone(a); b.workTill=Math.min(65,((a.workTill!==undefined)?a.workTill:65)+3); return b; }}); }
+        if(o.car) L.push({label:'Without the car', fn:function(a){ var b=clone(a); b.car=false; return b; }});
+        if(o.condo) L.push({label:'Without the condo upgrade', fn:function(a){ var b=clone(a); b.condo=false; return b; }});
+        if(!o.single && o.wedding>0 && o.marryAge>o.age) L.push({label:'A smaller wedding', fn:function(a){ var b=clone(a); b.wedding=0; return b; }});
+        if(o.pa>0) L.push({label:'Without the parental allowance', fn:function(a){ var b=clone(a); b.pa=0; return b; }});
+        if(o.raiseFloorPct!==0.75) L.push({label:'Saving 75% of every raise', fn:function(a){ var b=clone(a); b.raiseFloorPct=0.75; return b; }});
         var shift=Math.min(0.10,o.divCash||0);
-        if(shift>=0.05) L.push({label:'Hold '+Math.round(shift*100)+'% less cash and '+Math.round(shift*100)+'% more global equities (higher expected return, but more ups and downs)', fn:function(a){ var b=clone(a); var sh=Math.min(0.10,a.divCash||0); b.divCash=a.divCash-sh; b.divGetf=a.divGetf+sh; return b; }});
+        if(shift>=0.05) L.push({label:'Holding '+Math.round(shift*100)+'% less cash and '+Math.round(shift*100)+'% more global equities (higher expected return, but more ups and downs)', fn:function(a){ var b=clone(a); var sh=Math.min(0.10,a.divCash||0); b.divCash=a.divCash-sh; b.divGetf=a.divGetf+sh; return b; }});
         var res=[];
         L.forEach(function(lv){
           try{ var oa=lv.fn(o), ra=project(oa); var d=(ra.income/ra.disc)-proj; if(d>1) res.push({label:lv.label,fn:lv.fn,add:d,info:leverInfoFor(lv.label)}); }catch(e){}
@@ -7826,8 +7852,8 @@
         var idxWord = cd.idx===0 ? 'your' : 'their';
         window.renderImpactCard('pg-life-card-'+cd.idx, {
           title: cd.p.label+' death / TPD cover',
-          sub: 'National guideline (MAS/MoneySense): 9\u00d7 '+idxWord+' own annual income, plus any joint mortgage, minus the automatic CPF Dependants\u2019 Protection Scheme.',
-          beforeLabel: 'Recommended',
+          sub: 'National guideline (MAS/MoneySense): 9\u00d7 '+idxWord+' own annual income, plus any joint mortgage, minus the automatic CPF Dependants\u2019 Protection Scheme. A published rule of thumb for illustration, not a recommendation to buy cover or an assessment of what suits you.',
+          beforeLabel: 'Guideline amount',
           beforeRows: [
             {k:'9\u00d7 '+idxWord+' own annual income', v:fmtDollar(cd.lifeIncomePart)},
             {k:'+ Household mortgage', v:fmtDollar(cd.mortgage)},
@@ -7835,18 +7861,18 @@
           ],
           afterLabel: 'Your stated cover',
           afterRows: [{k:'Current cover', v:fmtDollar(cd.lifeHave)}],
-          diffLabel: cd.lifeGapVal>0 ? 'Shortfall' : 'Fully covered',
+          diffLabel: cd.lifeGapVal>0 ? 'Gap to guideline' : 'Meets guideline',
           diffValue: cd.lifeGapVal>0 ? fmtDollar(cd.lifeGapVal) : '\u2705 S$0',
           diffDirection: cd.lifeGapVal>0 ? 'down' : 'up'
         });
         window.renderImpactCard('pg-ci-card-'+cd.idx, {
           title: cd.p.label+' critical illness cover',
-          sub: 'National guideline: 4\u00d7 '+idxWord+' own annual income. No mortgage or DPS offset -- DPS is a death/TPD-only scheme.',
-          beforeLabel: 'Recommended',
+          sub: 'National guideline: 4\u00d7 '+idxWord+' own annual income. No mortgage or DPS offset -- DPS is a death/TPD-only scheme. A published rule of thumb, not a recommendation or suitability assessment.',
+          beforeLabel: 'Guideline amount',
           beforeRows: [{k:'4\u00d7 '+idxWord+' own annual income', v:fmtDollar(cd.ciNeed)}],
           afterLabel: 'Your stated cover',
           afterRows: [{k:'Current cover', v:fmtDollar(cd.ciHave)}],
-          diffLabel: cd.ciGapVal>0 ? 'Shortfall' : 'Fully covered',
+          diffLabel: cd.ciGapVal>0 ? 'Gap to guideline' : 'Meets guideline',
           diffValue: cd.ciGapVal>0 ? fmtDollar(cd.ciGapVal) : '\u2705 S$0',
           diffDirection: cd.ciGapVal>0 ? 'down' : 'up'
         });
@@ -8085,11 +8111,11 @@
         if(res.error){
           resultEl.innerHTML='⚠ '+res.error;
         } else if(res.alreadyThere){
-          resultEl.innerHTML='✓ <b>Already on track.</b> Even at the low end of this lever\'s range, your current scenario clears '+fmtK(todayTarget)+' by age '+targetAge+'.';
+          resultEl.innerHTML='✓ <b>Already reaches it in the model.</b> Even at the low end of this lever\'s range, your current scenario clears '+fmtK(todayTarget)+' by age '+targetAge+'.';
         } else if(!res.achievable){
-          resultEl.innerHTML='⚠ <b>Not reachable by this lever alone.</b> Even at the extreme ('+fmtLeverValue(lever,res.extreme)+'), the projection only reaches '+fmtK(res.extremeNW)+' by age '+targetAge+' — short of '+fmtK(todayTarget)+'. Try a different lever, a later age, or a smaller goal.';
+          resultEl.innerHTML='⚠ <b>Not reachable by this lever alone.</b> Even at the extreme ('+fmtLeverValue(lever,res.extreme)+'), the projection only reaches '+fmtK(res.extremeNW)+' by age '+targetAge+' — short of '+fmtK(todayTarget)+'. You can model a different lever, a later age, or a smaller goal.';
         } else {
-          resultEl.innerHTML='<b>'+fmtLeverValue(lever,res.value)+'</b> would get you there, holding everything else in your current scenario fixed.';
+          resultEl.innerHTML='<b>Modelled requirement: '+fmtLeverValue(lever,res.value)+'</b> to reach '+fmtK(todayTarget)+' by age '+targetAge+', under your selected assumptions and holding everything else in your current scenario fixed. A mathematical result, not a recommendation.';
         }
       });
     })();
@@ -8342,7 +8368,7 @@
       setWhatIfEnabled('wi-car', true, !carUnaffordable);
       if(!carUnaffordable){
         paintWhatIf('wi-car', whatIfDelta(WHATIF_DEFS.car.mutate),
-          carOn?'Skip the car':'Buy a car at '+$('i-carage').value);
+          carOn?'Without the car':'With a car at '+$('i-carage').value);
       }
       var canBigger = whatIfOn.flat || flatIdx<3;
       // Same affordability gate as the car, for the same reason, with the same
@@ -8351,7 +8377,7 @@
       setWhatIfEnabled('wi-flat', canBigger, !flatUnaffordable);
       if(!flatUnaffordable){
         paintWhatIf('wi-flat', canBigger?whatIfDelta(WHATIF_DEFS.flat.mutate):null,
-          canBigger?('Buy a '+FLATS[Math.min(flatIdx+1,3)].n+' instead'):'Already the largest flat');
+          canBigger?('With a '+FLATS[Math.min(flatIdx+1,3)].n+' instead'):'Already the largest flat');
       }
       setWhatIfEnabled('wi-halfraise', true, true);
       // Same delta pattern as every other chip: current settings vs one change --
@@ -8525,13 +8551,13 @@
       }
       if(navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext){
         navigator.clipboard.writeText(url).then(function(){
-          autoClear('✅ Link copied — paste it anywhere to share these exact numbers.'+fileWarning);
+          autoClear('✅ Link copied. It contains the numbers you entered, so share it only with people you want to see them.'+fileWarning);
         }).catch(function(){
-          if(legacyCopy(url)) autoClear('✅ Link copied — paste it anywhere to share these exact numbers.'+fileWarning);
+          if(legacyCopy(url)) autoClear('✅ Link copied. It contains the numbers you entered, so share it only with people you want to see them.'+fileWarning);
           else showRawLink();
         });
       } else if(legacyCopy(url)){
-        autoClear('✅ Link copied — paste it anywhere to share these exact numbers.'+fileWarning);
+        autoClear('✅ Link copied. It contains the numbers you entered, so share it only with people you want to see them.'+fileWarning);
       } else {
         showRawLink();
       }
@@ -8867,7 +8893,7 @@
 
       ctx.fillStyle='#A5ADA6';
       ctx.font='700 29px "Space Mono"';
-      ctx.fillText('MY PROJECTED RETIREMENT INCOME', 60, 264);
+      ctx.fillText('MY ILLUSTRATED RETIREMENT INCOME', 60, 264);
 
       var heroSize=fitSize(ctx,inc,W-120,138,'800','Bricolage Grotesque');
       ctx.fillStyle='#FF7A33';
@@ -8876,7 +8902,7 @@
 
       ctx.fillStyle='#A5ADA6';
       ctx.font='600 27px "Space Mono"';
-      ctx.fillText("in today's dollars, for life", 60, 264+heroSize+40);
+      ctx.fillText("a month, in today's dollars, under my assumptions", 60, 264+heroSize+40);
 
       var chartY=264+heroSize+100, chartH=360;
       drawMiniChart(ctx, 60, chartY, W-120, chartH);
@@ -8916,8 +8942,9 @@
       ctx.font='800 40px "Bricolage Grotesque"';
       ctx.fillText('Try your own numbers →', W/2, logoCy+logoSize/2+60);
       ctx.fillStyle='#A5ADA6';
-      ctx.font='600 25px "Space Mono"';
-      ctx.fillText('Financial Gladiator · illustration only, not financial advice', W/2, logoCy+logoSize/2+96);
+      ctx.font='600 23px "Space Mono"';
+      ctx.fillText('Illustration under my chosen assumptions.', W/2, logoCy+logoSize/2+94);
+      ctx.fillText('Not a forecast or financial advice.', W/2, logoCy+logoSize/2+126);
     }
 
     // The Story layout itself -- one hero number, one personal line, one hook,
@@ -8972,7 +8999,7 @@
       if(showHeadline){
         ctx.fillStyle='#F3F5F0';
         ctx.font='700 48px "Bricolage Grotesque"';
-        wrapTextCentered(ctx, "I'm going to retire a", W/2, 346, W-160, 58);
+        wrapTextCentered(ctx, "Under my assumptions, I could retire a", W/2, 346, W-160, 58);
         var word = (nwToday!==null && nwToday>=2000000) ? 'multi-millionaire.' : 'millionaire.';
         var wordSize=fitSize(ctx,word,W-160,68,'800','Bricolage Grotesque');
         ctx.fillStyle='#FF7A33';
@@ -8988,7 +9015,7 @@
       ctx.fillText(nw, W/2, heroBase+heroSize*0.32);
       ctx.fillStyle='#A5ADA6';
       ctx.font='600 30px "Space Mono"';
-      ctx.fillText("net worth at 65, in today's dollars", W/2, heroBase+heroSize*0.32+62);
+      ctx.fillText("modelled net worth at 65, in today's dollars", W/2, heroBase+heroSize*0.32+62);
 
       var chartY=heroBase+heroSize*0.32+140, chartH=420;
       drawMiniChart(ctx, 90, chartY, W-180, chartH);
@@ -9025,13 +9052,13 @@
             var earlierY=lineY+startLines*52+50;
             ctx.fillStyle='#FF7A33';
             ctx.font='700 32px "Space Mono"';
-            wrapTextCentered(ctx, 'Starting '+yrs+' year'+(yrs===1?'':'s')+' earlier would\u2019ve added '+E.fmtK(earlierDelta)+' more by 65.', W/2, earlierY, W-180, 42);
+            wrapTextCentered(ctx, 'In the model, starting '+yrs+' year'+(yrs===1?'':'s')+' earlier adds '+E.fmtK(earlierDelta)+' more by 65.', W/2, earlierY, W-180, 42);
           }
         }catch(e){}
       }
 
       var logoSize=200;
-      var logoCy=H-230;
+      var logoCy=H-270;
       var logoImg=document.querySelector('.fg-logo');
       if(logoImg && logoImg.complete && logoImg.naturalWidth>0){
         ctx.save();
@@ -9045,8 +9072,9 @@
       ctx.font='800 40px "Bricolage Grotesque"';
       ctx.fillText('Try your own numbers →', W/2, logoCy+logoSize/2+60);
       ctx.fillStyle='#A5ADA6';
-      ctx.font='600 25px "Space Mono"';
-      ctx.fillText('Financial Gladiator · illustration only, not financial advice', W/2, logoCy+logoSize/2+96);
+      ctx.font='600 23px "Space Mono"';
+      ctx.fillText('Illustration under my chosen assumptions.', W/2, logoCy+logoSize/2+94);
+      ctx.fillText('Not a forecast or financial advice.', W/2, logoCy+logoSize/2+126);
     }
 
     // Centre-anchored line wrap -- the existing wrapText() is left-anchored (built for
@@ -9336,7 +9364,7 @@ function drawQuizResultCard(isStory){
           navigator.share({
             files:[file],
             title:'The Singapore Millionaire Roadmap',
-            text:"Here's my own numbers -- plug in yours:",
+            text:"My numbers from an educational planning illustration (not financial advice). Try yours:",
             url: url || undefined
           }).catch(function(e){
             if(e && e.name==='AbortError') return; // reader just closed the share sheet, not an error
@@ -10405,9 +10433,40 @@ function drawQuizResultCard(isStory){
     });
     guard('Privacy','The privacy notice and the legal section both say visits are counted',function(){
       var l=document.getElementById('legal-ver'), t1='';
-      Array.prototype.forEach.call(document.querySelectorAll('.privacy-body'),function(e){ t1+=' '+e.textContent; });
+      var pm=document.getElementById('privacy-modal'); t1=pm?pm.textContent:'';
       var li=l?l.closest('ul'):null, t2=li?li.textContent:'';
       return {pass:/GoatCounter/.test(t1)&&/GoatCounter/.test(t2), detail:'notice and legal section mention the counter'};
+    });
+    guard('Wording','The first-visit notice is layered: key statements, a link to the full disclaimer, and an explicit button',function(){
+      var pm=document.getElementById('privacy-modal'), t=pm?pm.textContent:'';
+      var ok=/Educational modelling only/.test(t)&&/does not recommend any investment, product, portfolio or transaction/.test(t)&&/not a forecast/i.test(t)&&/licensed financial adviser/.test(t)&&!!pm.querySelector('[data-trust="disclaimer"]')&&!!document.getElementById('privacy-modal-ok')&&!!document.getElementById('dd-legal-disclaimer');
+      return {pass:ok, detail:'notice, disclaimer link and target section present'};
+    });
+    guard('Wording','A short "Educational modelling only" statement sits above the personalised answer and on the cover',function(){
+      var n=document.querySelectorAll('.edu-note[role="note"]'), a=document.getElementById('answer'), prev=a?a.previousElementSibling:null;
+      return {pass:n.length>=2&&!!prev&&prev.classList.contains('edu-note')&&/does not assess whether any investment is suitable/.test(prev.textContent), detail:n.length+' statements found'};
+    });
+    guard('Wording','No page text promises "safe" investing, maximised returns, or a total income "for life"',function(){
+      var body=document.body.cloneNode(true);
+      Array.prototype.forEach.call(body.querySelectorAll('script,style,.gloss-item'),function(e){ e.remove(); });
+      var t=body.textContent;
+      var bad=[/safe investing/i,/maximi[sz]e returns/i,/a month,? for life/i,/costs you/i,/you should invest/i,/what to actually set up/i];
+      var hit=bad.filter(function(r){ return r.test(t); });
+      return {pass:hit.length===0, detail:hit.length?('found: '+hit.join(', ')):'none found'};
+    });
+    guard('Wording','Share text, link message and both images carry a not-advice line',function(){
+      var src=String(window.SGMR_SHARE_SRC||'');
+      var html=document.documentElement.outerHTML;
+      var n=(html.match(/Not a forecast or financial advice\./g)||[]).length;
+      return {pass:n>=2&&/educational planning illustration \(not financial advice\)/.test(html)&&/share it only with people you want to see them/.test(html), detail:n+' image footers, share text and link message present'};
+    });
+    guard('Wording','The investing principles read as description of the model, not instructions or product-class advice',function(){
+      var body=document.body.cloneNode(true);
+      Array.prototype.forEach.call(body.querySelectorAll('script,style'),function(e){ e.remove(); });
+      var t=body.textContent;
+      var bad=[/kill the fees/i,/squeeze every/i,/stop guessing/i,/no insurance-linked/i,/rebalance every six months/i,/bought through a cheap brokerage/i,/the fix costs nothing/i,/Skip the car/,/Stop the parental/];
+      var hit=bad.filter(function(r){ return r.test(t); });
+      return {pass:hit.length===0, detail:hit.length?('found: '+hit.join(', ')):'none found'};
     });
     guard('Your plan','Your current inputs give finite, sensible results',function(){
       var r=E.project(userBase);
