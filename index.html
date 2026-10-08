@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="color-scheme" content="light only">
 <meta name="supported-color-schemes" content="light">
 <title>The Singapore Millionaire Roadmap</title>
@@ -1194,7 +1195,7 @@
       <button id="privacy-modal-close" class="share-modal-close" aria-label="Close">✕</button>
       <div class="privacy-icon">🔒</div>
       <h3 class="privacy-title">Just so you know</h3>
-      <p class="privacy-body">This app doesn't have a server, and nothing you enter is ever sent anywhere. It doesn't save your numbers either: everything you type &mdash; your age, salary, savings &mdash; lives only on this page while it's open. Refresh or close the tab and it starts fresh from the Classic Saver profile. (Your browser only remembers that you've seen this notice.)</p>
+      <p class="privacy-body">This app doesn't have a server of its own, and nothing you enter is ever sent anywhere. The only thing counted is that the page was opened, by a privacy-friendly visit counter (GoatCounter) that sets no cookies and never receives your numbers or the contents of a share link. The app doesn't save your numbers either: everything you type &mdash; your age, salary, savings &mdash; lives only on this page while it's open. Refresh or close the tab and it starts fresh from the Classic Saver profile. (Your browser only remembers that you've seen this notice.)</p>
       <p class="privacy-body privacy-body-sub">Play with your real numbers freely &mdash; that's the whole point.</p>
       <button type="button" class="hero-cta" id="privacy-modal-ok" style="margin-top:6px">Got it, thanks</button>
     </div>
@@ -2800,7 +2801,7 @@
   <div class="dd-body">
       <div class="callout">
         <ul>
-          <li><b>Privacy.</b> There is no server. Nothing you type is sent anywhere, and none of your financial inputs are saved in your browser: refresh the page and it resets to the Classic Saver profile. The only thing the browser remembers is a one-time flag that you have seen the privacy notice. A share link puts your inputs in the link itself, so only share one with someone you want to see them.</li>
+          <li><b>Privacy.</b> The app has no server of its own. Nothing you type is sent anywhere. The site counts page visits with GoatCounter, a privacy-friendly counter that sets no cookies and receives only the page address without anything after it, so never your numbers or the contents of a share link. Your financial inputs are not saved in your browser: refresh the page and it resets to the Classic Saver profile. The only thing the browser remembers is a one-time flag that you have seen the privacy notice. A share link puts your inputs in the link itself, so only share one with someone you want to see them.</li>
           <li><b>When the rules were last reviewed.</b> Version <span id="legal-ver">2026.1</span>, last reviewed <span id="legal-rev">2026-10-06</span>, against the 1 Jan 2026 CPF and IRAS tables. Next scheduled review: January 2027. Rules are not updated automatically.</li>
           <li><b>What it assumes.</b> Investment returns and volatility are illustrative, not forecasts, and not drawn from a named data set. Every figure and its source is listed under <i>Rules &amp; assumptions used</i>.</li>
           <li><b>What it can&rsquo;t do.</b> It does not model healthcare shocks in its main results (long-term care is only an optional stress-test scenario), female CPF LIFE payouts, the Basic or Enhanced Retirement Sums, bonds as a separate asset, your own tax situation beyond the basics, or any change to the rules after the review date. It cannot review your actual portfolio or tell you what to buy.</li>
@@ -10396,6 +10397,18 @@ function drawQuizResultCard(isStory){
 
     // ---- Retirement cash flow, return sets, SRS and gold choices -----------
     function cf(mod, n){ var o=mk(mod); return M.run(o,n||1500,0,5).cashflow; }
+    guard('Privacy','The visit counter is told to send the page path only, never a share link\u2019s inputs',function(){
+      var g=window.goatcounter, tag=document.querySelector('script[data-goatcounter]');
+      var src=(g&&typeof g.path==='function')?String(g.path):'';
+      var ok=!!tag && /^https:\/\/[a-z0-9-]+\.goatcounter\.com\/count$/.test(tag.getAttribute('data-goatcounter')) && src.indexOf('search')<0 && src.indexOf('href')<0 && g.path()===(location.pathname||'/');
+      return {pass:ok, detail:'path override sends "'+(g&&g.path?g.path():'(missing)')+'" and never reads the query string'};
+    });
+    guard('Privacy','The privacy notice and the legal section both say visits are counted',function(){
+      var l=document.getElementById('legal-ver'), t1='';
+      Array.prototype.forEach.call(document.querySelectorAll('.privacy-body'),function(e){ t1+=' '+e.textContent; });
+      var li=l?l.closest('ul'):null, t2=li?li.textContent:'';
+      return {pass:/GoatCounter/.test(t1)&&/GoatCounter/.test(t2), detail:'notice and legal section mention the counter'};
+    });
     guard('Your plan','Your current inputs give finite, sensible results',function(){
       var r=E.project(userBase);
       return {pass: allFinite(r), detail:'net worth at 65 '+S(r.nw)+(r.distressYears>0?(', with '+r.distressYears+' year(s) where committed costs exceed take-home pay'):'')};
@@ -10513,5 +10526,12 @@ function drawQuizResultCard(isStory){
     });
   })();
 </script>
+<script>
+  // VISIT COUNTING (GoatCounter, no cookies). A share link carries the reader's own numbers in its address
+  // (?a=45&s=40500&nw=...), and GoatCounter's default is to send location.pathname + location.search. This override sends
+  // the page path ONLY, so no input value and no part of a share link ever leaves the page. Do not remove it.
+  window.goatcounter={ path:function(){ return location.pathname || '/'; } };
+</script>
+<script data-goatcounter="https://financialgladiator.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

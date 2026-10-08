@@ -10,7 +10,7 @@ That's the claim this app puts to the test. Plug in your own age, salary and hou
 
 ## What it is
 
-A no-backend web app, installable straight to your phone's home screen. No sign-up, no server — every projection runs entirely in your own browser; nothing you type is ever sent anywhere.
+A no-backend web app, installable straight to your phone's home screen. No sign-up, no server of its own — every projection runs entirely in your own browser; nothing you type is ever sent anywhere. The only thing counted is that the page was opened, using GoatCounter (no cookies); it is configured to receive the page path only, never the numbers in a share link.
 
 It's built around six tabs:
 
