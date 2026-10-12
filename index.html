@@ -1096,6 +1096,194 @@
 #tab-calc #cp-calib span{font-size:var(--fs-fine) !important}
 #tab-calc .opt-tag,#tab-calc .rdl-tag{font-family:'Inter',system-ui,sans-serif}
 #tab-calc .fine-inline{display:block;margin-top:4px;font-size:var(--fs-fine);color:var(--muted);font-weight:400}
+
+/* =====================================================================
+   UX REFINEMENTS — fewer boxes, slim navigation, motion, controls, icons.
+   Fonts, type sizes and slider rows are unchanged; only the slider HANDLE is easier to grab.
+   Motion: 200–480ms, reduced-motion safe, no scroll hijacking.
+   ===================================================================== */
+html{scroll-behavior:smooth;scroll-padding-top:104px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+:focus-visible{outline:2px solid var(--brand);outline-offset:3px;border-radius:6px}
+::selection{background:var(--brand);color:var(--brand-ink)}
+
+/* ---------- Navigation: slim, sticky, with a progress hairline ---------- */
+.tabbar{background:rgba(0,0,0,.94);-webkit-backdrop-filter:saturate(1.4) blur(16px);backdrop-filter:saturate(1.4) blur(16px);
+  padding:calc(10px + env(safe-area-inset-top,0px)) 0 10px}
+.nav-toggle-btn,.pro-btn,.glossary-open-btn{width:44px;height:44px;border-radius:12px}
+.nav-toggle-btn{background:transparent;border:1px solid var(--line)}
+.nav-toggle-btn span{background:var(--ink)}
+.nav-toggle-btn:hover{border-color:var(--brand)}
+#breadcrumb{background:rgba(0,0,0,.94);-webkit-backdrop-filter:saturate(1.4) blur(16px);backdrop-filter:saturate(1.4) blur(16px);
+  top:calc(64px + env(safe-area-inset-top,0px));padding:4px 0;margin-bottom:0}
+#breadcrumb .bc-arrow{width:32px;height:32px;background:transparent}
+#ux-progress{position:absolute;left:0;bottom:-1px;height:2px;background:var(--brand);width:0;transition:width 360ms cubic-bezier(.2,.7,.2,1)}
+@media (prefers-reduced-motion:reduce){#ux-progress{transition:none}}
+.nav-dropdown{border-radius:16px;box-shadow:0 24px 64px rgba(0,0,0,.55)}
+
+/* ---------- Controls: 48px buttons, 44px inputs, clear focus ---------- */
+.hero-cta{min-height:48px;border-radius:12px;transition:transform 200ms cubic-bezier(.2,.7,.2,1),filter 200ms}
+.hero-cta:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.hero-cta:active{transform:none}
+select,input[type=text],input[type=number]{min-height:44px}
+.field select,.field input[type=text],.field input[type=number]{border-radius:10px}
+#btn-share{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:12px;min-height:48px}
+#btn-share:hover{border-color:var(--ink)}
+.help{min-width:24px;min-height:24px}
+
+/* ---------- Slider HANDLE: bigger and easier to grab. Rows, track thickness and fonts are unchanged.
+   The visible dot is 22px; a transparent ring around it makes the grab area 36px. ---------- */
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;touch-action:pan-y;
+  --f:0;--rail:rgba(243,245,240,.22);-webkit-tap-highlight-color:transparent}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;
+  /* the fill ends exactly under the centre of the handle (handle is 36px wide, so its centre travels from 18px to width-18px) */
+  background:linear-gradient(90deg,var(--brand) calc(18px + (100% - 36px)*var(--f)),var(--rail) calc(18px + (100% - 36px)*var(--f)))}
+input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:var(--rail)}
+input[type=range]::-moz-range-progress{height:6px;border-radius:3px;background:var(--brand)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;box-sizing:border-box;width:36px;height:36px;margin-top:-15px;
+  border:7px solid transparent;border-radius:50%;background:var(--brand);background-clip:padding-box;
+  transition:box-shadow 160ms ease,transform 160ms ease}
+input[type=range]::-moz-range-thumb{box-sizing:content-box;width:22px;height:22px;border:7px solid transparent;border-radius:50%;
+  background:var(--brand);background-clip:padding-box;transition:box-shadow 160ms ease}
+input[type=range]::-webkit-slider-thumb{box-shadow:none}
+input[type=range]::-moz-range-thumb{box-shadow:none}
+input[type=range]:active::-webkit-slider-thumb{box-shadow:0 0 0 6px rgba(255,122,51,.22)}
+input[type=range]:active::-moz-range-thumb{box-shadow:0 0 0 6px rgba(255,122,51,.22)}
+input[type=range]:focus-visible{outline:none}
+input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px var(--paper),0 0 0 5px var(--brand)}
+input[type=range]:focus-visible::-moz-range-thumb{box-shadow:0 0 0 3px var(--paper),0 0 0 5px var(--brand)}
+input[type=range]:disabled{opacity:.4;cursor:default}
+.field input[type=range]{height:36px}
+.alloc input[type=range]{height:34px}
+@media (prefers-reduced-motion:reduce){input[type=range]::-webkit-slider-thumb,input[type=range]::-moz-range-thumb{transition:none}}
+
+/* ---------- Fewer boxes: hairlines instead of bordered cards ---------- */
+.scard,.ctl-group,.proof,.compound-box,.chart-card,.compare-col,.divorce-card,.calc-card,.toggle-field,.ded,.contrib-card,
+.opt-card,.mc-headline,.note,.callout,.dd-card,.sc-tile,.whatif,.contact-card,.thankyou-box,.fix-block{
+  background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;box-shadow:none}
+.dd-card{padding:0}
+.dd-card > summary{padding:20px 0;min-height:44px}
+.dd-card > .dd-body{padding:0 0 22px}
+.ctl-group{padding:20px 0 8px}
+.scard,.compound-box,.proof,.chart-card,.calc-card,.contrib-card,.divorce-card,.ded,.compare-col,.opt-card,.mc-headline,.fix-block{padding:22px 0}
+.note{border-left:2px solid var(--brand);border-top:0;padding:8px 0 8px 16px}
+.callout{padding:14px 0 4px}
+.chart-card{padding:22px 0 8px}
+.sc-tile{padding:16px 16px 16px 0}
+.scorecard{gap:0;column-gap:24px}
+.edu-note{border-left:2px solid var(--line);background:transparent}
+/* the answer stays the one raised surface */
+#tab-calc .answer-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px 22px 14px;margin:20px 0 8px}
+.delay-cost{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0}
+
+/* ---------- Floating summary: a quiet raised panel, orange only on the figures ---------- */
+#float-summary{background:#242A33;color:var(--ink);border:1px solid var(--line);border-radius:16px;box-shadow:0 16px 48px rgba(0,0,0,.55);padding:14px 16px}
+#float-summary.warn{background:#2B1714;border-color:var(--brick)}
+#float-summary .fs-k{color:var(--muted)}
+#float-summary.warn .fs-k{color:#E8B7AE}
+#float-summary .fs-v{color:var(--brand)}
+#float-summary.warn .fs-v{color:var(--ink)}
+#float-summary .fs-div{background:var(--line)}
+#float-summary.fs-expanded .fs-extra{border-top-color:var(--line)}
+.fs-stars .st{background:linear-gradient(90deg,var(--brand) calc(var(--f)*100%),rgba(244,246,248,.22) calc(var(--f)*100%));-webkit-background-clip:text;background-clip:text}
+.fs-pc{color:var(--ink)}
+.share-modal-inner{border-radius:20px;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+
+/* ---------- Motion ---------- */
+.hero-spark i{animation-iteration-count:1;animation-fill-mode:both;animation-duration:1.4s}
+html.ux-js .ux-reveal{opacity:0;transform:translateY(16px);transition:opacity 480ms cubic-bezier(.2,.7,.2,1),transform 480ms cubic-bezier(.2,.7,.2,1);will-change:opacity,transform}
+html.ux-js .ux-reveal.ux-in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){html.ux-js .ux-reveal{opacity:1;transform:none;transition:none}.hero-spark i{animation:none;transform:none}}
+svg line[stroke="var(--grid)"]{stroke-opacity:.7}
+
+
+/* =====================================================================
+   UNIFIED LOOK — the tab 2 principles applied to every tab
+   3 fonts: Inter (all text and numbers) · Bricolage Grotesque (titles, hero numbers) · Space Mono (11px UPPERCASE labels only)
+   6 sizes: 11 label · 12 fine print · 14 body · 15 title · 20 stat · 28 hero  (display tier: page h1, cover headline and figure)
+   4 text colours: ink · muted · orange · red (warnings).  Series/traffic-light colours stay because they carry meaning.
+   Frames only on real cards: notes, warnings and callouts are plain text; accordion contents are never boxed.
+   ===================================================================== */
+
+/* ---- no box inside a box: callouts, notes, formulas and chips lose their frames ---- */
+.insight,.note-sg,.biginvest,.grant-live,.formula,.milestones,.milestones.flow,.impact-diff,.trap-cost,.setup{
+  background:none;border:0;border-radius:0;box-shadow:none}
+.insight,.note-sg,.biginvest,.grant-live{padding:4px 0;margin-top:14px}
+.insight > h3:first-child{display:none}               /* it repeated the accordion title right above it */
+.impact-diff{padding:6px 0}
+.impact-diff.is-down .v,.impact-diff.is-down b{color:var(--brick)}
+.impact-diff.is-up .v,.impact-diff.is-up b{color:var(--brand)}
+.impact-block-label{background:none !important;border:0 !important;padding:0 !important;color:var(--muted) !important}
+.luxury-table{border:0;border-radius:0}
+.luxury-row{border-left:0;border-right:0}
+.formula{padding:6px 0;margin:10px 0}
+
+/* ---- fonts: Space Mono only for 11px uppercase labels; everything else Inter ---- */
+.formula,.milestones,.cmp-rank,.cmp-val,.cmp-sub,.seg,.divorce-sub,.divorce-loss,.delay-cost-sub,.delay-cost-foot,.hero-or,
+.dd-desc,.setup,.fg-copyright,.chart-range-note,.impact-sub,.help,.gt-btn,.amt,.tab td,.tab .v,.tab .k{
+  font-family:'Inter',sans-serif;text-transform:none;letter-spacing:0}
+button.tq-link,.delay-arrow,.hero-cta,.gt-btn{font-family:'Inter',sans-serif}
+.tab th,.hr-label,.gl-label,.fix-tag,.impact-block-label,.cmp-rank,.eyebrow,.sec-label{
+  font-family:'Space Mono',monospace;font-size:var(--fs-label);letter-spacing:.1em;text-transform:uppercase}
+.cmp-rank{letter-spacing:.04em}
+
+/* ---- sizes ---- */
+.tab p,.tab li,.tab td,.tab .sec-sub,.formula,.callout p,.insight p,.note p,.note-sg p,.fix-block p,.cmp-cty,.cmp-flag,
+.tab .impact-title,.tab .v,.tab .k,.tab label,.tab .gt-slider-label{font-size:var(--fs-body);line-height:1.6}
+.tab .standfirst{font-size:var(--fs-title)}
+.dd-title,.tab h3,.tab h4,.fix-h,.impact-title,.delay-cost-period,.tab .dd-body .b-title{font-size:var(--fs-title);line-height:1.35}
+.dd-desc,.milestones,.chart-range-note,.divorce-sub,.divorce-loss,.cmp-sub,.impact-sub,.delay-cost-sub,.delay-cost-foot,.tc-label,
+.setup,.fg-copyright,.hero-or,.hero-ask-lead,.tab .gt-note,.tab .luxury-row span:not(:first-child),.tab .lx-note{font-size:var(--fs-fine);line-height:1.5}
+.tab .num,.opt-big,.tab .v b,.cmp-val,.seg,.amt{font-size:var(--fs-stat)}
+.cmp-val,.seg,.amt{font-size:var(--fs-body);font-weight:700}
+.delay-cost-value,.tab h2.part-title,.tab .part-title{font-size:var(--fs-hero)}
+.tab .num{font-size:var(--fs-stat);line-height:1}
+.hero-cta,.gt-btn,button.tq-link,.install-app-btn{font-size:var(--fs-body);font-weight:600}
+.help{font-size:var(--fs-fine)}
+.tab td{font-size:var(--fs-body)}
+.tab th{font-size:var(--fs-label)}
+.tab p b,.tab li b,.tab td b{font-weight:600;font-size:inherit;color:inherit}
+
+/* ---- colours: ink for text, muted for fine print; no extra tints ---- */
+.tab p,.tab li,.tab .callout p,.tab .insight p,.tab .note p,.tab .note-sg p,.tab .fix-block p,.tab .dd-body p,.tab .dd-body li,
+.formula,.tab td,.tab label{color:var(--ink)}
+.tab .sec-sub,.dd-desc,.milestones,.chart-range-note,.divorce-sub,.cmp-sub,.impact-sub,.delay-cost-sub,.delay-cost-foot,.setup,
+.fg-copyright,.hero-or,.tab th,.hero-ask-lead{color:var(--muted)}
+.tab p b,.tab li b{color:inherit}
+
+
+/* ---- unify pass 2: stragglers snapped to the scale (tabs 1, 3-6) ---- */
+.tab:not(#tab-calc) .dd-title,#tab-legal .fg-email{font-family:'Bricolage Grotesque',sans-serif;font-size:var(--fs-title) !important}
+.tab:not(#tab-calc) .dd-desc,.tab:not(#tab-calc) .tc-label{font-family:'Inter',sans-serif !important;font-size:var(--fs-fine) !important;letter-spacing:0 !important;text-transform:none !important}
+.tab:not(#tab-calc) .tc-label{color:var(--muted) !important}
+.hr-label,.fix-tag,.tab:not(#tab-calc) .dd-body summary span[style*="Space"],
+#tab-buy .dd-body span[style*="uppercase"],#tab-portfolio .dd-body span[style*="uppercase"],#tab-why .dd-body span[style*="uppercase"]{font-size:var(--fs-label) !important}
+.delay-cost-live{font-size:var(--fs-label) !important}
+.delay-arrow{font-size:var(--fs-title) !important}
+.tab:not(#tab-calc) td,.tab:not(#tab-calc) td b,.tab:not(#tab-calc) p,.tab:not(#tab-calc) p b,.tab:not(#tab-calc) li{font-size:var(--fs-body) !important}
+.tab:not(#tab-calc) p[style*="13px"],.tab:not(#tab-calc) .dd-body p.fine{font-size:var(--fs-fine) !important}
+#tab-buy .dd-body p:has(> b:only-child),#tab-buy .dd-body .fine{font-size:var(--fs-fine)}
+.gr-amt{font-size:var(--fs-stat) !important}
+#tab-why .dd-body span,#tab-portfolio .dd-body span:not([class]){font-size:var(--fs-fine)}
+#tab-portfolio .dd-body span[style*="color"],#tab-portfolio .dd-body span:not([class]),#tab-portfolio .dd-body span:not([class]) b{color:var(--muted) !important}
+#tab-portfolio .dd-body b{font-size:var(--fs-body) !important;color:var(--ink)}
+#tab-legal .dd-body p{font-size:var(--fs-body) !important;color:var(--ink) !important}
+#tab-legal .fg-email{font-size:var(--fs-title) !important}
+#tab-legal .ty-big{font-size:var(--fs-hero) !important}
+
+
+.gt-scale-mark span,.part-divider span{font-size:var(--fs-label) !important}
+#tab-portfolio .row .l b{font-size:var(--fs-body) !important;color:var(--ink) !important}
+#tab-portfolio .row[style*="font-size:12px"] b{color:inherit !important;font-size:inherit !important}
+
+.dd-body .callout{border:0 !important;background:none !important;padding:0 !important;margin-top:0 !important;border-radius:0}
+.dd-body .callout ul{font-size:var(--fs-body);color:var(--ink)}
+
+/* sliders end flush: dot edge meets the field edge at min and max (thumb has a 7px transparent border) */
+.field input[type=range],.alloc input[type=range]{width:calc(100% + 14px);margin-left:-7px;margin-right:-7px;max-width:none}
+.field input[type=range]::-webkit-slider-runnable-track,.alloc input[type=range]::-webkit-slider-runnable-track{border-radius:0;
+  background:linear-gradient(90deg,transparent 7px,var(--brand) 7px,var(--brand) calc(18px + (100% - 36px)*var(--f)),var(--rail) calc(18px + (100% - 36px)*var(--f)),var(--rail) calc(100% - 7px),transparent calc(100% - 7px))}
+.field input[type=range]::-moz-range-track,.alloc input[type=range]::-moz-range-track{margin:0 7px}
 </style>
 </head>
 <body>
@@ -1204,7 +1392,7 @@
 
   <div id="privacy-modal" class="share-modal" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
     <div class="share-modal-inner privacy-modal-inner">
-      <div class="privacy-icon">ℹ️</div>
+      <div class="privacy-icon"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FF7A33" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v5.5"/><circle cx="12" cy="7.7" r=".6" fill="#FF7A33"/></svg></div>
       <h3 class="privacy-title" id="privacy-title">Before you start</h3>
       <ul class="privacy-list">
         <li><b>Educational modelling only.</b> This app shows what could happen under the assumptions you choose. It does not recommend any investment, product, portfolio or transaction, and does not assess whether anything is suitable for you.</li>
@@ -1256,7 +1444,7 @@
           </div>
           <div class="hero-spark" id="hero-spark" aria-hidden="true"></div>
         </div>
-        <div class="edu-note" role="note"><b>Educational modelling only.</b> This calculator shows what could happen under the assumptions you choose. It does not recommend any investment, product, portfolio or transaction, and it does not assess whether any investment is suitable for you. <button type="button" class="tq-link" data-trust="disclaimer">Full disclaimer &rarr;</button></div>
+        <div class="edu-note" role="note">Illustration only, not financial advice. <button type="button" class="tq-link" data-trust="disclaimer">Full disclaimer &rarr;</button></div>
 
         
         <div class="delay-cost" id="delay-cost">
@@ -1473,7 +1661,7 @@
         <label>EC size <span class="hint"><button class="help">?</button><span class="bubble">Slide from the smallest (3-room, ~S$850k) to the largest (5-room, ~S$1.35m), before any ballot/build-wait inflation. EC is always family-sized — there's no 1- or 2-bedroom tier the way private condo has.</span></span> — <output id="o-ecsize">3-room EC</output></label>
         <input type="range" id="i-ecsize" min="0" max="2" step="1" value="0">
       </div>
-<div class="field pro-only" id="f-mortsrc">
+<div class="field" id="f-mortsrc">
         <label>Pay the HDB mortgage from <span class="hint"><button class="help">?</button><span class="bubble">By default, an HDB loan is serviced from <b>CPF-OA</b> — the standard approach, and free in the sense that it doesn't touch your take-home cash. Choosing <b>cash</b> instead means you pay it from take-home every month and leave your CPF-OA balance untouched, where it keeps compounding at CPF's <b>2.5%/yr</b>, risk-free. There's a real tradeoff here: CPF-OA growth is guaranteed but capped at 2.5%; cash freed up this way could instead go toward Necessities, Wants, or investing, which has historically returned more — with real volatility CPF doesn't carry. Neither choice is automatically better; this lets you compare both.</span></span> — <output id="o-mortsrc">CPF-OA</output></label>
         <select id="i-mortsrc">
           <option value="cpf">CPF-OA (default)</option>
@@ -1486,7 +1674,7 @@
         <div class="milestones flow" id="o-mopline" style="margin-top:8px"></div>
       </div>
       <div class="field" id="f-exmort">
-        <label>Your current mortgage payment <span class="hint"><button class="help">?</button><span class="bubble">The monthly instalment you already pay on the home you own. If your flat is fully paid off, leave this at S$0. HDB loans are usually serviced from <b>CPF-OA</b>; a bank loan on a condo is usually paid in <b>cash</b>. The model deducts it from whichever source applies until the term below runs out.</span></span> — <output id="o-exmort">S$0</output></label>
+        <label>Monthly mortgage <span class="hint"><button class="help">?</button><span class="bubble">The monthly instalment you already pay on the home you own. If your flat is fully paid off, leave this at S$0. HDB loans are usually serviced from <b>CPF-OA</b>; a bank loan on a condo is usually paid in <b>cash</b>. The model deducts it from whichever source applies until the term below runs out.</span></span> — <output id="o-exmort">S$0</output></label>
         <input type="range" id="i-exmort" min="0" max="12000" step="50" value="0">
       </div>
       <div class="field" id="f-exyears">
@@ -2023,9 +2211,9 @@
         <p id="o-shortfall"></p>
       </div>
 
-      <button class="preset" id="btn-share" style="margin-top:10px;border-style:solid">🔗 Copy my scenario link</button>
+      <button class="preset" id="btn-share" style="margin-top:10px;border-style:solid">Copy my scenario link</button>
       <div class="milestones flow" id="share-status" style="margin-top:8px"></div>
-      <div class="milestones flow" id="save-status" style="margin-top:4px;color:var(--muted)">🔒 Nothing you enter is saved — refreshing the page resets to the Classic Saver profile. Use “Copy my scenario link” to keep a setup.</div>
+      <div class="milestones flow" id="save-status" style="margin-top:4px;color:var(--muted)">Nothing you enter is saved — refreshing the page resets to the Classic Saver profile. Use “Copy my scenario link” to keep a setup.</div>
     </div>
 
         <div class="deep-dive" id="deep-dive-anchor">
@@ -2575,15 +2763,15 @@
       </div>
       <div class="blegend">
         <div class="row"><span class="l"><i class="dot" style="background:#FF7A33"></i><b>Global equities — growth + value blend</b></span><span class="amt">45%</span></div>
-        <div class="row" style="font-size:12.5px;color:#4a544a"><span>A broad, low-cost world index fund holds thousands of growth and value companies across every major currency in a single purchase.</span></div>
+        <div class="row" style="font-size:12px;color:var(--muted)"><span>A broad, low-cost world index fund holds thousands of growth and value companies across every major currency in a single purchase.</span></div>
         <div class="row"><span class="l"><i class="dot" style="background:#5E6F7E"></i><b>SG dividend stocks &amp; REITs — the income engine</b></span><span class="amt">20%</span></div>
-        <div class="row" style="font-size:12.5px;color:#4a544a"><span>Singapore banks, blue-chips and REITs paying 4–6% — and every dollar of it lands <b>tax-free</b> in a Singaporean's hands.</span></div>
+        <div class="row" style="font-size:12px;color:var(--muted)"><span>Singapore banks, blue-chips and REITs paying 4–6% — and every dollar of it lands <b>tax-free</b> in a Singaporean's hands.</span></div>
         <div class="row"><span class="l"><i class="dot" style="background:#C79A1E"></i><b>Gold — the anti-currency</b></span><span class="amt">15%</span></div>
-        <div class="row" style="font-size:12.5px;color:#4a544a"><span>Pays nothing, promises nothing — and that's the point. It's insurance against money-printing and the late stages of the long-term debt cycle.</span></div>
+        <div class="row" style="font-size:12px;color:var(--muted)"><span>Pays nothing, promises nothing — and that's the point. It's insurance against money-printing and the late stages of the long-term debt cycle.</span></div>
         <div class="row"><span class="l"><i class="dot" style="background:#8a918a"></i><b>Short bonds / T-bills / SSBs — dry powder</b></span><span class="amt">10%</span></div>
-        <div class="row" style="font-size:12.5px;color:#4a544a"><span>Deliberately minimal — CPF is already your big bond. In this illustration the sleeve is there as a buffer to deploy in a downturn, not to earn.</span></div>
+        <div class="row" style="font-size:12px;color:var(--muted)"><span>Deliberately minimal — CPF is already your big bond. In this illustration the sleeve is there as a buffer to deploy in a downturn, not to earn.</span></div>
         <div class="row"><span class="l"><i class="dot" style="background:#B23A2D"></i><b>Volatility &amp; insurance sleeve</b></span><span class="amt">10%</span></div>
-        <div class="row" style="font-size:12.5px;color:#4a544a"><span>A 6-month cash emergency fund plus protection cover (such as term life or disability), shown as a buffer so a crisis is less likely to force selling at a bad time. A common rule of thumb, not advice for you.</span></div>
+        <div class="row" style="font-size:12px;color:var(--muted)"><span>A 6-month cash emergency fund plus protection cover (such as term life or disability), shown as a buffer so a crisis is less likely to force selling at a bad time. A common rule of thumb, not advice for you.</span></div>
       </div>
     </section>
 
@@ -2637,7 +2825,7 @@
 
         <p>One common approach is to rebalance on fixed dates, say twice a year: bring holdings that have grown past their target weight back down and those that have fallen back up. A calendar rule can reduce the pull to act on emotion. Rebalancing does not guarantee better returns, and trading costs and your own tax position still matter. The model simply assumes the stated mix is maintained.</p>
         <div class="formula">Six-monthly is just one example of a schedule; there is no single correct frequency.</div>
-        <button type="button" class="hero-cta" id="btn-add-rebalance-cal" style="width:100%;margin-top:14px">📅 Optional: add a six-monthly reminder to my calendar</button>
+        <button type="button" class="hero-cta" id="btn-add-rebalance-cal" style="width:100%;margin-top:14px">Optional: add a six-monthly reminder to my calendar</button>
         </div>
 </details>
       <details class="dd-card">
@@ -2824,7 +3012,7 @@
   <div class="dd-body">
       <div class="callout">
         <ul>
-          <li><b>Privacy.</b> The app has no server of its own. Nothing you type is sent anywhere. The site counts page visits with GoatCounter, a privacy-friendly counter that sets no cookies and receives only the page address without anything after it, so never your numbers or the contents of a share link. Your financial inputs are not saved in your browser: refresh the page and it resets to the Classic Saver profile. The only thing the browser remembers is a one-time flag that you have seen the privacy notice. A share link puts your inputs in the link itself, so only share one with someone you want to see them.</li>
+          <li><b>Privacy.</b> The app has no server of its own. Nothing you type is sent anywhere. The site counts page visits with GoatCounter, a privacy-friendly counter that sets no cookies and receives only the page address without anything after it, so never your numbers or the contents of a share link. Your financial inputs are not saved in your browser: refresh the page and it resets to the Classic Saver profile. The browser remembers nothing about you, which is also why the notice above appears every time the page loads. A share link puts your inputs in the link itself, so only share one with someone you want to see them.</li>
           <li><b>When the rules were last reviewed.</b> Version <span id="legal-ver">2026.1</span>, last reviewed <span id="legal-rev">2026-10-06</span>, against the 1 Jan 2026 CPF and IRAS tables. Next scheduled review: January 2027. Rules are not updated automatically.</li>
           <li><b>What it assumes.</b> Investment returns and volatility are illustrative, not forecasts, and not drawn from a named data set. Every figure and its source is listed under <i>Rules &amp; assumptions used</i>.</li>
           <li><b>What it can&rsquo;t do.</b> It does not model healthcare shocks in its main results (long-term care is only an optional stress-test scenario), female CPF LIFE payouts, the Basic or Enhanced Retirement Sums, bonds as a separate asset, your own tax situation beyond the basics, or any change to the rules after the review date. It cannot review your actual portfolio or tell you what to buy.</li>
@@ -3761,19 +3949,14 @@
     });
   })();
 
-  /* ===== PRIVACY NOTICE: shown once, on first visit, cover tab only ===== */
+  /* ===== NOTICE: shown on every load, closed only by the explicit button ===== */
   (function(){
-    var STORAGE_KEY='sgmr_notice_v2';
-    try{ localStorage.removeItem('sgmr_privacy_seen'); }catch(e){}
+    // Older versions stored a "seen" flag. Nothing is stored any more: the notice appears each time.
+    try{ localStorage.removeItem('sgmr_privacy_seen'); localStorage.removeItem('sgmr_notice_v2'); }catch(e){}
     var pModal=document.getElementById('privacy-modal');
     if(!pModal) return;
-    function closePrivacyModal(){
-      pModal.classList.remove('open');
-      try{ localStorage.setItem(STORAGE_KEY,'1'); }catch(e){}
-    }
-    var seen=false;
-    try{ seen=localStorage.getItem(STORAGE_KEY)==='1'; }catch(e){}
-    if(!seen) pModal.classList.add('open');
+    function closePrivacyModal(){ pModal.classList.remove('open'); }
+    pModal.classList.add('open');
     var pClose=document.getElementById('privacy-modal-close'), pOk=document.getElementById('privacy-modal-ok');
     window.__closeNotice=closePrivacyModal;
     if(pClose) pClose.addEventListener('click', closePrivacyModal);
@@ -10590,6 +10773,56 @@ function drawQuizResultCard(isStory){
   // (?a=45&s=40500&nw=...), and GoatCounter's default is to send location.pathname + location.search. This override sends
   // the page path ONLY, so no input value and no part of a share link ever leaves the page. Do not remove it.
   window.goatcounter={ path:function(){ return location.pathname || '/'; } };
+</script>
+<script>
+  /* ===== UX LAYER: scroll reveals, nav progress, cover actions (index-UX.html) ===== */
+  (function(){
+    var root=document.documentElement;
+    var reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function $(id){ return document.getElementById(id); }
+    // Slim progress hairline under the sticky nav, driven by the existing "n / 6" label.
+    var bc=$('breadcrumb'), bt=$('bc-text');
+    if(bc && bt){
+      var bar=document.createElement('div'); bar.id='ux-progress'; bc.appendChild(bar);
+      var paint=function(){ var m=/(\d+)\s*\/\s*(\d+)/.exec(bt.textContent||''); if(m) bar.style.width=(100*(+m[1])/(+m[2]))+'%'; };
+      paint(); new MutationObserver(paint).observe(bt,{childList:true,characterData:true,subtree:true});
+    }
+    // Slider fill: the custom track needs the fill percentage as a CSS variable. Kept in sync on input,
+    // on tab changes, and by a cheap poll, because the calculator also sets slider values from code.
+    function syncRanges(){
+      Array.prototype.forEach.call(document.querySelectorAll('input[type=range]'),function(r){
+        var mn=parseFloat(r.min||0), mx=parseFloat(r.max||100), v=parseFloat(r.value);
+        var f=mx>mn?Math.max(0,Math.min(1,(v-mn)/(mx-mn))):0;
+        var s=f.toFixed(4); if(r.__f!==s){ r.__f=s; r.style.setProperty('--f',s); }
+      });
+    }
+    syncRanges();
+    document.addEventListener('input',function(e){ if(e.target&&e.target.type==='range') syncRanges(); },true);
+    document.addEventListener('change',syncRanges,true);
+    setInterval(syncRanges,300);
+
+    // Reveal-on-scroll. Content is only ever hidden when JS and IntersectionObserver both work
+    // and reduced motion is off; otherwise everything is simply visible.
+    if(reduce || !('IntersectionObserver' in window)) return;
+    root.classList.add('ux-js');
+    var SEL='.tab > .sec-label, .tab > .standfirst, .tab > section, .tab .scorecard, .tab .dd-card, .tab .chart-card, .tab .compound-box, .tab .fix-block, .tab .proof, .tab .note, .tab .calc-card, .tab .preset-scenarios, .tab .delay-cost, .tab .opt-card, .tab .contrib-card, .tab .contact-card';
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting || e.boundingClientRect.top<0){ e.target.classList.add('ux-in'); io.unobserve(e.target); } });
+    },{rootMargin:'0px 0px -8% 0px',threshold:0.04});
+    function arm(){
+      Array.prototype.forEach.call(document.querySelectorAll(SEL),function(el){
+        if(el.__ux) return; el.__ux=1;
+        if(el.closest('.hero-dark')) return;          // the opening is never delayed
+        el.classList.add('ux-reveal'); io.observe(el);
+      });
+    }
+    arm(); setTimeout(arm,600);
+    // Safety net: never leave anything hidden if the observer is slow (print, screenshots, odd embeds).
+    window.addEventListener('beforeprint',function(){ root.classList.remove('ux-js'); });
+    setTimeout(function(){ Array.prototype.forEach.call(document.querySelectorAll('.ux-reveal:not(.ux-in)'),function(el){
+      var r=el.getBoundingClientRect(); if(r.top<window.innerHeight*1.2) el.classList.add('ux-in'); }); },1800);
+  })();
+
 </script>
 <script data-goatcounter="https://financialgladiator.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
